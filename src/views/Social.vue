@@ -1,5 +1,6 @@
 <template>
-  <div class="social ml-2 col-4">
+<div class="row">    
+  <div class="social offset-1 col-3">
     <p>{{artists.length}} artistes affichés</p>
     <div class="progress my-2" v-show="artists.length < countArtists">
       <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" v-bind:style="progressStyle" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
@@ -18,27 +19,40 @@
           <p class="small" v-else>Sortie aujourd'hui</p>
           <h6 class="card-subtitle mb-2 text-muted">{{ artist.albums[0].title }}</h6>
           <img v-bind:src="artist.albums[0].cover" class="img-fluid" alt="picture artist" v-if="artist.albums[0].cover">
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-link" v-on:click="clickOnRelease(artist)">See more</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="col-7">
+    <transition name="slide-fade" >
+      <DeezerRelease 
+        v-if="(artists.length >= countArtists)"
+        v-bind:release="selectedRelease"/>
+    </transition>
+  </div>
+</div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
+import DeezerRelease from '@/components/DeezerRelease.vue'
+
 export default {
   name: 'Social',
-  /*components: {
-     HelloWorld
-  },*/
+  components: {
+     DeezerRelease
+  },
   data() {
     return {
       artists: [],
-      timeout_ms: 1000,
-      retry: 6,
+      timeout_ms: 1500,
+      retry: 10,
       loadedArtists: 0,
       countArtists: 100,
+      selectedRelease: null
     }
   },
   computed: {
@@ -70,17 +84,14 @@ export default {
       await this.$axios.get("http://localhost:8010/proxy/user/16192550/artists?index="+index)
         .then((response) => {
           if (response.status === 200 && response.data.data) {
-            if (response.data.data) {
+            this.countArtists = response.data.total;
+            response.data.data.forEach(artist => (
+              artist.albums = [],
+              this.fetchArtistContent(artist, this.retry)
+            ));
 
-              this.countArtists = response.data.total;
-              response.data.data.forEach(artist => (
-                artist.albums = [],
-                this.fetchArtistContent(artist, this.retry)
-              ));
-
-              if (response.data.next) {
-                this.fetchArtists(index + 25, this.retry);     	
-              }
+            if (response.data.next) {
+              this.fetchArtists(index + 25, this.retry);     	
             }
           } else {
             if (retry > 0) {
@@ -94,13 +105,11 @@ export default {
       await this.$axios.get("http://localhost:8010/proxy/artist/"+artist.id+"/albums")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
-            if (response.data) {
-              let sorted = response.data.data.sort((a, b) => this.shortAlbums(a,b));
-              artist.albums = sorted;
-              this.artists.push(artist);
-              this.loadedArtists+=1;
-              this.artists.sort((a,b) => this.shortLastReleases(a,b))
-            }
+            let sorted = response.data.data.sort((a, b) => this.shortAlbums(a,b));
+            artist.albums = sorted;
+            this.artists.push(artist);
+            this.loadedArtists+=1;
+            this.artists.sort((a,b) => this.shortLastReleases(a,b))
           } else {
             if (retry > 0) {
               setTimeout(this.fetchArtistContent, this.timeout_ms, artist, retry-1);
@@ -108,6 +117,9 @@ export default {
           }
         })
         .catch((error) => console.log(error));
+    },
+    clickOnRelease(artist) {
+      this.selectedRelease = artist;
     },
     shortAlbums ( a, b ) {
       if ( a.release_date == null ) return 1;
@@ -136,3 +148,19 @@ export default {
   }
 }
 </script>
+
+<style type="text/css">
+/* Enter and leave animations can use different */
+/* durations and timing functions.              */
+.slide-fade-enter-active {
+  transition: all .8s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+</style>

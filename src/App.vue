@@ -3,7 +3,9 @@
     <div id="nav">
       <router-link to="/">Social</router-link>
     </div>
-    <router-view/>
+    <div class="container-fluid">
+      <router-view/>    
+    </div>
   </div>
 </template>
 
