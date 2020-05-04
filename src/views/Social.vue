@@ -1,7 +1,7 @@
 <template>
   <div class="social ml-2 col-4">
-    {{artists.length}} artistes affichés ({{loadedArtists}}/{{countArtists}})
-    <div class="progress my-2" v-show="this.artists.length < this.countArtists">
+    <p>{{artists.length}} artistes affichés</p>
+    <div class="progress my-2" v-show="artists.length < countArtists">
       <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" v-bind:style="progressStyle" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
         {{progressPercent}}
       </div>
@@ -35,6 +35,8 @@ export default {
   data() {
     return {
       artists: [],
+      timeout_ms: 1000,
+      retry: 6,
       loadedArtists: 0,
       countArtists: 100,
     }
@@ -51,7 +53,7 @@ export default {
     },
   },
   created() {
-    this.fetchArtists();
+    this.fetchArtists(0, this.retry);
   },
   methods: {
     releaseDays: function (day) {
@@ -63,54 +65,54 @@ export default {
       if (typeof s !== 'string') return '';
       return s.charAt(0).toUpperCase() + s.slice(1);
     },
-    async fetchArtists (index = 0) {
+    async fetchArtists (index, retry) {
       
-      this.$axios.get("http://localhost:8010/proxy/user/16192550/artists?index="+index)
+      await this.$axios.get("http://localhost:8010/proxy/user/16192550/artists?index="+index)
         .then((response) => {
-          //console.log("fetchArtists");
-          //console.log(response.data);
           if (response.status === 200 && response.data.data) {
             if (response.data.data) {
+
               this.countArtists = response.data.total;
-
               response.data.data.forEach(artist => (
-                this.loadedArtists+=1,
-                Object.assign(artist, { album:[] }),
-
-                this.fetchArtistContent(artist)
+                artist.albums = [],
+                this.fetchArtistContent(artist, this.retry)
               ));
 
               if (response.data.next) {
-                this.fetchArtists(index + 25);     	
+                this.fetchArtists(index + 25, this.retry);     	
               }
             }
           } else {
-            setTimeout(this.fetchArtists(index), 3000);
+            if (retry > 0) {
+              setTimeout(this.fetchArtists, this.timeout_ms, index, retry-1);
+            }
           }
         })
         .catch((error) => console.log(error));
     },
-    async fetchArtistContent(artist) {
-      this.$axios.get("http://localhost:8010/proxy/artist/"+artist.id+"/albums")
+    async fetchArtistContent(artist, retry) {
+      await this.$axios.get("http://localhost:8010/proxy/artist/"+artist.id+"/albums")
         .then((response) => {
-          
-          //console.log("fetchArtistContent");
-          //console.log(response.data);
           if (response.status === 200 && response.data.data) {
             if (response.data) {
               let sorted = response.data.data.sort((a, b) => this.shortAlbums(a,b));
               artist.albums = sorted;
               this.artists.push(artist);
-
+              this.loadedArtists+=1;
               this.artists.sort((a,b) => this.shortLastReleases(a,b))
             }
           } else {
-            setTimeout(this.fetchArtistContent(artist), 3000);
+            if (retry > 0) {
+              setTimeout(this.fetchArtistContent, this.timeout_ms, artist, retry-1);
+            }
           }
         })
         .catch((error) => console.log(error));
     },
     shortAlbums ( a, b ) {
+      if ( a.release_date == null ) return 1;
+      if ( b.release_date == null ) return -1;
+
       if ( a.release_date > b.release_date ) {
         return -1;
       }

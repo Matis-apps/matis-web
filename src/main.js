@@ -7,7 +7,6 @@ import axios from 'axios'
 import moment from 'moment'
 
 Vue.prototype.$axios = axios
-Vue.prototype.$axiosRetry = axiosRetry
 Vue.prototype.$moment = moment
 
 Vue.config.productionTip = false
