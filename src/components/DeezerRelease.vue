@@ -1,20 +1,20 @@
 <template>
   <div id="deezer-release">
-    <div v-if="album">
+    <div v-if="release">
       <div class="card text-left">
         <div class="card-header d-flex">
-          <div class="col-2" v-show="album.cover">
-            <img class="card-img-top img-fluid img-circle" :src="album.cover" alt="Card image cap"> 
+          <div class="col-2" v-show="release.content_picture">
+            <img class="card-img-top img-fluid img-circle" :src="release.content_picture" alt="Card image cap"> 
           </div>
-          <div class="col-10 align-self-center"><a :href="release.link" target="_blank">{{release.name}}</a> | <a :href="album.link" target="_blank">{{album.title}}</a></div>
+          <div class="col-10 align-self-center"><a :href="release.link" target="_blank">{{release.name}}</a> | <a :href="release.content_link" target="_blank">{{release.content_title}}</a></div>
         </div>
 
         <div class="card-body">
           
-          <h5 class="card-title">{{capitalize(album.record_type)}}</h5>
-          <p class="card-text"><small class="text-muted">Sortie le {{ album.release_date }}</small></p>
+          <h5 class="card-title">{{capitalize(release.content_type)}}</h5>
+          <p class="card-text"><small class="text-muted">Sortie le {{ release.updated_at }}</small></p>
 
-          <ul class="list-group my-2" v-if="tracklist">
+          <ul class="list-group my-2" v-if="tracklist.length > 0">
             <li class="list-group-item d-flex justify-content-between align-items-center"
               v-for="track in tracklist"
               v-bind:key="track.id">
@@ -57,22 +57,20 @@ export default {
   },
   data() {
     return {
-      album: null,
-      relatedArtists: [],
       tracklist: [],
+      relatedArtists: [],
     }
   },
   watch: { 
     release: function(newVal, oldVal) { // watch it
-      // console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-      
       var element = document.getElementById("deezer-release");
       element.scrollIntoView({behavior: "smooth"});
 
-      this.album = newVal.albums[0];
-      if(this.album) this.fetchTracklist(this.album.id);
-
-      this.fetchRelatedArtists(newVal.id);
+      console.log(newVal);
+      if(newVal) {
+        this.fetchTracklist(newVal.content_id);
+        this.fetchRelatedArtists(newVal.id);
+      } 
     }
   },
   methods: {

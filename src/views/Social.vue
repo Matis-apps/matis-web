@@ -1,26 +1,26 @@
 <template>
 <div class="row">    
   <div class="social offset-1 col-3">
-    <p>{{artists.length}} artistes affichés</p>
-    <div class="progress my-2" v-show="artists.length < countArtists">
+    <p>{{releases.length}} artistes affichés</p>
+    <div class="progress my-2" v-show="releases.length < countArtists">
       <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" v-bind:style="progressStyle" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
         {{progressPercent}}
       </div>
     </div>
-    <div v-if="artists" class="scrollbar scrollbar-primary">
-      <div class="card mb-2" v-for="(artist, index) in artists" v-bind:key="artist.id">
+    <div v-if="releases" class="scrollbar scrollbar-primary">
+      <div class="card mb-2" v-for="(item, index) in releases" v-bind:key="item.id">
         <div class="card-header d-flex justify-content-between">
-          <img v-bind:src="artist.picture_big" class="card-img-top img-fluid" alt="picture artist" style="max-height: 50px; max-width: 50px;"> {{ artist.name }}
+          <img :src="item.picture" class="card-img-top img-fluid" alt="picture artist" style="max-height: 50px; max-width: 50px;"> {{ item.name }}
         </div>
-        <div class="card-body text-left" v-if="artist.albums.length > 0">
-          <h5 class="card-title"><b>#{{index+1}}</b> Dernière sortie <small>| {{ capitalize(artist.albums[0].record_type) }}</small></h5>
-          <p class="small" v-if="releaseDays(artist.albums[0].release_date) > 0">Il y a {{ releaseDays(artist.albums[0].release_date) }} jours ({{ artist.albums[0].release_date }})</p>
-          <p class="small" v-else-if="releaseDays(artist.albums[0].release_date) < 0">Sortie prévue dans {{ Math.abs(releaseDays(artist.albums[0].release_date)) }} jours ({{ artist.albums[0].release_date }})</p>
+        <div class="card-body text-left" v-if="item.content_full.length > 0">
+          <h5 class="card-title"><b>#{{index+1}}</b> Dernière sortie <small>| {{ capitalize(item.content_type) }}</small></h5>
+          <p class="small" v-if="releaseDays(item.updated_at) > 0">Il y a {{ releaseDays(item.updated_at) }} jours ({{ item.updated_at }})</p>
+          <p class="small" v-else-if="releaseDays(item.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(item.updated_at)) }} jours ({{ item.updated_at }})</p>
           <p class="small" v-else>Sortie aujourd'hui</p>
-          <h6 class="card-subtitle mb-2 text-muted">{{ artist.albums[0].title }}</h6>
-          <img v-bind:src="artist.albums[0].cover" class="img-fluid" alt="picture artist" v-if="artist.albums[0].cover">
+          <h6 class="card-subtitle mb-2 text-muted">{{ item.content_title }}</h6>
+          <img :src="item.content_picture" class="img-fluid" alt="picture artist" v-if="item.content_picture">
           <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-link" v-on:click="clickOnRelease(artist)">See more</button>
+            <button type="button" class="btn btn-link" v-on:click="clickOnRelease(item)">See more</button>
           </div>
         </div>
       </div>
@@ -29,7 +29,7 @@
   <div class="col-7">
     <transition name="slide-fade" >
       <DeezerRelease 
-        v-if="(artists.length >= countArtists)"
+        v-if="(releases.length >= countArtists)"
         v-bind:release="selectedRelease"/>
     </transition>
   </div>
@@ -47,7 +47,7 @@ export default {
   },
   data() {
     return {
-      artists: [],
+      releases: [],
       timeout_ms: 1500,
       retry: 10,
       loadedArtists: 0,
@@ -81,7 +81,7 @@ export default {
     },
     async fetchArtists (index, retry) {
       
-      await this.$axios.get("http://localhost:8010/proxy/user/16192550/artists?index="+index)
+      await this.$axios.get("http://localhost:8010/proxy/user/16192550/artists?limit=100&index="+index)
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.countArtists = response.data.total;
@@ -91,7 +91,7 @@ export default {
             ));
 
             if (response.data.next) {
-              this.fetchArtists(index + 25, this.retry);     	
+              this.fetchArtists(index+100, this.retry);     	
             }
           } else {
             if (retry > 0) {
@@ -107,9 +107,9 @@ export default {
           if (response.status === 200 && response.data.data) {
             let sorted = response.data.data.sort((a, b) => this.shortAlbums(a,b));
             artist.albums = sorted;
-            this.artists.push(artist);
+            this.releases.push(this.formatArtistToFeed(artist));
             this.loadedArtists+=1;
-            this.artists.sort((a,b) => this.shortLastReleases(a,b))
+            this.releases.sort((a,b) => this.shortLastReleases(a,b))
           } else {
             if (retry > 0) {
               setTimeout(this.fetchArtistContent, this.timeout_ms, artist, retry-1);
@@ -118,8 +118,29 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    clickOnRelease(artist) {
-      this.selectedRelease = artist;
+    formatArtistToFeed(artist){
+      return {
+        // Related to the author
+        id: artist.id,
+        name: artist.name,
+        picture: artist.picture_big,
+        link: artist.link,
+        updated_at: artist.albums[0].release_date,
+        // Related to the content
+        content_id: artist.albums[0].id,
+        content_title: artist.albums[0].title,
+        content_type: artist.albums[0].record_type,
+        content_picture: artist.albums[0].cover,
+        content_link: artist.albums[0].link,
+        content_last: artist.albums[0],
+        content_full: artist.albums,
+      };
+    },
+    formatPlaylistToFeed(playlist){
+      return playlist;
+    },
+    clickOnRelease(release) {
+      this.selectedRelease = release;
     },
     shortAlbums ( a, b ) {
       if ( a.release_date == null ) return 1;
@@ -134,13 +155,13 @@ export default {
       return 0;
     },
     shortLastReleases ( a, b ) {
-      if ( a.albums.length == 0 ) return 1;
-      if ( b.albums.length == 0 ) return -1;
+      if ( a.content_full.length == 0 ) return 1;
+      if ( b.content_full.length == 0 ) return -1;
 
-      if ( a.albums[0].release_date > b.albums[0].release_date ) {
+      if ( a.updated_at > b.updated_at ) {
         return -1;
       }
-      if ( a.albums[0].release_date < b.albums[0].release_date ) {
+      if ( a.updated_at < b.updated_at ) {
         return 1;
       }
       return 0;
