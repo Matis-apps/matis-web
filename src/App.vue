@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Social</router-link>
+      <router-link to="/">Social</router-link> |
+      <router-link to="/friends">Friends</router-link>
     </div>
     <div class="container-fluid">
       <router-view/>    

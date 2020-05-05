@@ -1,10 +1,13 @@
 <template>
 <div class="row">    
   <div class="social offset-1 col-3">
-    <p>{{releases.length}} news</p>
-    <div class="progress my-2" v-show="releases.length < countReleases">
-      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" v-bind:style="progressStyle" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
-        {{progressPercent}}
+    <div class="alert alert-info align-self-center" role="alert">
+      <p>{{releases.length}} news <small v-show="releases.length < countReleases">/ {{countReleases}}</small></p>
+
+      <div class="progress my-2" v-show="releases.length < countReleases">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" v-bind:style="progressStyle" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
+          {{progressPercent}}
+        </div>
       </div>
     </div>
     <div v-if="releases" class="scrollbar scrollbar-primary">
@@ -61,7 +64,7 @@ export default {
   },
   computed: {
     progress: function () {
-      return Math.ceil(this.loadedArtists/this.countReleases*100);
+      return Math.ceil((this.loadedArtists + this.loadedPlaylists)/this.countReleases*100);
     },
     progressPercent: function () {
       return this.progress + "%"
@@ -71,6 +74,11 @@ export default {
     },
   },
   created() {
+    this.releases = [];
+    this.loadedArtists = 0;
+    this.loadedPlaylists = 0;
+    this.countReleases = 0;
+
     this.fetchArtists(0, this.retry);
     this.fetchPlaylists(0, this.retry);
   },
@@ -95,7 +103,8 @@ export default {
       await this.$axios.get("http://localhost:8010/proxy/user/"+this.user_id+"/artists?limit=100&index="+index)
         .then((response) => {
           if (response.status === 200 && response.data.data) {
-            this.countReleases += response.data.total;
+            if (index == 0) this.countReleases += response.data.total;
+
             response.data.data.forEach(artist => (
               artist.albums = [],
               this.fetchArtistContent(artist, this.retry)
@@ -122,14 +131,20 @@ export default {
       await this.$axios.get("http://localhost:8010/proxy/artist/"+artist.id+"/albums")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
-            let sorted = response.data.data.sort((a, b) => this.shortAlbums(a,b));
-            artist.albums = sorted;
-            this.releases.push(this.formatArtistToFeed(artist));
-            this.loadedArtists+=1;
-            this.releases.sort((a,b) => this.shortLastReleases(a,b))
+            if (response.data.data.length > 0){
+              let sorted = response.data.data.sort((a, b) => this.sortAlbums(a,b));
+              artist.albums = sorted;
+              this.releases.push(this.formatArtistToFeed(artist));
+              this.loadedArtists+=1;
+              this.releases.sort((a,b) => this.sortLastReleases(a,b))
+            } else {
+              this.countReleases-=1;
+            }
           } else {
             if (retry > 0) {
               setTimeout(this.fetchArtistContent, this.timeout_ms, artist, retry-1);
+            } else {
+              this.countReleases-=1;
             }
           }
         })
@@ -149,14 +164,14 @@ export default {
         // Related to the author
         id: artist.id,
         name: artist.name,
-        picture: artist.picture_big,
+        picture: artist.picture_small,
         link: artist.link,
         updated_at: artist.albums[0].release_date,
         // Related to the content
         content_id: artist.albums[0].id,
         content_title: artist.albums[0].title,
         content_type: artist.albums[0].record_type,
-        content_picture: artist.albums[0].cover,
+        content_picture: artist.albums[0].cover_medium,
         content_link: artist.albums[0].link,
         content_last: artist.albums[0],
         content_full: artist.albums,
@@ -173,13 +188,13 @@ export default {
       await this.$axios.get("http://localhost:8010/proxy/user/"+this.user_id+"/playlists?limit=100&index="+index)
         .then((response) => {
           
-          if (response.status === 200 && response.data.data) {            
+          if (response.status === 200 && response.data.data) {  
             response.data.data.forEach(playlist => (
               this.fetchPlaylistContent(playlist)
             ));
 
             if (response.data.next) {
-              //this.fetchPlaylists(index+100, this.retry);       
+              this.fetchPlaylists(index+100, this.retry);       
             }
           } else {
             if (retry > 0) {
@@ -197,10 +212,10 @@ export default {
      */
     fetchPlaylistContent(playlist) {
       if(!playlist.is_loved_track && playlist.creator.id != this.user_id) {
-        this.releases.push(this.formatPlaylistToFeed(playlist)),
-        this.loadedPlaylists+=1,
-        this.countReleases += 1,
-        this.releases.sort((a,b) => this.shortLastReleases(a,b))
+        this.releases.push(this.formatPlaylistToFeed(playlist));
+        this.loadedPlaylists+=1;
+        this.countReleases+=1;
+        this.releases.sort((a,b) => this.sortLastReleases(a,b));
       }
     },
 
@@ -218,7 +233,7 @@ export default {
         content_id: playlist.id,
         content_title: playlist.title,
         content_type: playlist.type,
-        content_picture: playlist.picture_big,
+        content_picture: playlist.picture_medium,
         content_link: playlist.link,
         content_last: playlist,
         content_full: playlist,
@@ -230,7 +245,7 @@ export default {
     clickOnRelease(release) {
       this.selectedRelease = release;
     },
-    shortAlbums ( a, b ) {
+    sortAlbums ( a, b ) {
       if ( a.release_date == null ) return 1;
       if ( b.release_date == null ) return -1;
 
@@ -242,7 +257,7 @@ export default {
       }
       return 0;
     },
-    shortLastReleases ( a, b ) {
+    sortLastReleases ( a, b ) {
       if ( a.content_full.length == 0 ) return 1;
       if ( b.content_full.length == 0 ) return -1;
 
