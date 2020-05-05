@@ -3,7 +3,8 @@
 The musical's social network.
 
 ## Features
-  - Retrieve the last release from the liked artists
+  - Retrieve the last releases from the liked artists and playlists
+  - Retrieve the last releases from the user's friends
 
 ## Supported applications
 <p align="left"><a href="https://www.deezer.com" target="_blank" rel="noopener noreferrer"><img width="100" src="https://e-cdns-files.dzcdn.net/cache/slash/images/common/logos/deezer_black.d6ac6f2e01ab99235817963405917ae3.png" alt="Deezer logo"></a></p>
@@ -37,15 +38,3 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
-
-## Prevent *CORS* error in local
-**When working in local, the request might be blocked by the browser. In order to prevent this error, a local proxy can be used to avoid this issue.**
-
-### Install the proxy
-```
-npm install -g local-cors-proxy
-```
-### Run the proxy
-```
-lcp --proxyUrl https://api.deezer.com
-```

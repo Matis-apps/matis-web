@@ -150,7 +150,7 @@ export default {
 
     async fetchFriends (index, retry) {
       
-      await this.$axios.get("http://localhost:8010/proxy/user/"+this.user_id+"/followings?limit=100&index="+index)
+      await this.$axios.get("/deezer/user/"+this.user_id+"/followings?limit=100&index="+index)
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             response.data.data.forEach(friend => (
@@ -178,7 +178,7 @@ export default {
      */
     async fetchArtists (index, retry) {
       
-      await this.$axios.get("http://localhost:8010/proxy/user/"+this.friend_id+"/artists?limit=100&index="+index)
+      await this.$axios.get("/deezer/user/"+this.friend_id+"/artists?limit=100&index="+index)
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             if (index == 0) this.countReleases += response.data.total;
@@ -206,7 +206,7 @@ export default {
      * @params retry int - Number of retries remaining
      */
     async fetchArtistContent(artist, retry) {
-      await this.$axios.get("http://localhost:8010/proxy/artist/"+artist.id+"/albums")
+      await this.$axios.get("/deezer/artist/"+artist.id+"/albums")
         .then((response) => {
           if (response.status === 200 && response.data.data ) {
             if (response.data.data.length > 0) {
@@ -265,7 +265,7 @@ export default {
      */
     async fetchPlaylists (index, retry) {
       
-      await this.$axios.get("http://localhost:8010/proxy/user/"+this.friend_id+"/playlists?limit=100&index="+index)
+      await this.$axios.get("/deezer/user/"+this.friend_id+"/playlists?limit=100&index="+index)
         .then((response) => {
           
           if (response.status === 200 && response.data.data) {   

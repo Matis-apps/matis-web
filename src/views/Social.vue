@@ -92,15 +92,13 @@ export default {
       if (typeof s !== 'string') return '';
       return s.charAt(0).toUpperCase() + s.slice(1);
     },
-
     /**
      * Retrieve the loved artists
      * @params index int - For pagination
      * @params retry int - Number of retries remaining
      */
     async fetchArtists (index, retry) {
-      
-      await this.$axios.get("http://localhost:8010/proxy/user/"+this.user_id+"/artists?limit=100&index="+index)
+      await this.$axios.get("/deezer/user/"+this.user_id+"/artists?limit=100&index="+index)
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             if (index == 0) this.countReleases += response.data.total;
@@ -128,7 +126,7 @@ export default {
      * @params retry int - Number of retries remaining
      */
     async fetchArtistContent(artist, retry) {
-      await this.$axios.get("http://localhost:8010/proxy/artist/"+artist.id+"/albums")
+      await this.$axios.get("/deezer/artist/"+artist.id+"/albums")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             if (response.data.data.length > 0){
@@ -185,7 +183,7 @@ export default {
      */
     async fetchPlaylists (index, retry) {
       
-      await this.$axios.get("http://localhost:8010/proxy/user/"+this.user_id+"/playlists?limit=100&index="+index)
+      await this.$axios.get("/deezer/user/"+this.user_id+"/playlists?limit=100&index="+index)
         .then((response) => {
           
           if (response.status === 200 && response.data.data) {  

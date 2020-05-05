@@ -96,7 +96,7 @@ export default {
     },
     async fetchAlbumTracklist (id, retry = 0) {
       
-      await this.$axios.get("http://localhost:8010/proxy/album/"+id)
+      await this.$axios.get("/deezer/album/"+id)
         .then((response) => {
           if (response.status === 200 && response.data.tracks) {
             this.tracklist = response.data.tracks.data;
@@ -111,7 +111,7 @@ export default {
     },
     async fetchRelatedArtists (id, retry = 0) {
       
-      await this.$axios.get("http://localhost:8010/proxy/artist/"+id+"/related")
+      await this.$axios.get("/deezer/artist/"+id+"/related")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.relatedArtists = response.data.data;
@@ -125,7 +125,7 @@ export default {
     },
     async fetchPlaylistTracklist (id, retry = 0) {
       
-      await this.$axios.get("http://localhost:8010/proxy/playlist/" +id+"/tracks&limit=50&index=0")
+      await this.$axios.get("/deezer/playlist/" +id+"/tracks&limit=50&index=0")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.tracklist = response.data.data;

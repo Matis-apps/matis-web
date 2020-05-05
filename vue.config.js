@@ -1,5 +1,14 @@
 module.exports = {
   devServer: {
-    proxy: "http://localhost:8010"
+    proxy: {
+      '^/deezer': {
+        target: 'https://api.deezer.com/',
+        changeOrigin: true,
+        secure: false,
+        pathRewrite: {
+          '^/deezer' : '/'
+        },
+      },
+    }
   }
 }
