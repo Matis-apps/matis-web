@@ -98,8 +98,19 @@ export default {
      * @params retry int - Number of retries remaining
      */
     async fetchArtists (index, retry) {
-      await this.$axios.get("/deezer/user/"+this.user_id+"/artists?limit=100&index="+index)
-        .then((response) => {
+
+      let config = { 
+        headers: { 
+          'Accept': 'application/json'
+        }, 
+        method: 'GET',
+        mode: 'cors',
+      };
+      let url = "https://api.deezer.com/user/"+this.user_id+"/artists?limit=100&index="+index;
+
+      await fetch(url, config)
+        .then(response => response.json())
+        .then(response => {
           if (response.status === 200 && response.data.data) {
             if (index == 0) this.countReleases += response.data.total;
 
