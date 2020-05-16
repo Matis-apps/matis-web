@@ -67,7 +67,7 @@
     </div>
     <div class="col-7">
       <transition name="slide-fade" >
-        <DeezerRelease 
+        <ReleaseContent 
           v-if="(releases.length >= countReleases)"
           v-bind:release="selectedRelease"/>
       </transition>
@@ -78,12 +78,12 @@
 
 <script>
 // @ is an alias to /src
-import DeezerRelease from '@/components/DeezerRelease.vue'
+import ReleaseContent from '@/components/ReleaseContent.vue'
 
 export default {
   name: 'FriendsSocial',
   components: {
-     DeezerRelease
+     ReleaseContent
   },
   data() {
     return {
