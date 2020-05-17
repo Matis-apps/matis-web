@@ -18,7 +18,7 @@
       <div class="social offset-1 col-3">
         <transition name="slide-fade" >
           <div v-if="releases.length > 0">
-            <p class="font-weight-lighter text-left">{{ releases.length }} items</p>
+            <p class="font-weight-lighter text-left">{{ releases.length }} items <span class="small"> (en {{processingTime}} s.)</span></p>
             <div class="card mb-2" :class="{ 'border-primary' : releaseDays(item.content.updated_at) == 0 }" v-for="(item, index) in releases" v-bind:key="item._uid">
               <div class="card-header d-flex justify-content-between">
                 <img v-show="item.author.picture" :src="item.author.picture" class="card-img-top img-fluid rounded" alt="picture artist" style="max-height: 50px; max-width: 50px;">
@@ -63,6 +63,7 @@ export default {
       errorMessage: null,
       loadingReleases: false,
       countReleases: 0,
+      processingTime:0,
       selectedRelease: null
     }
   },
@@ -100,11 +101,14 @@ export default {
      */
     fetchReleases () {
       this.loadingReleases = true;
+      let start = Date.now();
       this.$axios.get("http://localhost:3000/deezer/releases")
         .then((response) => {
+          let end = Date.now();
           if (response.status === 200) {
             this.releases = response.data.data;
             this.countReleases = response.data.count;
+            this.processingTime = (end - start)/1000;
             this.loadingReleases = false;
           }
         })
