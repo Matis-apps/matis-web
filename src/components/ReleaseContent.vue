@@ -96,7 +96,7 @@ export default {
     },
     fetchReleaseContent (obj, id) {
       //this.loadingReleases = true;
-      this.$axios.get("http://localhost:3000/deezer/release/"+obj+"/"+id)
+      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/release/"+obj+"/"+id)
         .then((response) => {
           if (response.status === 200) {
             this.tracklist = response.data.data.content.tracks;
@@ -125,7 +125,7 @@ export default {
         .catch((error) => console.log(error));*/
     },
     fetchRelatedArtists (id) {
-      this.$axios.get("http://localhost:3000/deezer/artist/"+id+"/related")
+      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/artist/"+id+"/related")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.relatedArtists = response.data.data;

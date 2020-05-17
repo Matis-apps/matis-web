@@ -102,7 +102,7 @@ export default {
     fetchReleases () {
       this.loadingReleases = true;
       let start = Date.now();
-      this.$axios.get("http://localhost:3000/deezer/releases")
+      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/releases")
         .then((response) => {
           let end = Date.now();
           if (response.status === 200) {
