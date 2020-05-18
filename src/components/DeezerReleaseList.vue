@@ -42,20 +42,23 @@ export default {
     }
   },
   created() {
-    this.fetchReleases();
+    this.loadReleaseList()
   },
   watch: { 
     user_id: function(newVal, oldVal) { // watch it
       if(newVal) {
-        this.processingTime = 0;
-        this.countReleases = 0;
-        this.tracklist = [];
-        this.genres = [];
-        this.fetchReleases();
+        this.loadReleaseList()
       }
     }
   },
   methods: {
+    loadReleaseList: function () {
+      this.processingTime = 0;
+      this.countReleases = 0;
+      this.releases = [];
+      this.genres = [];
+      this.fetchReleases();
+    },
     releaseDays: function (day) {
       var dateofvisit = this.$moment(day, 'YYYY-MM-DD-MM');
       var today = this.$moment();
