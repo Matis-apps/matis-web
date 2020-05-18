@@ -1,17 +1,17 @@
 <template>
   <div>
-    <DeezerSocial/>
+    <DeezerFeed/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import DeezerSocial from '@/components/DeezerSocial.vue'
+import DeezerFeed from '@/components/DeezerFeed.vue'
 
 export default {
-  name: 'Social',
+  name: 'Feed',
   components: {
-     DeezerSocial
+     DeezerFeed
   },
   created() {
     //

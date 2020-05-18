@@ -1,20 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Feed from '../views/Feed.vue'
 import Social from '../views/Social.vue'
-import FriendsSocial from '../views/FriendsSocial.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'Social',
-    component: Social
+    path: '/feed',
+    name: 'Feed',
+    component: Feed
   },
   {
-    path: '/friends',
-    name: 'FriendsSocial',
-    component: FriendsSocial
+    path: '/social',
+    name: 'Social',
+    component: Social
   }
 ]
 

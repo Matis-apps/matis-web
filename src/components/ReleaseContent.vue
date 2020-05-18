@@ -14,20 +14,32 @@
           <h5 class="card-title">{{capitalize(release.content.type)}}</h5>
           <p class="card-text"><small class="text-muted">Sortie le {{ release.content.updated_at }}</small></p>
 
-          <div v-if="tracklist.length > 0">
+          <div v-if="loadingTracklist">
+            <div class="alert alert-light">
+              <div class="spinner-border text-primary" role="status"></div>
+              <span class="mx-3">Loading the tracklist...</span>      
+            </div>
+          </div>
+          <div v-else-if="tracklist.length > 0">
             <p><small>{{totalTracks}} tracks</small></p>
             <ul class="list-group my-2">
-              <li class="list-group-item d-flex justify-content-between align-items-center"
-                v-for="track in tracklist"
+              <li class="list-group-item align-items-center"
+                v-for="(track, index) in tracklist"
                 v-bind:key="track.id">
-                {{track.artist.name}} | {{track.name}}
+                <b>#{{index+1}}</b> | {{track.artist.name}} | <a :href="track.link" target="_blank">{{track.name}}</a>
               </li>
             </ul>
           </div>
           <div v-if="release._obj == 'album'">
             <hr>
             <h5 class="card-title">Related artists</h5>
-            <div class="d-flex justify-content-around row" v-if="relatedArtists.length > 0">
+            <div v-if="loadingRelated">
+              <div class="alert alert-light">
+                <div class="spinner-border text-primary" role="status"></div>
+                <span class="mx-3">Loading the related artists...</span>      
+              </div>
+            </div>
+            <div class="d-flex justify-content-around row" v-else-if="relatedArtists.length > 0">
               <div class="card col-5 my-2"
                 v-for="artist in relatedArtists"
                 v-bind:key="artist.author.id">
@@ -69,6 +81,8 @@ export default {
       totalTracks: 0,
       tracklist: [],
       relatedArtists: [],
+      loadingTracklist: false,
+      loadingRelated: false,
     }
   },
   watch: { 
@@ -95,44 +109,34 @@ export default {
       return s.charAt(0).toUpperCase() + s.slice(1);
     },
     fetchReleaseContent (obj, id) {
-      //this.loadingReleases = true;
+      this.loadingTracklist = true;
       this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/release/"+obj+"/"+id)
         .then((response) => {
           if (response.status === 200) {
             this.tracklist = response.data.data.content.tracks;
             this.totalTracks = response.data.data.content.tracks.length;
-            //this.loadingReleases = false;
           }
+          this.loadingTracklist = false;
         })
         .catch((error) => {
           console.log("Error: "+error)
-          //this.errorMessage = error;
-          //this.loadingReleases = false;
+          this.loadingTracklist = false;
         });
-
-      /*
-      await this.$axios.get("/deezer/album/"+id)
-        .then((response) => {
-          if (response.status === 200 && response.data.tracks) {
-            this.tracklist = response.data.tracks.data;
-            this.totalTracks = response.data.nb_tracks;
-          } else {
-            if (retry > 0) {
-              // setTimeout(this.fetchTracklist, this.timeout_ms, index, retry-1);
-            }
-          }
-        })
-        .catch((error) => console.log(error));*/
     },
     fetchRelatedArtists (id) {
+      this.loadingRelated = true;
       this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/artist/"+id+"/related")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.relatedArtists = response.data.data;
             this.relatedArtists.sort((a,b) => this.sortLastReleases(a,b));
           }
+          this.loadingRelated = false;
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log("Error: "+error);
+          this.loadingRelated = false;
+        });
     },
     sortLastReleases ( a, b ) {
       if ( a.content.updated_at == null ) return 1;
