@@ -41,6 +41,9 @@ export default {
       processingTime:0,
     }
   },
+  mounted() {
+    this.loadReleaseList();
+  },
   watch: { 
     user_id: function(newVal, oldVal) { // watch it
       if(newVal) {
