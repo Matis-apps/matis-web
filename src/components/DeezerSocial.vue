@@ -3,7 +3,7 @@
     <div id="selectFriend" class="row mb-2 d-flex">
       <div class="offset-1 col-3">
         <div class="card bg-light border-success mb-3">
-          <div class="card-header">See your friend news</div>
+          <div class="card-header">Voir l'activitié de ton pote</div>
           <div class="card-body text-success">
             <div class="row" v-if="selectedFriend">
               <div class="col-6">
@@ -15,13 +15,13 @@
               </div>            
             </div>
             <div v-else class="alert alert-warning">
-              <p class="mb-0">Select a friend on the right panel.</p>
+              <p class="mb-0">Selectionne un ami dans la liste.</p>
             </div>
           </div>
         </div>
       </div>
       <div class="col-7 align-self-center">
-        <p><small>{{friends.length}} friends followed</small></p>
+        <p><small>{{friends.length}} amis suivis</small></p>
         <select class="custom-select" @change="onChangeFriend($event)">
           <option v-for="friend in friends" 
             v-bind:key="'friend-'+friend.id"
@@ -35,7 +35,7 @@
       <div v-if="loadingReleases" class="row justify-content-center">
         <div class="alert alert-secondary">
           <div class="spinner-border text-success" role="status"></div>
-          <span class="mx-3">Loading the new releases related to your friend...</span>      
+          <span class="mx-3">Chargement des nouveautés...</span>      
         </div>
       </div>
       <div v-else-if="errorMessage" class="row justify-content-center">
@@ -56,7 +56,7 @@
         </div>
         <div class="col-7">
           <ReleaseContent 
-            v-show="selectedRelease"
+            v-if="displayContent"
             v-bind:release="selectedRelease"/>
         </div>
       </div>
@@ -85,11 +85,25 @@ export default {
 
       errorMessage: null,
       loadingReleases: false,
-      selectedRelease: null
+      selectedRelease: null,
+      displayContent: false,
     }
   },
-  created() {
+  mounted() {
+    // init arrays
+    this.releases = [];
     this.friends = [];
+
+    // nullable variables
+    this.selectedFriend = null;
+    this.errorMessage = null;
+    this.selectedRelease = null;
+
+    // init booleans
+    this.loadingReleases = false;
+    this.displayContent = false;
+
+    // load the friends
     this.fetchFriends();
   },
   methods: {
@@ -121,6 +135,7 @@ export default {
     },
     onEndingLoad: function () {
       this.loadingReleases = false;
+      this.displayContent = true;
     },
     onRelease: function (item) {
       this.selectedRelease = item;

@@ -4,7 +4,7 @@
       <div v-show="loadingReleases" class="row justify-content-center">
         <div class="alert alert-secondary">
           <div class="spinner-border text-success" role="status"></div>
-          <span class="mx-3">Loading the new releases related to your feed...</span>      
+          <span class="mx-3">Chargement des nouveautés...</span>      
         </div>
       </div>
       <div v-if="errorMessage" class="row justify-content-center">
@@ -23,9 +23,8 @@
             v-on:showRelease="onRelease"/>
         </transition>
       </div>
-      <div class="col-7">
+      <div v-if="displayContent" class="col-7">
         <ReleaseContent 
-          v-show="selectedRelease"
           v-bind:release="selectedRelease"/>
       </div>
     </div>
@@ -46,15 +45,21 @@ export default {
   data() {
     return {
       errorMessage: null,
+      selectedRelease: null,
+
       loadingReleases: false,
-      selectedRelease: null
+      displayContent: false,
     }
   },
   computed: {
     //
   },
-  created() {
+  mounted() {
+    this.errorMessage = null;
+    this.selectedRelease = null;
+
     this.loadingReleases = true;
+    this.displayContent = false;
   },
   methods: {
     onError: function (event) {
@@ -62,6 +67,7 @@ export default {
     },
     onEndingLoad: function () {
       this.loadingReleases = false;
+      this.displayContent = true;
     },
     onRelease: function (item) {
       this.selectedRelease = item;

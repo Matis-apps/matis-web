@@ -1,6 +1,11 @@
 <template>
   <div id="release-content">
-    <div v-if="release">
+    <div v-if="release == null" class="alert alert-warning">
+      <h4 class="alert-heading">Pas de nouveauté selectionnée !</h4>
+      <hr>
+      <p class="mb-0">Selectionne un élément dans la liste pour voir son contenu.</p>
+    </div>
+    <div v-else>
       <div class="card text-left">
         <div class="card-header d-flex">
           <div class="col-2" v-show="release.content.picture">
@@ -17,7 +22,7 @@
           <div v-if="loadingTracklist">
             <div class="alert alert-light">
               <div class="spinner-border text-primary" role="status"></div>
-              <span class="mx-3">Loading the tracklist...</span>      
+              <span class="mx-3">Chargement de la tracklist...</span>      
             </div>
           </div>
           <div v-else-if="tracklist.length > 0">
@@ -32,11 +37,11 @@
           </div>
           <div v-if="release._obj == 'album'">
             <hr>
-            <h5 class="card-title">Related artists</h5>
+            <h5 class="card-title">Artists associés</h5>
             <div v-if="loadingRelated">
               <div class="alert alert-light">
                 <div class="spinner-border text-primary" role="status"></div>
-                <span class="mx-3">Loading the related artists...</span>      
+                <span class="mx-3">Chargement des artistes associés...</span>      
               </div>
             </div>
             <div class="d-flex justify-content-around row" v-else-if="relatedArtists.length > 0">
@@ -61,11 +66,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div v-else class="alert alert-warning">
-      <h4 class="alert-heading">No release selected!</h4>
-      <hr>
-      <p class="mb-0">Click on a release to see more details.</p>
     </div>
   </div>
 </template>
