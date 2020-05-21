@@ -32,19 +32,19 @@
       </div>
     </div>
     <div id="releases" v-if="selectedFriend">
-      <div v-if="loadingReleases" class="row justify-content-center">
+      <div v-show="loadingReleases" class="row justify-content-center">
         <div class="alert alert-secondary">
           <div class="spinner-border text-success" role="status"></div>
           <span class="mx-3">Chargement des nouveautés...</span>      
         </div>
       </div>
-      <div v-else-if="errorMessage" class="row justify-content-center">
+      <div v-if="errorMessage" class="row justify-content-center">
         <div class="alert alert-secondary">
           <div class="spinner-grow text-danger" role="status"></div>
           <span class="mx-3 small">{{errorMessage}}</span>
         </div>
       </div>
-      <div class="row">
+      <div v-else class="row">
         <div class="social offset-1 col-3">
           <transition name="slide-fade" >
             <DeezerReleaseList
