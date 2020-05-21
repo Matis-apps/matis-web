@@ -128,6 +128,7 @@ export default {
       this.selectedFriend = this.friends.find(item => {
         return item.id == friend_id;
       })
+      this.displayContent = false;
       this.loadingReleases = true;
     },
     onError: function (event) {
