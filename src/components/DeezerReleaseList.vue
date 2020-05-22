@@ -57,7 +57,8 @@ export default {
       this.countReleases = 0;
       this.releases = [];
       this.genres = [];
-      this.fetchReleases();
+      if (localStorage.token) this.fetchReleases();
+      else this.$emit('error', 'No token provided');
     },
     releaseDays: function (day) {
       var dateofvisit = this.$moment(day, 'YYYY-MM-DD-MM');
@@ -77,11 +78,11 @@ export default {
       let start = Date.now();
 
       const url = 
-        process.env.VUE_APP_ROOT_API
-        + "/deezer/releases" +
-        (this.user_id ? "/" + this.user_id: "");
+        process.env.VUE_APP_ROOT_API + (this.user_id ? 
+          "/deezer/releases/" + this.user_id
+          : "/deezer/me/releases");
 
-      this.$axios.get(url)
+      this.$axios.get(url, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
         .then((response) => {
           let end = Date.now();
           if (response.status === 200) {

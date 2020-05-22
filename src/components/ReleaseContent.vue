@@ -94,12 +94,16 @@ export default {
       this.tracklist = [];
       this.relatedArtists = [];
 
-      if(newVal) {
-        this.fetchReleaseContent(newVal._obj, newVal.content.id);
+      if (localStorage.token) {
+        if(newVal) {
+          this.fetchReleaseContent(newVal._obj, newVal.content.id);
 
-        if(newVal._obj == 'album') {
-          this.fetchRelatedArtists(newVal.author.id);
+          if(newVal._obj == 'album') {
+            this.fetchRelatedArtists(newVal.author.id);
+          }
         }
+      } else {
+        console.log('No token provided');
       }
     }
   },
@@ -110,7 +114,7 @@ export default {
     },
     fetchReleaseContent (obj, id) {
       this.loadingTracklist = true;
-      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/release/"+obj+"/"+id)
+      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/release/"+obj+"/"+id, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
         .then((response) => {
           if (response.status === 200) {
             this.tracklist = response.data.data.content.tracks;
@@ -125,7 +129,7 @@ export default {
     },
     fetchRelatedArtists (id) {
       this.loadingRelated = true;
-      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/artist/"+id+"/related")
+      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/artist/"+id+"/related", { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.relatedArtists = response.data.data;

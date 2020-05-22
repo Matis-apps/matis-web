@@ -22,7 +22,7 @@ const routes = [
   {
     path: '/account',
     name: 'Account',
-    component: Account
+    component: Account,
   },  
   {
     path: '/feed',

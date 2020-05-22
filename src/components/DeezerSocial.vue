@@ -104,11 +104,12 @@ export default {
     this.displayContent = false;
 
     // load the friends
-    this.fetchFriends();
+    if (localStorage.token) this.fetchFriends();
+    else this.$emit('error', 'No token provided');
   },
   methods: {
     fetchFriends () {
-      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/social")
+      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/me/social", { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             response.data.data.followings.forEach(friend => (

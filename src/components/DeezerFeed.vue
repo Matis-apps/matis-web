@@ -61,6 +61,7 @@ export default {
   },
   methods: {
     onError: function (event) {
+      console.log(event)
       this.errorMessage = event;
     },
     onEndingLoad: function () {
