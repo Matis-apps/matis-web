@@ -24,7 +24,7 @@
       </div>
     </div>
     <div v-if="user">
-      <div class="card">
+      <div class="card mb-3">
         <div class="card-header">
           Deezer
         </div>
@@ -35,6 +35,19 @@
             <p>Access Token: {{user.deezer.token.access_token}}</p>
           </div>
           <p><a class="btn btn-primary" :href="deezerConnect" role="button">{{user.deezer ? 'Refresh':'Connect'}}</a></p>
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-header">
+          Spotify
+        </div>
+        <div class="card-body">
+          <div v-if="user.spotify">
+            <p><b>#{{user.spotify.account.id}}</b> - {{user.spotify.account.name}}</p>
+            <p>{{user.spotify.account.fullname}}</p>
+            <p>Access Token: {{user.spotify.token.access_token}}</p>
+          </div>
+          <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Refresh':'Connect'}}</a></p>
         </div>
       </div>
     </div>
@@ -56,7 +69,8 @@ export default {
       token: null,
       errorMessage: null,
       loadingAccounts: false,
-      deezerConnect: "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT
+      deezerConnect: "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT,
+      spotifyConnect: "https://accounts.spotify.com/authorize?client_id=" + process.env.VUE_APP_SPOTIFY_CLIENT_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_SPOTIFY_REDIRECT + "&response_type=code",
     }
   },
   created() {
@@ -92,7 +106,7 @@ export default {
           if (err.response.status === 401) {
             this.errorMessage = "Erreur de connection";
           } else {
-            this.errorMessage = err.response.data;
+            this.errorMessage = err.response.data || err;
           }
         });
     },
@@ -102,7 +116,7 @@ export default {
           if(query.code) this.getDeezerToken(query.code)
           break;
         default:
-          console.log("Not supported", query)
+          if(query.code) this.getSpotifyToken(query.code)
           break;
       }
     },
@@ -119,7 +133,23 @@ export default {
           }
         })
         .catch((err) => {
-          this.errorMessage = err.response.data;
+          this.errorMessage = err.response.data || err;
+        });
+    },
+    getSpotifyToken (code) {
+      const url = process.env.VUE_APP_ROOT_API + "/users/token/spotify?code="+code;
+
+      this.$axios.get(url, { headers: { 'Authorization': this.token, 'Content-Type': 'text/plain' } })
+        .then((response) => {
+          if (response.status === 200) {
+            this.user = {
+              ...this.user,
+              spotify: response.data.data
+            };
+          }
+        })
+        .catch((err) => {
+          this.errorMessage = err.response.data || err;
         });
     }
   }
