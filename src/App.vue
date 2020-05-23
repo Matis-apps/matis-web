@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/account">Account</router-link> |
-      <router-link to="/feed">Feed</router-link> |
-      <router-link to="/social">Social</router-link>
+      <router-link to="/login" exact>Login</router-link> |
+      <router-link to="/account" exact-path>Account</router-link> |
+      <router-link to="/feed" exact>Feed</router-link> |
+      <router-link to="/social" exact>Social</router-link>
     </div>
     <div class="container-fluid">
       <router-view/>    
