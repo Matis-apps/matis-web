@@ -6,6 +6,12 @@
       <p class="mb-0">Selectionne un élément dans la liste pour voir son contenu.</p>
     </div>
     <div v-else>
+      <div v-if="releaseType == 'album'">
+        <CrossAlbum
+          from="*"
+          v-bind:query="release.content.title + ' ' + release.author.name"
+          v-bind:upc="upc"/>
+      </div>
       <div class="card text-left">
         <div class="card-header d-flex">
           <div class="col-2" v-show="release.content.picture">
@@ -31,7 +37,7 @@
               <li class="list-group-item align-items-center"
                 v-for="(track, index) in tracklist"
                 v-bind:key="track.id">
-                <b>#{{index+1}}</b> | {{track.artist.name}} | <a :href="track.link" target="_blank">{{track.name}}</a>
+                <b>#{{index+1}}</b> | <span v-for="artist in track.artist" v-bind:key="artist._uid"><a :href="artist.link" target="_blank">{{artist.name}}</a> | </span><a :href="track.link" target="_blank">{{track.name}}</a>
               </li>
             </ul>
           </div>
@@ -71,18 +77,25 @@
 </template>
 
 <script>
+import CrossAlbum from './CrossAlbum.vue'
+
 export default {
   name: 'ReleaseContent',
   props: {
     release: Object
+  },
+  components: {
+     CrossAlbum
   },
   data() {
     return {
       totalTracks: 0,
       tracklist: [],
       relatedArtists: [],
+      releaseType: null,
       loadingTracklist: false,
       loadingRelated: false,
+      upc: null,
     }
   },
   watch: { 
@@ -96,6 +109,7 @@ export default {
 
       if (localStorage.token) {
         if(newVal) {
+          this.releaseType = newVal._obj;
           this.fetchReleaseContent(newVal._obj, newVal.content.id);
 
           if(newVal._obj == 'album') {
@@ -117,6 +131,7 @@ export default {
       this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/release/"+obj+"/"+id, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
         .then((response) => {
           if (response.status === 200) {
+            this.upc = response.data.data.content.upc;
             this.tracklist = response.data.data.content.tracks;
             this.totalTracks = response.data.data.content.tracks.length;
           }

@@ -31,7 +31,6 @@
         <div class="card-body">
           <div v-if="user.deezer">
             <p><b>#{{user.deezer.account.id}}</b> - {{user.deezer.account.name}}</p>
-            <p>{{user.deezer.account.fullname}}</p>
             <p>Access Token: {{user.deezer.token.access_token}}</p>
           </div>
           <p><a class="btn btn-primary" :href="deezerConnect" role="button">{{user.deezer ? 'Refresh':'Connect'}}</a></p>
@@ -43,8 +42,7 @@
         </div>
         <div class="card-body">
           <div v-if="user.spotify">
-            <p><b>#{{user.spotify.account.id}}</b> - {{user.spotify.account.name}}</p>
-            <p>{{user.spotify.account.fullname}}</p>
+            <p><b>#{{user.spotify.account.id}}</b> - {{user.spotify.account.display_name}}</p>
             <p>Access Token: {{user.spotify.token.access_token}}</p>
           </div>
           <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Refresh':'Connect'}}</a></p>
