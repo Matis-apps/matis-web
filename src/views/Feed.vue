@@ -41,7 +41,6 @@ export default {
     onSelectPlatform: function(p) {
       this.selectedPlateform = p;
       var buttons = document.querySelectorAll("#buttonsSection button");
-      console.log(buttons)
       if (buttons.length > 0) {
         buttons.forEach(button => {
           button.disabled = true;
@@ -49,14 +48,11 @@ export default {
       }
     },
     onEndingLoad: function(e) {
-      console.log("hey")
       var buttons = document.querySelectorAll("#buttonsSection button");
-      console.log(buttons)
       if (buttons.length > 0) {
         buttons.forEach(button => {
           button.disabled = false;
         })
-        console.log(document.querySelectorAll("#buttonsSection button"))
       }
     }
   }

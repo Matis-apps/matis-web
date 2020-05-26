@@ -1,6 +1,8 @@
 <template>
   <div>
-
+    <div v-if="errorMessage" class="alert alert-danger" role="alert">
+      {{errorMessage}}
+    </div>
     <div class="card mb-3">
       <div class="card-header text-white bg-primary">
         Account
@@ -48,11 +50,6 @@
           <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Refresh':'Connect'}}</a></p>
         </div>
       </div>
-    </div>
-      
-
-    <div v-if="errorMessage" class="alert alert-danger" role="alert">
-      {{errorMessage}}
     </div>
   </div>
 </template>
@@ -131,7 +128,7 @@ export default {
           }
         })
         .catch((err) => {
-          this.errorMessage = err.response.data || err;
+          this.errorMessage = err.response.data.error.message || err.response.message;          
         });
     },
     getSpotifyToken (code) {
@@ -147,7 +144,7 @@ export default {
           }
         })
         .catch((err) => {
-          this.errorMessage = err.response.data || err;
+          this.errorMessage = err.response.data.error.message || err.response.message;          
         });
     }
   }
