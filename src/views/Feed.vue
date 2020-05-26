@@ -3,32 +3,34 @@
     <div class="row">
       <div class="offset-3 col-6 d-flex justify-content-around">
         <button type="button" class="btn btn-primary my-2" v-on:click="onSelectPlatform('Deezer')">Deezer</button>    
-        <button type="button" class="btn btn-primary my-2" disabled>Spotify</button>    
+        <button type="button" class="btn btn-primary my-2" v-on:click="onSelectPlatform('Spotify')">Spotify</button>    
       </div>
     </div>
     <hr>
-    <div v-if="selectedPlateform">
-      <div>
-        <h2 class="ml-5 small font-weight-light">{{selectedPlateform}}</h2>
-        <DeezerFeed
-           v-if="selectedPlateform === 'Deezer'"/>
-      </div>
+    <div>
+      <h2 class="ml-5 small font-weight-light">
+        <span v-if="selectedPlateform">{{selectedPlateform}}</span>
+        <span v-else>Selectionnez une plateforme ci-dessus</span>
+      </h2>
+      <PlatformFeed
+         v-if="selectedPlateform"
+         v-bind:platform="selectedPlateform"/>
     </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import DeezerFeed from '@/components/DeezerFeed.vue'
+import PlatformFeed from '@/components/PlatformFeed.vue'
 
 export default {
   name: 'Feed',
   components: {
-     DeezerFeed
+     PlatformFeed
   },
   data() {
     return {
-      selectedPlateform: 'Selectionnez une plateforme ci-dessus',
+      selectedPlateform: null,
     }
   },
   created() {
@@ -37,7 +39,6 @@ export default {
   methods: {
     onSelectPlatform: function(p) {
       this.selectedPlateform = p;
-      console.log(this.selectedPlateform)
     }
   }
 }

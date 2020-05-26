@@ -17,7 +17,11 @@
           <div class="col-2" v-show="release.content.picture">
             <img class="card-img-top img-fluid img-circle" :src="release.content.picture" alt="Card image cap"> 
           </div>
-          <div class="col-10 align-self-center"><a :href="release.author.link" target="_blank">{{release.author.name}}</a> | <a :href="release.content.link" target="_blank">{{release.content.title}}</a></div>
+          <div class="col-10 align-self-center">
+            <p>
+              <a :href="release.author.link" target="_blank">{{release.author.name}}</a> | <a :href="release.content.link" target="_blank" class="text-success">{{release.content.title}}</a>
+            </p>
+          </div>
         </div>
 
         <div class="card-body">
@@ -37,7 +41,7 @@
               <li class="list-group-item align-items-center"
                 v-for="(track, index) in tracklist"
                 v-bind:key="track.id">
-                <b>#{{index+1}}</b> | <span v-for="artist in track.artist" v-bind:key="artist._uid"><a :href="artist.link" target="_blank">{{artist.name}}</a> | </span><a :href="track.link" target="_blank">{{track.name}}</a>
+                <b>#{{index+1}}</b> | <span v-for="artist in track.artist" v-bind:key="artist._uid"><a :href="artist.link" target="_blank">{{artist.name}}</a> | </span><a :href="track.link" target="_blank" class="text-success">{{track.name}}</a>
               </li>
             </ul>
           </div>
@@ -128,7 +132,7 @@ export default {
     },
     fetchReleaseContent (obj, id) {
       this.loadingTracklist = true;
-      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/release/"+obj+"/"+id, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      this.$axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/release/"+obj+"/"+id, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
         .then((response) => {
           if (response.status === 200) {
             this.upc = response.data.data.content.upc;
@@ -138,8 +142,8 @@ export default {
           this.loadingTracklist = false;
         })
         .catch((error) => {
-          console.log("Error: "+error)
           this.loadingTracklist = false;
+          this.$emit('error', error);
         });
     },
     fetchRelatedArtists (id) {
@@ -153,8 +157,8 @@ export default {
           this.loadingRelated = false;
         })
         .catch((error) => {
-          console.log("Error: "+error);
           this.loadingRelated = false;
+          this.$emit('error', error);
         });
     },
     sortLastReleases ( a, b ) {

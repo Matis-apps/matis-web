@@ -16,10 +16,17 @@
         </div>
       </div>
     </div>
-    <div v-else class="row">
+    <div v-else-if="platform" class="row">
       <div class="social offset-1 col-3">
         <transition name="slide-fade" >
           <DeezerReleaseList
+            v-if="platform == 'Deezer'"
+            v-on:error="onError"
+            v-on:endingLoad="onEndingLoad"
+            v-on:showRelease="onRelease"/>
+
+          <SpotifyReleaseList
+            v-if="platform == 'Spotify'"
             v-on:error="onError"
             v-on:endingLoad="onEndingLoad"
             v-on:showRelease="onRelease"/>
@@ -27,7 +34,8 @@
       </div>
       <div v-if="displayContent" class="col-7">
         <ReleaseContent 
-          v-bind:release="selectedRelease"/>
+          v-bind:release="selectedRelease"
+          v-on:error="onError"/>
       </div>
     </div>
   </div>
@@ -36,13 +44,16 @@
 <script>
 // @ is an alias to /src
 import DeezerReleaseList from './DeezerReleaseList.vue'
+import SpotifyReleaseList from './SpotifyReleaseList.vue'
 import ReleaseContent from './ReleaseContent.vue'
 
 export default {
-  name: 'DeezerFeed',
+  name: 'PlatformFeed',
+  props: ['platform'],
   components: {
      DeezerReleaseList,
-     ReleaseContent
+     SpotifyReleaseList,
+     ReleaseContent,
   },
   data() {
     return {
@@ -57,13 +68,23 @@ export default {
     //
   },
   mounted() {
-    this.errorMessage = null;
-    this.selectedRelease = null;
-
-    this.loadingReleases = true;
-    this.displayContent = false;
+    this.init();
+  },
+  watch: { 
+    platform: function(newVal, oldVal) { // watch it
+      if(newVal) {
+        this.init();
+      }
+    }
   },
   methods: {
+    init: function() {
+      this.errorMessage = null;
+      this.selectedRelease = null;
+
+      this.loadingReleases = true;
+      this.displayContent = false;
+    },
     onError: function (error) {
       switch(error.response.status) {
         case 401:

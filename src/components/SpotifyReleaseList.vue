@@ -5,7 +5,7 @@
     </div>
     <div class="row" v-if="genres.length > 0">
       <span v-for="item in genres" v-bind:key="item.key" class="small">
-        <button :id="'btn-genre-'+item.key" type="button" class="btn btn-sm btn-link" :class='item.isClicked == true ? "text-success" : "text-primary"' v-on:click="onSelectGenre(item.key)">{{item.value}}</button>&nbsp;|&nbsp;
+        <button :id="'btn-genre-'+item.key" type="button" class="btn btn-sm btn-link" :class='item.isClicked == true ? "text-success" : "text-primary"' v-on:click="onSelectGenre(item.value)">{{capitalize(item.value)}}</button>&nbsp;|&nbsp;
       </span>
     </div>
     <div class="row">
@@ -32,7 +32,7 @@
 
 <script>
 export default {
-  name: 'DeezerReleaseList',
+  name: 'SpotifyReleaseList',
   props: ['user_id'],
   data() {
     return {
@@ -80,8 +80,8 @@ export default {
 
       const url = 
         process.env.VUE_APP_ROOT_API + (this.user_id ? 
-          "/deezer/releases/" + this.user_id
-          : "/deezer/me/releases");
+          "/spotify/releases/" + this.user_id
+          : "/spotify/me/releases");
 
       this.$axios.get(url, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
         .then((response) => {
@@ -103,18 +103,18 @@ export default {
     },
     onSelectGenre(key) {
       this.genres = this.genres.map(g => {
-        g.isClicked = g.key == key ? true : false;
+        g.isClicked = g == key ? true : false;
         return g;
       });
 
-      if(key == -42) {
+      if(key == 'Tous') {
         this.releases = this.releases.map(r => {
           r.display = true; 
           return r;
         });
-      } else {
-        this.releases = this.releases.map(r => {
-          r.display = r.content.genre == key ? true : false;
+      } else {        
+        this.releases = this.releases.map(r => {          
+          r.display = r.content.genre.split(':').includes(key) ? true : false;
           return r;
         });
       }
