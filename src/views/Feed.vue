@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row">
+    <div class="row" id="buttonsSection">
       <div class="offset-3 col-6 d-flex justify-content-around">
         <button type="button" class="btn btn-primary my-2" v-on:click="onSelectPlatform('Deezer')">Deezer</button>    
         <button type="button" class="btn btn-primary my-2" v-on:click="onSelectPlatform('Spotify')">Spotify</button>    
@@ -14,7 +14,8 @@
       </h2>
       <PlatformFeed
          v-if="selectedPlateform"
-         v-bind:platform="selectedPlateform"/>
+         v-bind:platform="selectedPlateform"
+         v-on:endingLoad="onEndingLoad"/>
     </div>
   </div>
 </template>
@@ -34,11 +35,29 @@ export default {
     }
   },
   created() {
-    //
+
   },
   methods: {
     onSelectPlatform: function(p) {
       this.selectedPlateform = p;
+      var buttons = document.querySelectorAll("#buttonsSection button");
+      console.log(buttons)
+      if (buttons.length > 0) {
+        buttons.forEach(button => {
+          button.disabled = true;
+        })
+      }
+    },
+    onEndingLoad: function(e) {
+      console.log("hey")
+      var buttons = document.querySelectorAll("#buttonsSection button");
+      console.log(buttons)
+      if (buttons.length > 0) {
+        buttons.forEach(button => {
+          button.disabled = false;
+        })
+        console.log(document.querySelectorAll("#buttonsSection button"))
+      }
     }
   }
 }

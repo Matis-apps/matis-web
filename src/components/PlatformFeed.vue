@@ -9,7 +9,7 @@
       </div>
     </div>
     <div v-if="errorMessage" class="row">
-      <div class="mx-auto" style="width: 200px;">
+      <div class="mx-auto" style="width: 400px;">
         <div class="alert alert-secondary text-center">
           <div class="spinner-grow text-danger" role="status"></div>
           <span class="mx-3 small">{{errorMessage}}</span>
@@ -98,6 +98,7 @@ export default {
     onEndingLoad: function () {
       this.loadingReleases = false;
       this.displayContent = true;
+      this.$emit('endingLoad');
     },
     onRelease: function (item) {
       this.selectedRelease = item;
