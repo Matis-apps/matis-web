@@ -1,15 +1,19 @@
 <template>
   <div id="releases">
-    <div v-show="loadingReleases" class="row justify-content-center">
-      <div class="alert alert-secondary">
-        <div class="spinner-border text-success" role="status"></div>
-        <span class="mx-3">Chargement des nouveautés...</span>      
+    <div v-show="loadingReleases" class="row">
+      <div class="mx-auto" style="width: 400px;">
+        <div class="alert alert-secondary text-center">
+          <div class="spinner-border text-success" role="status"></div>
+          <span class="mx-3">Chargement des nouveautés...</span>      
+        </div>
       </div>
     </div>
-    <div v-if="errorMessage" class="row justify-content-center">
-      <div class="alert alert-secondary">
-        <div class="spinner-grow text-danger" role="status"></div>
-        <span class="mx-3 small">{{errorMessage}}</span>
+    <div v-if="errorMessage" class="row">
+      <div class="mx-auto" style="width: 200px;">
+        <div class="alert alert-secondary text-center">
+          <div class="spinner-grow text-danger" role="status"></div>
+          <span class="mx-3 small">{{errorMessage}}</span>
+        </div>
       </div>
     </div>
     <div v-else class="row">
@@ -60,9 +64,15 @@ export default {
     this.displayContent = false;
   },
   methods: {
-    onError: function (event) {
-      console.log(event)
-      this.errorMessage = event;
+    onError: function (error) {
+      switch(error.response.status) {
+        case 401:
+          this.errorMessage = "Il faut refresh le token";
+          break;
+        default:
+          this.errorMessage = event;
+          break;
+      }
     },
     onEndingLoad: function () {
       this.loadingReleases = false;
