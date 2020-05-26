@@ -5,6 +5,7 @@ import Social from '../views/Social.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Account from '../views/Account.vue'
+import Search from '../views/Search.vue'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,11 @@ const routes = [
     path: '/social',
     name: 'Social',
     component: Social
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: Search
   }
 ]
 

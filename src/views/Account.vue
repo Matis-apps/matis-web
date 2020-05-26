@@ -101,7 +101,7 @@ export default {
           if (err.response.status === 401) {
             this.errorMessage = "Erreur de connection";
           } else {
-            this.errorMessage = err.response.data || err;
+            this.errorMessage = err.response.data.error.message || err.response.message;
           }
         });
     },
