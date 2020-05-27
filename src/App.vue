@@ -4,6 +4,7 @@
       <router-link to="/login" exact>Login</router-link> |
       <router-link to="/account" exact-path>Account</router-link> |
       <router-link to="/feed" exact>Feed</router-link> |
+      <router-link to="/playlists" exact>Playlists</router-link> |
       <router-link to="/social" exact>Social</router-link> |
       <router-link to="/search" exact>Search</router-link>
     </div>

@@ -19,7 +19,7 @@
           <p class="small" v-if="releaseDays(item.content.updated_at) > 0">Il y a {{ releaseDays(item.content.updated_at) }} jours ({{ item.content.updated_at }})</p>
           <p class="small" v-else-if="releaseDays(item.content.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(item.content.updated_at)) }} jours ({{ item.content.updated_at }})</p>
           <p class="small" v-else>Sortie aujourd'hui</p>
-          <p class="small font-weight-lighter">{{item.content.description}}</p>
+          <p class="small font-weight-lighter" v-html="item.content.description"></p>
           <img :src="item.content.picture" class="img-fluid rounded" alt="picture artist" v-if="item.content.picture">
           <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-link" v-on:click="$emit('showRelease',item)">Voir plus</button>

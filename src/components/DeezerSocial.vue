@@ -85,11 +85,8 @@ export default {
   },
   data() {
     return {
-      user_id: 16192550,
       friends: [],
       selectedFriend: null,
-
-      releases: [],
 
       errorMessage: null,
       loadingReleases: false,
@@ -100,7 +97,6 @@ export default {
   },
   mounted() {
     // init arrays
-    this.releases = [];
     this.friends = [];
 
     // nullable variables
@@ -142,7 +138,6 @@ export default {
         });
     },
     onChangeFriend(event) {
-      this.releases = [];
       this.selectedRelease = null;
 
       const friend_id = event.target.value;
