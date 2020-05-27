@@ -2,8 +2,8 @@
   <div>
     <div class="row" id="buttonsSection">
       <div class="offset-3 col-6 d-flex justify-content-around">
-        <button type="button" class="btn btn-primary my-2" v-on:click="onSelectPlatform('Deezer')">Deezer</button>    
-        <button type="button" class="btn btn-primary my-2" v-on:click="onSelectPlatform('Spotify')">Spotify</button>    
+        <button type="button" class="btn btn-primary my-2" v-on:click="onSelectPlatform('deezer')">Deezer</button>    
+        <button type="button" class="btn btn-primary my-2" v-on:click="onSelectPlatform('spotify')">Spotify</button>    
       </div>
     </div>
     <hr>
