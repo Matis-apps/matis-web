@@ -20,13 +20,13 @@
       <div class="social offset-1 col-3">
         <transition name="slide-fade" >
           <DeezerReleaseList
-            v-if="platform == 'Deezer'"
+            v-if="platform == 'deezer'"
             v-on:error="onError"
             v-on:endingLoad="onEndingLoad"
             v-on:showRelease="onRelease"/>
 
           <SpotifyReleaseList
-            v-if="platform == 'Spotify'"
+            v-if="platform == 'spotify'"
             v-on:error="onError"
             v-on:endingLoad="onEndingLoad"
             v-on:showRelease="onRelease"/>

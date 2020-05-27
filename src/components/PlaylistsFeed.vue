@@ -12,7 +12,7 @@
       <div class="mx-auto" style="width: 400px;">
         <div class="alert alert-secondary text-center">
           <div class="spinner-border text-success" role="status"></div>
-          <span class="mx-3">Chargement des nouveautés...</span>      
+          <span class="mx-3">Chargement des playlists...</span>      
         </div>
       </div>
     </div>
@@ -47,7 +47,6 @@
         </select>
       </div>
     </div>
-    <hr>
     <div v-show="loadingReleases" class="row">
       <div class="mx-auto" style="width: 400px;">
         <div class="alert alert-secondary text-center">
