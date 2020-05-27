@@ -6,6 +6,7 @@
         <button type="button" class="btn btn-primary my-2" disabled>Spotify</button>    
       </div>
     </div>
+    <hr>
     <DeezerSocial/>
   </div>
 </template>
