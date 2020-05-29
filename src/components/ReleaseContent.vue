@@ -157,7 +157,7 @@ export default {
     },
     fetchRelatedArtists (id) {
       this.loadingRelated = true;
-      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/artist/"+id+"/related", { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      this.$axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/artist/"+id+"/related", { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.relatedArtists = response.data.data;
