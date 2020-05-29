@@ -1,58 +1,74 @@
 <template>
-  <div id="selectFriend">
-    <div v-if="errorMessage" class="row">
-      <div class="mx-auto" style="width: 400px;">
-        <div class="alert alert-secondary text-center">
-          <div class="spinner-grow text-danger" role="status"></div>
-          <span class="mx-3 small">{{errorMessage}}</span>
+  <div>
+    <div id="selectPlaylist">
+      <div v-if="errorMessage" class="row">
+        <div class="mx-auto" style="width: 400px;">
+          <div class="alert alert-secondary text-center">
+            <div class="spinner-grow text-danger" role="status"></div>
+            <span class="mx-3 small">{{errorMessage}}</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div v-else-if="loadingPlaylists" class="row justify-content-center">
-      <div class="mx-auto" style="width: 400px;">
-        <div class="alert alert-secondary text-center">
-          <div class="spinner-border text-success" role="status"></div>
-          <span class="mx-3">Chargement des playlists...</span>      
+      <div v-else-if="loadingPlaylists" class="row justify-content-center">
+        <div class="mx-auto" style="width: 400px;">
+          <div class="alert alert-secondary text-center">
+            <div class="spinner-border text-success" role="status"></div>
+            <span class="mx-3">Chargement des playlists...</span>      
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="offset-1 col-3">
+          <div class="card bg-light border-success mb-3">
+            <div class="card-header">Voir l'activitié des artists dans la playlist</div>
+            <div class="card-body text-success">
+              <div class="row" v-if="selectedPlaylist">
+                <div class="col-6">
+                  <h5 class="card-title">{{selectedPlaylist.name}}</h5>
+                  <p class="card-text"><a :href="selectedPlaylist.link" target="_blank">Lien</a></p>
+                </div>
+                <div class="col-6">
+                  <img class="img-fluid" v-bind:src="selectedPlaylist.picture">
+                </div>            
+              </div>
+              <div v-else class="alert alert-warning">
+                <p class="mb-0">Selectionne une playlist dans la liste.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-7 align-self-center">
+          <p><small>{{playlists.length}} playlists</small></p>
+          <select class="custom-select" @change="onChangePlaylist($event)">
+            <option v-for="playlist in playlists" 
+              v-bind:key="'playlist-'+playlist.id"
+              :value="playlist.id">
+              {{playlist.name}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div v-show="loadingReleases" class="row">
+        <div class="mx-auto" style="width: 400px;">
+          <div class="alert alert-secondary text-center">
+            <div class="spinner-border text-success" role="status"></div>
+            <span class="mx-3">Chargement des nouveautés...</span>      
+          </div>
         </div>
       </div>
     </div>
     <div class="row">
       <div class="offset-1 col-3">
-        <div class="card bg-light border-success mb-3">
-          <div class="card-header">Voir l'activitié des artists dans la playlist</div>
-          <div class="card-body text-success">
-            <div class="row" v-if="selectedPlaylist">
-              <div class="col-6">
-                <h5 class="card-title">{{selectedPlaylist.name}}</h5>
-                <p class="card-text"><a :href="selectedPlaylist.link" target="_blank">Lien</a></p>
-              </div>
-              <div class="col-6">
-                <img class="img-fluid" v-bind:src="selectedPlaylist.picture">
-              </div>            
-            </div>
-            <div v-else class="alert alert-warning">
-              <p class="mb-0">Selectionne une playlist dans la liste.</p>
-            </div>
-          </div>
-        </div>
+        <ReleasesList
+          v-if="releases.length > 0"
+          v-bind:releases="releases"
+          v-bind:processingTime="processingTime"
+          v-on:showRelease="onShowRelease"/>
       </div>
-      <div class="col-7 align-self-center">
-        <p><small>{{playlists.length}} playlists</small></p>
-        <select class="custom-select" @change="onChangePlaylist($event)">
-          <option v-for="playlist in playlists" 
-            v-bind:key="'playlist-'+playlist.id"
-            :value="playlist.id">
-            {{playlist.name}}
-          </option>
-        </select>
-      </div>
-    </div>
-    <div v-show="loadingReleases" class="row">
-      <div class="mx-auto" style="width: 400px;">
-        <div class="alert alert-secondary text-center">
-          <div class="spinner-border text-success" role="status"></div>
-          <span class="mx-3">Chargement des nouveautés...</span>      
-        </div>
+      <div v-if="selectedRelease" class="col-7">
+        <ReleaseContent 
+          v-bind:release="selectedRelease"
+          v-on:error="onError"/>
       </div>
     </div>
   </div>
@@ -61,12 +77,19 @@
 
 <script>
 // @ is an alias to /src
+import ReleasesList from './ReleasesList.vue'
+import ReleaseContent from './ReleaseContent.vue'
 
 export default {
   name: 'PlaylistsFeed',
   props: ['platform'],
+  components: {
+    ReleasesList,
+    ReleaseContent,
+  },
   data() {
     return {
+      releases: [],
       playlists: [],
       selectedPlaylist: null,
 
@@ -74,7 +97,7 @@ export default {
       loadingReleases: false,
       loadingPlaylists: false,
       selectedRelease: null,
-      displayContent: false,
+      processingTime: 0,
     }
   },
 
@@ -86,6 +109,9 @@ export default {
       if(newVal) {
         this.init();
       }
+    },
+    selectedPlaylist: function(newVal, oldVal) {
+      this.fetchReleases(newVal.id);
     }
   },
   methods: {
@@ -96,20 +122,25 @@ export default {
       // nullable variables
       this.selectedPlaylist = null;
       this.errorMessage = null;
-      this.selectedRelease = null;
 
       // init booleans
       this.loadingPlaylists = false;
       this.loadingReleases = false;
-      this.displayContent = false;
+
+      this.initPlaylistList()
 
       // load the friends
       if (localStorage.token) this.fetchPlaylists();
       else this.errorMessage = 'No token provided';
     },
+    initPlaylistList() {
+      this.releases = [];
+      this.selectedRelease = null;
+    },
     fetchPlaylists () {
       this.loadingPlaylists = true;
-      this.$axios.get(process.env.VUE_APP_ROOT_API+"/"+this.platform+"/me/playlists", { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      const url = process.env.VUE_APP_ROOT_API+"/"+this.platform+"/me/playlists";
+      this.$axios.get(url, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
         .then((response) => {
           this.loadingPlaylists = false;
           if (response.status === 200 && response.data.data) {
@@ -132,25 +163,45 @@ export default {
           this.$emit('endingLoad');
         });
     },
+    fetchReleases (id) {
+      this.initPlaylistList();
+
+      this.loadingReleases = true;
+      let start = Date.now();
+      const url = process.env.VUE_APP_ROOT_API+"/"+this.platform+"/me/playlist/" + id + "/releases"
+      this.$axios.get(url, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+        .then((response) => {
+          let end = Date.now();
+          if (response.status === 200) {
+            this.releases = response.data.data;
+            this.releases.map(r => r.display = true);
+            this.processingTime = (end - start)/1000;
+            this.loadingReleases = false;
+            this.$emit('endingLoad');
+          }
+        })
+        .catch((error) => {
+          this.errorMessage = error;
+          this.loadingReleases = false;
+          this.$emit('endingLoad');
+        });
+    },
     onChangePlaylist(event) {
-      this.selectedRelease = null;
+      this.initPlaylistList()
 
       const playlist_id = event.target.value;
       this.selectedPlaylist = this.playlists.find(item => {
         return item.id == playlist_id;
       })
-      this.displayContent = false;
       this.loadingReleases = true;
     },
     onError: function (error) {
-      console.log(error)
       this.errorMessage = error;
     },
     onEndingLoad: function () {
       this.loadingReleases = false;
-      this.displayContent = true;
     },
-    onRelease: function (item) {
+    onShowRelease: function (item) {
       this.selectedRelease = item;
     }
   }

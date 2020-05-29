@@ -86,13 +86,17 @@ export default {
       this.displayContent = false;
     },
     onError: function (error) {
-      switch(error.response.status) {
-        case 401:
-          this.errorMessage = "Il faut refresh le token";
-          break;
-        default:
-          this.errorMessage = event;
-          break;
+      if(error.response) {
+        switch(error.response.status) {
+          case 401:
+            this.errorMessage = "Il faut refresh le token";
+            break;
+          default:
+            this.errorMessage = error.response.message;
+            break;
+        }
+      } else {
+        this.errorMessage = error.message;
       }
     },
     onEndingLoad: function () {

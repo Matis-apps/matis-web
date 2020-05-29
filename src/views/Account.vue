@@ -65,7 +65,7 @@ export default {
       errorMessage: null,
       loadingAccounts: false,
       deezerConnect: "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT,
-      spotifyConnect: "https://accounts.spotify.com/authorize?client_id=" + process.env.VUE_APP_SPOTIFY_CLIENT_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_SPOTIFY_REDIRECT + "&response_type=code&scope=" + encodeURI('user-library-read user-follow-read'),
+      spotifyConnect: "https://accounts.spotify.com/authorize?client_id=" + process.env.VUE_APP_SPOTIFY_CLIENT_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_SPOTIFY_REDIRECT + "&response_type=code&scope=" + encodeURIComponent('user-library-read user-follow-read'),
     }
   },
   created() {
@@ -95,15 +95,7 @@ export default {
             this.user = response.data.data;
           }
         })
-        .catch((err) => {
-          this.loadingAccounts = false;
-
-          if (err.response.status === 401) {
-            this.errorMessage = "Erreur de connection";
-          } else {
-            this.errorMessage = err.response.data.error.message || err.response.message;
-          }
-        });
+        .catch(err => this.catchError(err));
     },
     handleCallback(query) {
       switch(query.from) {
@@ -127,9 +119,7 @@ export default {
             };
           }
         })
-        .catch((err) => {
-          this.errorMessage = err.response.data.error.message || err.response.message;          
-        });
+        .catch(err => this.catchError(err));
     },
     getSpotifyToken (code) {
       const url = process.env.VUE_APP_ROOT_API + "/users/token/spotify?code="+code;
@@ -143,9 +133,21 @@ export default {
             };
           }
         })
-        .catch((err) => {
-          this.errorMessage = err.response.data.error.message || err.response.message;          
-        });
+        .catch(err => this.catchError(err));
+    },
+    catchError(error) {
+      if(error.response) {
+        switch(error.response.status) {
+          case 401:
+            this.errorMessage = "Il faut refresh le token";
+            break;
+          default:
+            this.errorMessage = error.response.message;
+            break;
+        }
+      } else {
+        this.errorMessage = error.message;
+      }
     }
   }
 

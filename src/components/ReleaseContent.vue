@@ -9,7 +9,7 @@
       <div v-if="releaseType == 'album'">
         <CrossAlbum
           from="*"
-          v-bind:query="release.content.title + ' ' + release.author.name"
+          v-bind:query="release.author.name + ' ' + release.content.title"
           v-bind:upc="upc"/>
       </div>
       <div class="card text-left">
@@ -85,9 +85,7 @@ import CrossAlbum from './CrossAlbum.vue'
 
 export default {
   name: 'ReleaseContent',
-  props: {
-    release: Object
-  },
+  props: ['release'],
   components: {
      CrossAlbum
   },
@@ -102,8 +100,20 @@ export default {
       upc: null,
     }
   },
+  mounted() {
+    if (this.release) {
+      this.init(this.release);
+    }
+  },
   watch: { 
     release: function(newVal, oldVal) { // watch it
+      if (newVal) {
+        this.init(newVal)
+      }
+    }
+  },
+  methods: {
+    init: function(release) {
       var element = document.getElementById("release-content");
       element.scrollIntoView({behavior: "smooth"});
 
@@ -112,20 +122,19 @@ export default {
       this.relatedArtists = [];
 
       if (localStorage.token) {
-        if(newVal) {
-          this.releaseType = newVal._obj;
-          this.fetchReleaseContent(newVal._obj, newVal.content.id);
+        if(release) {
+          this.releaseType = release._obj;
+          this.fetchReleaseContent(release._obj, release.content.id);
 
-          if(newVal._obj == 'album') {
-            this.fetchRelatedArtists(newVal.author.id);
+          if(release._obj == 'album') {
+            this.fetchRelatedArtists(release.author.id);
           }
         }
       } else {
-        console.log('No token provided');
+        this.$emit('error', 'No token provided');
       }
-    }
-  },
-  methods: {
+
+    },
     capitalize: function (s) {
       if (typeof s !== 'string') return '';
       return s.charAt(0).toUpperCase() + s.slice(1);

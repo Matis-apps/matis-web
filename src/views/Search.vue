@@ -98,11 +98,10 @@ export default {
         this.error = null;
         this.results = null;
         this.loading = true;
-        this.$axios.get(process.env.VUE_APP_ROOT_API+"/tool/search?q="+search, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+        this.$axios.get(process.env.VUE_APP_ROOT_API+"/tool/search?q="+encodeURIComponent(search), { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
           .then((response) => {
             if (response.status === 200) {
               this.search = search;
-              console.log(response.data.data)
               var results = response.data.data;
               this.results = results;
             }
@@ -110,12 +109,9 @@ export default {
           })
           .catch((err) => {
             this.loading = false;
-            console.log("error")
-            console.log(err)
             this.error = err.response.data.error.message || err.response.message;
           });
       }
-      console.log(search)
     },
   }
 }

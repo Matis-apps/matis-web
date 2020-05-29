@@ -92,7 +92,8 @@ export default {
      * @params retry int - Number of retries remaining
      */
     fetchSearch () {  
-      const url = process.env.VUE_APP_ROOT_API + "/tool/upc?from=" + this.from + "&q=" + this.query + "&upc=" + this.upc;
+      const url = process.env.VUE_APP_ROOT_API + "/tool/upc?from=" + this.from + "&q=" + encodeURIComponent(this.query) + "&upc=" + this.upc;
+      console.log(url)
       this.waiting = false;
       this.loading = true;
       this.$axios.get(url, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })

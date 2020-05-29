@@ -7,10 +7,16 @@
       </div>
     </div>
     <hr>
-    <PlaylistsFeed
-      v-if="selectedPlateform"
-      v-bind:platform="selectedPlateform"
-      v-on:endingLoad="onEndingLoad"/>
+    <div>
+      <h2 class="ml-5 small font-weight-light">
+        <span v-if="selectedPlateform">{{selectedPlateform}}</span>
+        <span v-else>Selectionnez une plateforme ci-dessus</span>
+      </h2>
+      <PlaylistsFeed
+        v-if="selectedPlateform"
+        v-bind:platform="selectedPlateform"
+        v-on:endingLoad="onEndingLoad"/>
+    </div>
   </div>
 </template>
 
