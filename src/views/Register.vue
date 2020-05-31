@@ -83,7 +83,7 @@ export default {
 
             if (response.status === 200) {
               this.successMessage = "OK";
-              localStorage.token = response.data.data.token;
+              localStorage.token = response.data.data.access_token;
               this.$router.push({ path: 'account' });
             }
           })

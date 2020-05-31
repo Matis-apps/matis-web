@@ -3,7 +3,7 @@
     <div class="row">
       <div class="offset-4 col-4">
         <div class="card p-3">
-          <form @submit="checkForm">
+          <form @submit.prevent="checkForm">
             <div class="form-group">
               <label for="inputEmail">Compte</label>
               <input v-model="email" type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Votre e-mail">
@@ -71,7 +71,8 @@ export default {
             this.errorMessage = null;
             if (response.status === 200) {
               this.successMessage = "OK";
-              localStorage.token = response.data.data.token;
+              localStorage.token = response.data.data.access_token;
+              //this.$store.dispatch('user/setToken', response.data.data.access_token)
               this.$router.push({ path: 'account' });
             }
           })

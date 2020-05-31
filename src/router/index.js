@@ -7,19 +7,37 @@ import Register from '../views/Register.vue'
 import Account from '../views/Account.vue'
 import Search from '../views/Search.vue'
 import Playlists from '../views/Playlists.vue'
+import store from '../store' // your vuex store 
 
 Vue.use(VueRouter)
+
+/*
+const ifNotAuthenticated = (to, from, next) => {
+  if (!store.getters.isAuthenticated) {
+    next()
+    return
+  }
+  next('/')
+}
+
+const ifAuthenticated = (to, from, next) => {
+  if (store.getters.isAuthenticated) {
+    next()
+    return
+  }
+  next('/login')
+}*/
 
 const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
   },
   {
     path: '/register',
     name: 'Register',
-    component: Register
+    component: Register,
   },
   {
     path: '/account',
@@ -29,22 +47,22 @@ const routes = [
   {
     path: '/feed',
     name: 'Feed',
-    component: Feed
+    component: Feed,
   },
   {
     path: '/social',
     name: 'Social',
-    component: Social
+    component: Social,
   },
   {
     path: '/search',
     name: 'Search',
-    component: Search
+    component: Search,
   },
   {
     path: '/playlists',
     name: 'Playlists',
-    component: Playlists
+    component: Playlists,
   }
 ]
 

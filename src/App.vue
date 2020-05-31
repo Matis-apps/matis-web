@@ -1,12 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/login" exact>Login</router-link> |
-      <router-link to="/account" exact-path>Account</router-link> |
-      <router-link to="/feed" exact>Feed</router-link> |
-      <router-link to="/playlists" exact>Playlists</router-link> |
-      <router-link to="/social" exact>Social</router-link> |
-      <router-link to="/search" exact>Search</router-link>
+      <Navbar/>
     </div>
     <div class="container-fluid">
       <router-view/>    
@@ -14,17 +9,30 @@
   </div>
 </template>
 
+<script>
+// @ is an alias to /src
+import Navbar from '@/components/Navbar.vue'
+
+export default {
+  name: 'App',
+  components: {
+     Navbar
+  },
+  created() {
+    
+  },
+}
+</script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-size: 0.96em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
 }
 
 #nav {
-  padding: 30px;
-
   a {
     font-weight: bold;
     color: #2c3e50;
