@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import ReleasesList from './ReleasesList.vue'
 
 export default {
@@ -39,8 +40,7 @@ export default {
       this.processingTime = 0;
       this.releases = [];
       this.genres = [];
-      if (localStorage.token) this.fetchReleases();
-      else this.$emit('error', 'No token provided');
+      this.fetchReleases();
     },
     /**
      * Retrieve the loved artists
@@ -51,11 +51,11 @@ export default {
       let start = Date.now();
 
       const url = 
-        process.env.VUE_APP_ROOT_API + (this.user_id ? 
-          "/deezer/releases/" + this.user_id
-          : "/deezer/me/releases");
+        this.user_id
+          ? "/deezer/releases/" + this.user_id
+          : "/deezer/me/releases";
 
-      this.$axios.get(url, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      axios.get(url)
         .then((response) => {
           let end = Date.now();
           if (response.status === 200) {

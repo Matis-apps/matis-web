@@ -74,6 +74,7 @@
 
 <script>
 // @ is an alias to /src
+import axios from "axios";
 
 export default {
   name: 'Search',
@@ -98,7 +99,7 @@ export default {
         this.error = null;
         this.results = null;
         this.loading = true;
-        this.$axios.get(process.env.VUE_APP_ROOT_API+"/tool/search?q="+encodeURIComponent(search), { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+        axios.get(process.env.VUE_APP_ROOT_API+"/tool/search?q="+encodeURIComponent(search))
           .then((response) => {
             if (response.status === 200) {
               this.search = search;

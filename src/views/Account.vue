@@ -55,44 +55,42 @@
 </template>
 
 <script>
+import axios from "axios";
 
 export default {
   name: 'Account',
   data() {
     return {
       user: null,
-      token: null,
       errorMessage: null,
       loadingAccounts: false,
       deezerConnect: "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT,
       spotifyConnect: "https://accounts.spotify.com/authorize?client_id=" + process.env.VUE_APP_SPOTIFY_CLIENT_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_SPOTIFY_REDIRECT + "&response_type=code&scope=" + encodeURIComponent('user-library-read user-follow-read'),
     }
   },
-  created() {
-    if (localStorage.token) {
-
-      this.fetchAccount();
-
-      if (Object.keys(this.$route.query).length > 0) {
-        this.handleCallback(this.$route.query)      
-      }
+  computed: {
+    token: function() {
+      return this.$store.getters['auth/getToken'];
     }
-    else {
-      this.errorMessage = "Vous devez vous connecter"
+  },
+  created() {
+    this.fetchAccount();
+    if (Object.keys(this.$route.query).length > 0) {
+      this.handleCallback(this.$route.query)
     }
   },
   methods: {
     fetchAccount () {
-      this.token = localStorage.token;
-      const url = process.env.VUE_APP_ROOT_API + "/users/me";
+      const url = "/users/me";
 
       this.loadingAccounts = true;
-      this.$axios.get(url, { headers: { 'Authorization': this.token, 'Content-Type': 'text/plain' } })
+      axios.get(url)
         .then((response) => {
+          console.log('response :')
+          console.log(response)
           this.loadingAccounts = false;
-
           if (response.status === 200) {
-            this.user = response.data.data;
+            this.user = response.data;
           }
         })
         .catch(err => this.catchError(err));
@@ -108,34 +106,37 @@ export default {
       }
     },
     getDeezerToken (code) {
-      const url = process.env.VUE_APP_ROOT_API + "/users/token/deezer?code="+code;
+      const url = "/users/token/deezer?code="+code;
 
-      this.$axios.get(url, { headers: { 'Authorization': this.token, 'Content-Type': 'text/plain' } })
+      axios.get(url)
         .then((response) => {
           if (response.status === 200) {
             this.user = {
               ...this.user,
-              deezer: response.data.data
+              deezer: response.data
             };
           }
         })
         .catch(err => this.catchError(err));
     },
     getSpotifyToken (code) {
-      const url = process.env.VUE_APP_ROOT_API + "/users/token/spotify?code="+code;
+      const url = "/users/token/spotify?code="+code;
 
-      this.$axios.get(url, { headers: { 'Authorization': this.token, 'Content-Type': 'text/plain' } })
+      axios.get(url)
         .then((response) => {
           if (response.status === 200) {
             this.user = {
               ...this.user,
-              spotify: response.data.data
+              spotify: response.data
             };
           }
         })
         .catch(err => this.catchError(err));
     },
     catchError(error) {
+      console.log('error :')
+      console.log(error)
+
       if(error.response) {
         switch(error.response.status) {
           case 401:

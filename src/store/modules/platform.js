@@ -8,6 +8,9 @@ export default {
   mutations: {
     SET_PLATFORMS (state, platforms) {
       state.enables = platforms;
+      if (state.platform == null && platforms.length > 0) {
+        // add the first platform as the current one
+      }
     },
     ADD_PLATFORM (state, platform) {
       if (state.enables.includes(platform)) {
@@ -22,7 +25,7 @@ export default {
     },
   },
   actions: {
-    setPlatforms ({commit}, platforms) {
+    setPlatforms ({commit, dispatch}, platforms) {
       commit('SET_PLATFORMS', platforms);
     },
     addPlatform ({commit}, platform) {

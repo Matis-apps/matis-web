@@ -74,6 +74,7 @@
 
 <script>
 // @ is an alias to /src
+import axios from "axios";
 import DeezerReleaseList from './DeezerReleaseList.vue'
 import ReleaseContent from './ReleaseContent.vue'
 
@@ -110,13 +111,12 @@ export default {
     this.displayContent = false;
 
     // load the friends
-    if (localStorage.token) this.fetchFriends();
-    else this.errorMessage = 'No token provided';
+    this.fetchFriends();
   },
   methods: {
     fetchFriends () {
       this.loadingSocial = true;
-      this.$axios.get(process.env.VUE_APP_ROOT_API+"/deezer/me/social", { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      axios.get("/deezer/me/social")
         .then((response) => {
           this.loadingSocial = false;
           if (response.status === 200 && response.data.data) {

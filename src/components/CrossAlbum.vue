@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: 'CrossAlbum',
   props: ['from', 'query', 'upc'],
@@ -83,8 +85,7 @@ export default {
   methods: {
     loadSearch: function () {
       this.albums = null;
-      if (localStorage.token) this.fetchSearch();
-      else this.$emit('error', 'No token provided');
+      this.fetchSearch();
     },
     /**
      * Retrieve the loved artists
@@ -92,11 +93,11 @@ export default {
      * @params retry int - Number of retries remaining
      */
     fetchSearch () {  
-      const url = process.env.VUE_APP_ROOT_API + "/tool/upc?from=" + this.from + "&q=" + encodeURIComponent(this.query) + "&upc=" + this.upc;
-      console.log(url)
+      const url = "/tool/upc?from=" + this.from + "&q=" + encodeURIComponent(this.query) + "&upc=" + this.upc;
+
       this.waiting = false;
       this.loading = true;
-      this.$axios.get(url, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      axios.get(url)
         .then((response) => {
           if (response.status === 200) {
             this.albums = response.data.data;

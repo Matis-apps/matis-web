@@ -23,9 +23,6 @@
         <div v-if="errorMessage" class="alert alert-danger" role="alert">
           {{errorMessage}}
         </div>
-        <div v-if="successMessage" class="alert alert-success" role="alert">
-          {{successMessage}}
-        </div>
         <div class="alert alert-warning" role="alert">
           Première connextion sur #matis ? Enregister toi <router-link to="/register">ici</router-link> !
         </div>
@@ -41,7 +38,6 @@ export default {
   name: 'Login',
   data() {
     return {
-      successMessage: null,
       errorMessage: null,
       email: '',
       password: '',
@@ -60,32 +56,29 @@ export default {
       else if (this.password == '') {
         this.errorMessage = "Mot de passe manquant";
       } else {
-        const url = process.env.VUE_APP_ROOT_API + "/auth/login";
+        const url = "/auth/login";
         const params = {
           'email': this.email,
           'password': this.password
         };
 
-        this.$axios.post(url, params)
-          .then((response) => {
-            this.errorMessage = null;
-            if (response.status === 200) {
-              this.successMessage = "OK";
-              localStorage.token = response.data.data.access_token;
-              //this.$store.dispatch('user/setToken', response.data.data.access_token)
-              this.$router.push({ path: 'account' });
+        this.$store.dispatch('auth/login', params)
+          .then(() => {
+            this.$router.push({ path: 'account' });
+          })
+          .catch(error => {
+            if (error.response) {
+              if (error.response.status === 403) {
+                this.errorMessage = "Utilisateur introuvable";
+              } else if (error.response.status === 401) {
+                this.errorMessage = "Mot de passe invalide";
+              } else {
+                this.errorMessage = error.response.message;
+              }
+            } else {
+                this.errorMessage = error.message;
             }
           })
-          .catch((err) => {
-            this.successMessage = null;            
-            if (err.response.status === 403) {
-              this.errorMessage = "Utilisateur introuvable";
-            } else if (err.response.status === 401) {
-              this.errorMessage = "Mot de passe invalide";
-            } else {
-              this.errorMessage = err.response.data;
-            }
-          });
       }
     }
   }

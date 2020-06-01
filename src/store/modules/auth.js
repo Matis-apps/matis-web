@@ -1,4 +1,4 @@
-const tokenKey = 'token';
+import axios from "axios";
 
 export default {
   namespaced: true,
@@ -8,44 +8,66 @@ export default {
   },
   mutations: {
     AUTH_REQUEST: (state) => {
-      state.status = 'loading'
+      state.status = 'loading';
     },
     AUTH_SUCCESS: (state, token) => {
-      state.status = 'success'
-      state.token = token
+      state.status = 'success';
+      state.token = token;
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
     },
     AUTH_ERROR: (state) => {
-      state.status = 'error'
+      state.status = 'error';
     },
+    AUTH_LOGOUT: (state) => {
+      state.token = null;
+      state.status = '';
+      delete axios.defaults.headers.common['Authorization'];
+    }
   },
   actions: {
-    AUTH_REQUEST ({commit, dispatch}, user) {
+    login ({commit, dispatch}, params) {
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-        commit(AUTH_REQUEST)
-        this.$axios.post(process.env.VUE_APP_ROOT_API + "/auth/login", user)
-          .then(resp => {
-            const token = resp.data.data.access_token
-            this.$axios.defaults.headers.common['Authorization'] = token
-            commit(AUTH_SUCCESS, token)
-            dispatch(USER_REQUEST)
-            resolve(resp)
+        commit('AUTH_REQUEST')
+        axios.post("/auth/login", params)
+          .then(response => {
+            const token = response.data.access_token.token;
+            commit('AUTH_SUCCESS', token);
+            const platforms = response.data.has;
+            console.log(platforms)
+            dispatch('platform/setPlatforms', platforms, {root: true});
+            resolve(response);
           })
-        .catch(err => {
-          commit(AUTH_ERROR, err)
-          reject(err)
+        .catch(error => {
+          commit('AUTH_ERROR', error)
+          reject(error)
         })
       })
     },
-    AUTH_LOGOUT: ({commit, dispatch}) => {
+    refresh ({commit, dispatch}, user) {
+      return new Promise((resolve, reject) => { // The Promise used for router redirect in login
+        commit('AUTH_REQUEST')
+        axios.get("/auth/token")
+          .then(response => {
+            const token = response.data.access_token.token;
+            commit('AUTH_SUCCESS', token)
+            resolve(token)
+          })
+        .catch(error => {
+          commit('AUTH_ERROR', error)
+          reject(error)
+        })
+      })
+    },
+    logout: ({commit, dispatch}) => {
       return new Promise((resolve, reject) => {
-        commit(AUTH_LOGOUT)
-        delete this.$axios.defaults.headers.common['Authorization']
+        commit('AUTH_LOGOUT')
         resolve()
       })
     }
   },
   getters: {
     isAuthenticated: state => !!state.token,
+    getToken: state => state.token,
     authStatus: state => state.status,
   },
 }

@@ -81,6 +81,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import CrossAlbum from './CrossAlbum.vue'
 
 export default {
@@ -121,19 +122,14 @@ export default {
       this.tracklist = [];
       this.relatedArtists = [];
 
-      if (localStorage.token) {
-        if(release) {
-          this.releaseType = release._obj;
-          this.fetchReleaseContent(release._obj, release.content.id);
+      if(release) {
+        this.releaseType = release._obj;
+        this.fetchReleaseContent(release._obj, release.content.id);
 
-          if(release._obj == 'album') {
-            this.fetchRelatedArtists(release.author.id);
-          }
+        if(release._obj == 'album') {
+          this.fetchRelatedArtists(release.author.id);
         }
-      } else {
-        this.$emit('error', 'No token provided');
       }
-
     },
     capitalize: function (s) {
       if (typeof s !== 'string') return '';
@@ -141,7 +137,7 @@ export default {
     },
     fetchReleaseContent (obj, id) {
       this.loadingTracklist = true;
-      this.$axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/release/"+obj+"/"+id, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/release/"+obj+"/"+id)
         .then((response) => {
           if (response.status === 200) {
             this.upc = response.data.data.content.upc;
@@ -157,7 +153,7 @@ export default {
     },
     fetchRelatedArtists (id) {
       this.loadingRelated = true;
-      this.$axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/artist/"+id+"/related", { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/artist/"+id+"/related")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.relatedArtists = response.data.data;

@@ -77,6 +77,7 @@
 
 <script>
 // @ is an alias to /src
+import axios from "axios";
 import ReleasesList from './ReleasesList.vue'
 import ReleaseContent from './ReleaseContent.vue'
 
@@ -130,8 +131,7 @@ export default {
       this.initPlaylistList()
 
       // load the friends
-      if (localStorage.token) this.fetchPlaylists();
-      else this.errorMessage = 'No token provided';
+      this.fetchPlaylists();
     },
     initPlaylistList() {
       this.releases = [];
@@ -139,8 +139,8 @@ export default {
     },
     fetchPlaylists () {
       this.loadingPlaylists = true;
-      const url = process.env.VUE_APP_ROOT_API+"/"+this.platform+"/me/playlists";
-      this.$axios.get(url, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      const url = "/"+this.platform+"/me/playlists";
+      axios.get(url)
         .then((response) => {
           this.loadingPlaylists = false;
           if (response.status === 200 && response.data.data) {
@@ -168,8 +168,8 @@ export default {
 
       this.loadingReleases = true;
       let start = Date.now();
-      const url = process.env.VUE_APP_ROOT_API+"/"+this.platform+"/me/playlist/" + id + "/releases"
-      this.$axios.get(url, { headers: { 'Authorization': localStorage.token, 'Content-Type': 'text/plain' } })
+      const url = "/"+this.platform+"/me/playlist/" + id + "/releases"
+      axios.get(url)
         .then((response) => {
           let end = Date.now();
           if (response.status === 200) {

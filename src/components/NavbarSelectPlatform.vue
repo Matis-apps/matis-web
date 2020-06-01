@@ -22,12 +22,9 @@ export default {
   },
   created() {
     const platform = this.$store.getters['platform/getCurrentPlatform'];
-    console.log(this.$store.getters)
-    console.log(platform)
   },
   methods: {
     onSelectPlatform(item) {
-      console.log(item)
       this.$store.dispatch('platform/setCurrentPlatform', item)
     }
   },

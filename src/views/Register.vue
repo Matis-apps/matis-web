@@ -41,6 +41,7 @@
 
 <script>
 // @ is an alias to /src
+import axios from "axios";
 
 export default {
   name: 'Login',
@@ -70,31 +71,30 @@ export default {
       else if (this.password == '') {
         this.errorMessage = "Mot de passe manquant";
       } else {
-        const url = process.env.VUE_APP_ROOT_API + "/auth/register";
+        const url = "/auth/register";
         const params = {
           'name': this.name,
           'email': this.email,
           'password': this.password
         };
 
-        this.$axios.post(url, params)
-          .then((response) => {
-            this.errorMessage = null;
-
-            if (response.status === 200) {
-              this.successMessage = "OK";
-              localStorage.token = response.data.data.access_token;
-              this.$router.push({ path: 'account' });
+        this.$store.dispatch('auth/register', params)
+          .then(() => {
+            this.$router.push({ path: 'account' });
+          })
+          .catch(error => {
+            if (error.response) {
+              if (error.response.status === 403) {
+                this.errorMessage = "Utilisateur introuvable";
+              } else if (error.response.status === 401) {
+                this.errorMessage = "Mot de passe invalide";
+              } else {
+                this.errorMessage = error.response.message;
+              }
+            } else {
+                this.errorMessage = error.message;
             }
           })
-          .catch((err) => {
-            this.successMessage = null;
-            if (err.response.status === 401) {
-              this.errorMessage = "L'adresse e-mail est déjà utilisée.";
-            } else {
-              this.errorMessage = err.response.data;
-            }
-          });
       }
     }
   }
