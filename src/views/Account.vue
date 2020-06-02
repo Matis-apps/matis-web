@@ -86,8 +86,6 @@ export default {
       this.loadingAccounts = true;
       axios.get(url)
         .then((response) => {
-          console.log('response :')
-          console.log(response)
           this.loadingAccounts = false;
           if (response.status === 200) {
             this.user = response.data;
@@ -134,9 +132,6 @@ export default {
         .catch(err => this.catchError(err));
     },
     catchError(error) {
-      console.log('error :')
-      console.log(error)
-
       if(error.response) {
         switch(error.response.status) {
           case 401:

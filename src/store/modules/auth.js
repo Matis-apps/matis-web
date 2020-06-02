@@ -33,7 +33,6 @@ export default {
             const token = response.data.access_token.token;
             commit('AUTH_SUCCESS', token);
             const platforms = response.data.has;
-            console.log(platforms)
             dispatch('platform/setPlatforms', platforms, {root: true});
             resolve(response);
           })
@@ -50,6 +49,8 @@ export default {
           .then(response => {
             const token = response.data.access_token.token;
             commit('AUTH_SUCCESS', token)
+            const platforms = response.data.has;
+            dispatch('platform/setPlatforms', platforms, {root: true});
             resolve(token)
           })
         .catch(error => {

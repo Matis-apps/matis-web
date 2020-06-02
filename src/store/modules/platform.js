@@ -2,14 +2,17 @@ export default {
   namespaced: true,
   state: {
     platform: null,
-    availables: ['Deezer', 'Spotify'],
+    availables: ['Deezer', 'Spotify', 'Test'],
     enables: [],
   },
   mutations: {
     SET_PLATFORMS (state, platforms) {
-      state.enables = platforms;
-      if (state.platform == null && platforms.length > 0) {
-        // add the first platform as the current one
+      if (platforms.length > 0) {
+        platforms.forEach(p => {
+          if(state.availables.includes(p)) {
+            state.enables.push(p);
+          }
+        })
       }
     },
     ADD_PLATFORM (state, platform) {
@@ -17,22 +20,29 @@ export default {
         state.enables.push(platform);
       }
     },
-    SET_CUURENT_PLATFORM (state, platform) {
-      if (state.availables.includes(platform) /*&& state.enables.includes(platform)*/) {
+    SET_CURRENT_PLATFORM (state, platform) {
+      if (state.availables.includes(platform) && state.enables.includes(platform)) {
         state.platform = platform;
-        console.log(state.platform)
       }
     },
   },
   actions: {
-    setPlatforms ({commit, dispatch}, platforms) {
+    setPlatforms ({commit, state}, platforms) {
       commit('SET_PLATFORMS', platforms);
+      if (state.platform == null && platforms.length > 0) {
+        for(let i = 0; i < platforms.length; i++) {
+          if(state.enables.includes(platforms[i])) {
+            commit('SET_CURRENT_PLATFORM', platforms[i])
+            break;
+          }
+        }
+      }
     },
     addPlatform ({commit}, platform) {
       commit('ADD_PLATFORM', platform);
     },
     setCurrentPlatform ({commit}, platform) {
-      commit('SET_CUURENT_PLATFORM', platform);
+      commit('SET_CURRENT_PLATFORM', platform);
     }
   },
   getters: {
@@ -40,7 +50,11 @@ export default {
       return state.platform;
     },
     availablePlatforms: state => {
-      return state.availables.some(i => i.active = state.enables.includes(i) ? true : false);
+      return state.availables.map(i => ({
+        name: i, 
+        active: state.enables.includes(i) ? true : false, 
+        current: i == state.platform ? true : false 
+      }));
     }
   },
 }
