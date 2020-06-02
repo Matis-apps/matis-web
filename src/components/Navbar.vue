@@ -5,15 +5,12 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <router-link class="nav-link" to="/login" exact>Login</router-link>
-        </li>
+      <ul class="navbar-nav mr-auto" v-if="isAuthenticated">
         <li class="nav-item">
           <router-link class="nav-link" to="/account" exact-path>Account</router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/feed" exact>Feed</router-link>
+          <router-link class="nav-link" to="/releases" exact>Releases</router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/playlists" exact>Playlists</router-link>
@@ -23,6 +20,14 @@
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/search" exact>Search</router-link>
+        </li>
+      </ul>
+      <ul class="navbar-nav mr-auto" v-else>
+        <li class="nav-item">
+          <router-link class="nav-link" to="/login" exact>Login</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" to="/register" exact>Register</router-link>
         </li>
       </ul>
       <NavbarSelectPlatform/>
@@ -37,6 +42,11 @@ export default {
   name: 'Navbar',
   components: {
     NavbarSelectPlatform
+  },
+  computed: {
+    isAuthenticated: function() {
+      return this.$store.getters['auth/isAuthenticated'];
+    }
   },
   data() {
     return {

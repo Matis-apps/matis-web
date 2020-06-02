@@ -32,6 +32,11 @@ export default {
           .then(response => {
             const token = response.data.access_token.token;
             commit('AUTH_SUCCESS', token);
+            let payload = {
+              type: 'success',
+              message: 'Welcome back !',
+            }
+            dispatch('toast/show', payload, {root: true})
             const platforms = response.data.has;
             dispatch('platform/setPlatforms', platforms, {root: true});
             resolve(response);
@@ -49,6 +54,11 @@ export default {
           .then(response => {
             const token = response.data.access_token.token;
             commit('AUTH_SUCCESS', token)
+            let payload = {
+              type: 'success',
+              message: 'Back in the game !',
+            }
+            dispatch('toast/show', payload, {root: true})
             const platforms = response.data.has;
             dispatch('platform/setPlatforms', platforms, {root: true});
             resolve(token)

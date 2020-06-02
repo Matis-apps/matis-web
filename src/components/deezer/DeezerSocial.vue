@@ -76,7 +76,7 @@
 // @ is an alias to /src
 import axios from "axios";
 import DeezerReleaseList from './DeezerReleaseList.vue'
-import ReleaseContent from './ReleaseContent.vue'
+import ReleaseContent from '../ReleaseContent.vue'
 
 export default {
   name: 'DeezerSocial',

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Feed from '../views/Feed.vue'
+import Releases from '../views/Releases.vue'
 import Social from '../views/Social.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
@@ -45,9 +45,9 @@ const routes = [
     component: Account,
   },  
   {
-    path: '/feed',
-    name: 'Feed',
-    component: Feed,
+    path: '/releases',
+    name: 'Releases',
+    component: Releases,
   },
   {
     path: '/social',

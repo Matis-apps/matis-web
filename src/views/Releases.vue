@@ -4,26 +4,29 @@
       <span v-if="platform">{{platform}}</span>
       <span v-else>Selectionnez une plateforme ci-dessus</span>
     </h2>
-    <PlaylistsFeed
-      v-if="platform"
-      v-bind:platform="platform"
-      v-on:endingLoad="onEndingLoad"/>
+    <ReleasesFeed
+       v-if="platform"
+       v-bind:platform="platform"
+       v-on:endingLoad="onEndingLoad"/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import PlaylistsFeed from '@/components/PlaylistsFeed.vue'
+import ReleasesFeed from '@/components/ReleasesFeed.vue'
 
 export default {
-  name: 'Social',
+  name: 'Releases',
   components: {
-     PlaylistsFeed
+     ReleasesFeed
   },
   computed: {
     platform: function() {
       return this.$store.getters['platform/getCurrentPlatform'];
-    },
+    }
+  },
+  created() {
+
   },
   methods: {
     onEndingLoad: function(e) {

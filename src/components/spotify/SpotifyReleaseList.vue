@@ -11,7 +11,7 @@
 
 <script>
 import axios from "axios";
-import ReleasesList from './ReleasesList.vue'
+import ReleasesList from '../ReleasesList.vue'
 
 export default {
   name: 'SpotifyReleaseList',
@@ -69,8 +69,8 @@ export default {
           }
         })
         .catch((error) => {
-          this.$emit('error', error);
           this.$emit('endingLoad');
+          this.$emit('error', error);
         });
     },
     onShowRelease(item) {

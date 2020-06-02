@@ -14,11 +14,6 @@
           <span class="mx-3">Recherche en cours...</span>
         </div>
       </div>
-      <div v-else-if="error" class="card-body">
-        <div class="alert alert-danger">
-          <p class="text-danger">{{error}}</p>    
-        </div>
-      </div>
       <div v-else-if="albums" class="card-body text-success">
         <div class="row">
           <div class="col-6">
@@ -56,7 +51,6 @@ export default {
       albums: null,
       waiting: false,
       loading: false,
-      error: null,
     }
   },
   mounted() {
@@ -92,11 +86,12 @@ export default {
      * @params index int - For pagination
      * @params retry int - Number of retries remaining
      */
-    fetchSearch () {  
+    fetchSearch () {
       const url = "/tool/upc?from=" + this.from + "&q=" + encodeURIComponent(this.query) + "&upc=" + this.upc;
 
       this.waiting = false;
       this.loading = true;
+      this.showLoading('Recherche sur toutes les plateformes...');
       axios.get(url)
         .then((response) => {
           if (response.status === 200) {
@@ -107,10 +102,33 @@ export default {
         })
         .catch((error) => {
           this.loading = false;
-          this.error = error;
+          this.showError(error)
           //this.$emit('error', error);
           //this.$emit('endingLoad');
         });
+    },
+    showLoading(message) {
+      let payload = {
+        type: 'loading',
+        message: message
+      }
+      this.$store.dispatch('toast/show', payload)
+    },
+    showError(error) {
+      let payload = {
+        type: 'error',
+      }
+
+      if(error.response) {
+        if (error.response.data && error.response.data.error) {
+          payload.message = error.response.data.error.message||error.response.statusText;
+        } else {
+          payload.message = error.response.message||error.response.statusText;
+        }
+      } else {
+        payload.message = error.message;
+      }
+      this.$store.dispatch('toast/show', payload)
     }
   }
 }

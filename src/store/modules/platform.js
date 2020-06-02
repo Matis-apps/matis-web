@@ -27,12 +27,13 @@ export default {
     },
   },
   actions: {
-    setPlatforms ({commit, state}, platforms) {
+    setPlatforms ({commit, dispatch, state}, platforms) {
       commit('SET_PLATFORMS', platforms);
       if (state.platform == null && platforms.length > 0) {
         for(let i = 0; i < platforms.length; i++) {
-          if(state.enables.includes(platforms[i])) {
-            commit('SET_CURRENT_PLATFORM', platforms[i])
+          let platform = platforms[i];
+          if(state.enables.includes(platform)) {
+            dispatch('setCurrentPlatform', platform)
             break;
           }
         }
@@ -41,8 +42,13 @@ export default {
     addPlatform ({commit}, platform) {
       commit('ADD_PLATFORM', platform);
     },
-    setCurrentPlatform ({commit}, platform) {
+    setCurrentPlatform ({commit, dispatch}, platform) {
       commit('SET_CURRENT_PLATFORM', platform);
+      let payload = {
+        type: 'success',
+        message: 'Platforme selectionnée : ' + platform,
+      }
+      dispatch('toast/show', payload, {root: true})
     }
   },
   getters: {
@@ -51,9 +57,9 @@ export default {
     },
     availablePlatforms: state => {
       return state.availables.map(i => ({
-        name: i, 
-        active: state.enables.includes(i) ? true : false, 
-        current: i == state.platform ? true : false 
+        name: i,
+        active: state.enables.includes(i) ? true : false,
+        current: i == state.platform ? true : false,
       }));
     }
   },

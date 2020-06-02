@@ -4,7 +4,7 @@
       <Navbar/>
     </div>
     <div class="container-fluid">
-      <router-view/>    
+      <router-view/>
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@ import Navbar from '@/components/Navbar.vue'
 export default {
   name: 'App',
   components: {
-     Navbar
+     Navbar, 
   },
   created() {
     

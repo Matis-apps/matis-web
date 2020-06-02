@@ -108,12 +108,28 @@ export default {
             }
             this.loading = false;
           })
-          .catch((err) => {
+          .catch((error) => {
             this.loading = false;
-            this.error = err.response.data.error.message || err.response.message;
+            this.showError(error)
           });
       }
     },
+    showError(error) {
+      let payload = {
+        type: 'error',
+      }
+
+      if(error.response) {
+        if (error.response.data && error.response.data.error) {
+          payload.message = error.response.data.error.message||error.response.statusText;
+        } else {
+          payload.message = error.response.message||error.response.statusText;
+        }
+      } else {
+        payload.message = error.message;
+      }
+      this.$store.dispatch('toast/show', payload)
+    }
   }
 }
 </script>

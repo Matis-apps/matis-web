@@ -136,6 +136,7 @@ export default {
       return s.charAt(0).toUpperCase() + s.slice(1);
     },
     fetchReleaseContent (obj, id) {
+      this.showLoading('Chargement du contenu...');
       this.loadingTracklist = true;
       axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/release/"+obj+"/"+id)
         .then((response) => {
@@ -152,12 +153,13 @@ export default {
         });
     },
     fetchRelatedArtists (id) {
+      this.showLoading('Chargement des artistes relatives...');
       this.loadingRelated = true;
       axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/artist/"+id+"/related")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.relatedArtists = response.data.data;
-            this.relatedArtists.sort((a,b) => this.sortLastReleases(a,b));
+            //this.relatedArtists.sort((a,b) => this.sortLastReleases(a,b));
           }
           this.loadingRelated = false;
         })
@@ -165,6 +167,13 @@ export default {
           this.loadingRelated = false;
           this.$emit('error', error);
         });
+    },
+    showLoading(message) {
+      let payload = {
+        type: 'loading',
+        message: message
+      }
+      this.$store.dispatch('toast/show', payload)
     },
     sortLastReleases ( a, b ) {
       if ( a.content.updated_at == null ) return 1;

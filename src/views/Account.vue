@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div v-if="errorMessage" class="alert alert-danger" role="alert">
-      {{errorMessage}}
-    </div>
     <div class="card mb-3">
       <div class="card-header text-white bg-primary">
         Account
@@ -62,7 +59,6 @@ export default {
   data() {
     return {
       user: null,
-      errorMessage: null,
       loadingAccounts: false,
       deezerConnect: "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT,
       spotifyConnect: "https://accounts.spotify.com/authorize?client_id=" + process.env.VUE_APP_SPOTIFY_CLIENT_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_SPOTIFY_REDIRECT + "&response_type=code&scope=" + encodeURIComponent('user-library-read user-follow-read'),
@@ -91,7 +87,7 @@ export default {
             this.user = response.data;
           }
         })
-        .catch(err => this.catchError(err));
+        .catch(err => this.showError(err));
     },
     handleCallback(query) {
       switch(query.from) {
@@ -113,9 +109,10 @@ export default {
               ...this.user,
               deezer: response.data
             };
+            this.successToast('Deezer');
           }
         })
-        .catch(err => this.catchError(err));
+        .catch(err => this.showError(err));
     },
     getSpotifyToken (code) {
       const url = "/users/token/spotify?code="+code;
@@ -127,23 +124,29 @@ export default {
               ...this.user,
               spotify: response.data
             };
+            this.successToast('Spotify');
           }
         })
-        .catch(err => this.catchError(err));
+        .catch(err => this.showError(err));
     },
-    catchError(error) {
-      if(error.response) {
-        switch(error.response.status) {
-          case 401:
-            this.errorMessage = "Il faut refresh le token";
-            break;
-          default:
-            this.errorMessage = error.response.message;
-            break;
-        }
-      } else {
-        this.errorMessage = error.message;
+    successToast(from) {
+      let payload = {
+        type: 'success',
+        message: 'Le compte '+from+' a été refresh'
       }
+      this.$store.dispatch('toast/show', payload)
+    },
+    showError(error) {
+      let payload = {
+        type: 'error',
+      }
+
+      if(error.response) {
+        payload.message = error.response.message||error.response.statusText;
+      } else {
+        payload.message = error.message;
+      }
+      this.$store.dispatch('toast/show', payload)
     }
   }
 

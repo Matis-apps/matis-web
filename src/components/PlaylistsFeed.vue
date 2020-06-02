@@ -1,15 +1,7 @@
 <template>
   <div>
     <div id="selectPlaylist">
-      <div v-if="errorMessage" class="row">
-        <div class="mx-auto" style="width: 400px;">
-          <div class="alert alert-secondary text-center">
-            <div class="spinner-grow text-danger" role="status"></div>
-            <span class="mx-3 small">{{errorMessage}}</span>
-          </div>
-        </div>
-      </div>
-      <div v-else-if="loadingPlaylists" class="row justify-content-center">
+      <div v-if="loadingPlaylists" class="row justify-content-center">
         <div class="mx-auto" style="width: 400px;">
           <div class="alert alert-secondary text-center">
             <div class="spinner-border text-success" role="status"></div>
@@ -94,7 +86,6 @@ export default {
       playlists: [],
       selectedPlaylist: null,
 
-      errorMessage: null,
       loadingReleases: false,
       loadingPlaylists: false,
       selectedRelease: null,
@@ -122,7 +113,6 @@ export default {
 
       // nullable variables
       this.selectedPlaylist = null;
-      this.errorMessage = null;
 
       // init booleans
       this.loadingPlaylists = false;
@@ -139,6 +129,7 @@ export default {
     },
     fetchPlaylists () {
       this.loadingPlaylists = true;
+      this.showLoading('Chargement des playlists...');
       const url = "/"+this.platform+"/me/playlists";
       axios.get(url)
         .then((response) => {
@@ -151,21 +142,14 @@ export default {
           this.$emit('endingLoad');
         })
         .catch((error) => {
+          this.showError(error)
           this.loadingPlaylists = false;
-          switch(error.response.status) {
-            case 401:
-              this.errorMessage = "Il faut refresh le token";
-              break;
-            default:
-              this.errorMessage = error;
-              break;
-          }
           this.$emit('endingLoad');
         });
     },
     fetchReleases (id) {
       this.initPlaylistList();
-
+      this.showLoading('Chargement de la playlist...');
       this.loadingReleases = true;
       let start = Date.now();
       const url = "/"+this.platform+"/me/playlist/" + id + "/releases"
@@ -181,7 +165,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.errorMessage = error;
+          this.showError(error)
           this.loadingReleases = false;
           this.$emit('endingLoad');
         });
@@ -196,13 +180,36 @@ export default {
       this.loadingReleases = true;
     },
     onError: function (error) {
-      this.errorMessage = error;
+      this.showError(error)
     },
     onEndingLoad: function () {
       this.loadingReleases = false;
     },
     onShowRelease: function (item) {
       this.selectedRelease = item;
+    },
+    showLoading(message) {
+      let payload = {
+        type: 'loading',
+        message: message
+      }
+      this.$store.dispatch('toast/show', payload)
+    },
+    showError(error) {
+      let payload = {
+        type: 'error',
+      }
+
+      if(error.response) {
+        if (error.response.data && error.response.data.error) {
+          payload.message = error.response.data.error.message||error.response.statusText;
+        } else {
+          payload.message = error.response.message||error.response.statusText;
+        }
+      } else {
+        payload.message = error.message;
+      }
+      this.$store.dispatch('toast/show', payload)
     }
   }
 }
