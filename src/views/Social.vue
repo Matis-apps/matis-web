@@ -1,22 +1,30 @@
 <template>
   <div>
-    <h2>Only Deezer supported</h2>
-    <hr>
-    <DeezerSocial/>
+    <h2 class="ml-5 small font-weight-light">
+      <span v-if="platform == 'Deezer'">{{platform}}</span>
+      <span v-else class="text-danger">Disponible seulement sur Deezer</span>
+    </h2>
+    <SocialFeed
+      v-if="platform"
+      v-bind:platform="platform"
+      v-on:startLoading="$emit('startLoading',$event)"
+      v-on:error="$emit('error', $event)"/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import DeezerSocial from '@/components/deezer/DeezerSocial.vue'
+import SocialFeed from '@/components/SocialFeed.vue'
 
 export default {
   name: 'Social',
   components: {
-     DeezerSocial
+     SocialFeed
   },
-  created() {
-    
+  computed: {
+    platform: function() {
+      return this.$store.getters['platform/getCurrentPlatform'];
+    },
   },
 }
 </script>

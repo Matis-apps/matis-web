@@ -1,22 +1,18 @@
 <template>
-  <div>
-    <div id="selectPlaylist">
-      <div v-if="loadingPlaylists" class="row justify-content-center">
-        <div class="mx-auto" style="width: 400px;">
-          <div class="alert alert-secondary text-center">
-            <div class="spinner-border text-success" role="status"></div>
-            <span class="mx-3">Chargement des playlists...</span>      
-          </div>
-        </div>
-      </div>
+  <div id="playplist">
+    <div v-if="playlists.length == 0" class="d-flex justify-content-center text-muted">
+      <div v-show="loadingPlaylists" class="spinner-border" style="width: 2rem; height: 2rem;" role="status"></div>
+      <h3 class="mx-3">Playlists</h3>
+    </div>
+    <div v-else>
       <div class="row">
-        <div class="offset-1 col-3">
-          <div class="card bg-light border-success mb-3">
+        <div class="col-lg-4 px-lg-6 col-md-5 px-md-4 col-sm-12 px-sm-4 order-2 order-md-12 mx-0">
+          <div class="card bg-light mb-3" style="border-color: #9286e2;">
             <div class="card-header">Voir l'activitié des artists dans la playlist</div>
             <div class="card-body text-success">
               <div class="row" v-if="selectedPlaylist">
                 <div class="col-6">
-                  <h5 class="card-title">{{selectedPlaylist.name}}</h5>
+                  <h5 class="card-title" style="color: #9286e2;">{{selectedPlaylist.name}}</h5>
                   <p class="card-text"><a :href="selectedPlaylist.link" target="_blank">Lien</a></p>
                 </div>
                 <div class="col-6">
@@ -29,9 +25,9 @@
             </div>
           </div>
         </div>
-        <div class="col-7 align-self-center">
-          <p><small>{{playlists.length}} playlists</small></p>
-          <select class="custom-select" @change="onChangePlaylist($event)">
+        <div class="col-lg-8 col-md-7 px-md-4 col-sm-12 px-sm-4 order-1 order-md-12 mx-0 align-self-center">
+          <p class="small">{{playlists.length}} playlists</p>
+          <select class="mb-2 custom-select" @change="onChangePlaylist($event)">
             <option v-for="playlist in playlists" 
               v-bind:key="'playlist-'+playlist.id"
               :value="playlist.id">
@@ -40,27 +36,26 @@
           </select>
         </div>
       </div>
-      <div v-show="loadingReleases" class="row">
-        <div class="mx-auto" style="width: 400px;">
-          <div class="alert alert-secondary text-center">
-            <div class="spinner-border text-success" role="status"></div>
-            <span class="mx-3">Chargement des nouveautés...</span>      
-          </div>
+      <div v-if="!displayContent" class="d-flex justify-content-center text-muted">
+        <div v-show="loadingReleases" class="spinner-border" style="width: 2rem; height: 2rem;" role="status"></div>
+        <h3 class="mx-3">Nouveautés</h3>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 px-lg-6 col-md-5 px-md-4 col-sm-12 px-sm-4 order-2 order-md-12 mx-0">
+          <transition name="slide-fade">
+            <ReleasesList
+              v-if="releases.length > 0"
+              v-bind:releases="releases"
+              v-bind:processingTime="processingTime"
+              v-on:showRelease="onShowRelease"/>
+            </transition>
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="offset-1 col-3">
-        <ReleasesList
-          v-if="releases.length > 0"
-          v-bind:releases="releases"
-          v-bind:processingTime="processingTime"
-          v-on:showRelease="onShowRelease"/>
-      </div>
-      <div v-if="selectedRelease" class="col-7">
-        <ReleaseContent 
-          v-bind:release="selectedRelease"
-          v-on:error="onError"/>
+        <div v-if="displayContent" class="col-lg-8 col-md-7 px-md-4 col-sm-12 px-sm-4 order-1 order-md-12 mx-0">
+          <ReleaseContent 
+            v-bind:release="selectedRelease"
+            v-on:startLoading="$emit('startLoading',$event)"
+            v-on:error="$emit('error',$event)"/>
+        </div>
       </div>
     </div>
   </div>
@@ -86,6 +81,7 @@ export default {
       playlists: [],
       selectedPlaylist: null,
 
+      displayContent: false,
       loadingReleases: false,
       loadingPlaylists: false,
       selectedRelease: null,
@@ -115,6 +111,7 @@ export default {
       this.selectedPlaylist = null;
 
       // init booleans
+      this.displayContent = false;
       this.loadingPlaylists = false;
       this.loadingReleases = false;
 
@@ -129,8 +126,9 @@ export default {
     },
     fetchPlaylists () {
       this.loadingPlaylists = true;
-      this.showLoading('Chargement des playlists...');
-      const url = "/"+this.platform+"/me/playlists";
+      this.$emit('startLoading', 'Chargement des playlists...');
+
+      const url = "/"+this.platform.toLowerCase()+"/me/playlists";
       axios.get(url)
         .then((response) => {
           this.loadingPlaylists = false;
@@ -139,17 +137,18 @@ export default {
               this.playlists.push(playlist)
             ));
           }
-          this.$emit('endingLoad');
+          this.$emit('endLoading');
         })
         .catch((error) => {
-          this.showError(error)
           this.loadingPlaylists = false;
-          this.$emit('endingLoad');
+          this.$emit('endLoading');
+          this.$emit('error', error);
         });
     },
     fetchReleases (id) {
       this.initPlaylistList();
-      this.showLoading('Chargement de la playlist...');
+      this.$emit('startLoading', 'Chargement de la playlist...');
+
       this.loadingReleases = true;
       let start = Date.now();
       const url = "/"+this.platform+"/me/playlist/" + id + "/releases"
@@ -161,17 +160,21 @@ export default {
             this.releases.map(r => r.display = true);
             this.processingTime = (end - start)/1000;
             this.loadingReleases = false;
-            this.$emit('endingLoad');
+            this.displayContent = true;
+
+            this.$emit('endLoading');
           }
         })
         .catch((error) => {
-          this.showError(error)
+          this.displayContent = false;
           this.loadingReleases = false;
-          this.$emit('endingLoad');
+          this.$emit('endLoading');
+          this.$emit('error', error);
         });
     },
     onChangePlaylist(event) {
       this.initPlaylistList()
+      this.displayContent = false;
 
       const playlist_id = event.target.value;
       this.selectedPlaylist = this.playlists.find(item => {
@@ -180,37 +183,27 @@ export default {
       this.loadingReleases = true;
     },
     onError: function (error) {
-      this.showError(error)
-    },
-    onEndingLoad: function () {
-      this.loadingReleases = false;
+      this.$emit('error', error);
     },
     onShowRelease: function (item) {
       this.selectedRelease = item;
     },
-    showLoading(message) {
-      let payload = {
-        type: 'loading',
-        message: message
-      }
-      this.$store.dispatch('toast/show', payload)
-    },
-    showError(error) {
-      let payload = {
-        type: 'error',
-      }
-
-      if(error.response) {
-        if (error.response.data && error.response.data.error) {
-          payload.message = error.response.data.error.message||error.response.statusText;
-        } else {
-          payload.message = error.response.message||error.response.statusText;
-        }
-      } else {
-        payload.message = error.message;
-      }
-      this.$store.dispatch('toast/show', payload)
-    }
   }
 }
 </script>
+
+<style type="text/css">
+/* Enter and leave animations can use different */
+/* durations and timing functions.              */
+.slide-fade-enter-active {
+  transition: all .8s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+</style>

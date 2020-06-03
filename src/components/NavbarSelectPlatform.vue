@@ -1,6 +1,6 @@
 <template>
-  <ul class="navbar-nav ml-auto" v-if="platforms">
-    <li class="nav-item dropdown dropleft mx-2">
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown dropleft mx-2" v-if="platforms">
       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span v-if="platform">{{platform}}</span>
         <span v-else>Platform</span>
@@ -14,6 +14,9 @@
             {{ platform.name }}
           </a>
       </div>
+    </li>
+    <li class="nav-item">
+      <router-link class="nav-link text-danger" to="/logout" exact>Logout</router-link>
     </li>
   </ul>
 </template>

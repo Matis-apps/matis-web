@@ -1,42 +1,30 @@
 <template>
   <div>
-    <form v-on:submit.prevent="onSearch">
+    <div class="d-flex justify-content-center text-muted">
+      <div v-if="loading" class="spinner-border" style="width: 2rem; height: 2rem;" role="status"></div>
+      <h3 class="mx-3">Rechercher de la musique sur Deezer et Spotify</h3>
+    </div>
+    <form v-on:submit.prevent="onSearch" class="my-2 col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-10 offset-sm-1 col-xs-12">
       <div class="row">
-        <input id="search" class="form-control form-control-lg mx-5" type="text" placeholder="Search some tracks, albums, users, playlists, ...">
+        <input id="search" class="form-control form-control-lg" type="text" aria-describedby="searchHelp" placeholder="J'ai de la chance ...">
+        <small id="searchHelp" class="form-text text-muted">* Préciser au maxium le résultat à trouver car la recherche est imprécise...</small>
       </div>
       <div class="row my-2">
-        <button type="submit" class="btn btn-primary mx-5">Search</button>  
+        <button type="submit" class="btn btn-primary">Search</button>
       </div>
     </form>
-    <div v-if="error" class="row">
-      <div class="mx-auto" style="width: 400px;">
-        <div class="alert alert-secondary text-center">
-          <div class="spinner-grow text-danger" role="status"></div>
-          <span class="mx-3 small">{{error}}</span>
-        </div>
-      </div>
-    </div>
-    <div v-if="loading" class="row">
-      <div class="mx-auto" style="width: 400px;">
-        <div class="alert alert-secondary text-center">
-          <div class="spinner-border text-success" role="status"></div>
-          <span class="mx-3">Recherche des résultats...</span>      
-        </div>
-      </div>
-    </div>
-    <div v-if="results" class="mt-3">
-      <p class="text-center"><b>Recherche: </b>{{ search }}</p>      
-      <div v-if="results.albums" class="col-10 offset-1">
+    <div v-if="results" class="row mt-3">
+      <div v-if="results.albums" class="col-lg-10 offset-lg-1 col-md-12">
         <h3>Albums</h3>
         <p class="small">{{results.albums.length}} résultats</p>
         <ul class="list-group">
           <li class="list-group-item d-flex justify-content-around" v-for="(albums, i) in results.albums" v-bind:key="'album-'+i">
             <div :class="'col-'+Math.floor(12/albums.length)" v-for="items in albums" v-bind:key="items._uid">
               <div class="row">
-                <div class="col-2">
+                <div class="col-lg-2 col-md-3 col-sm-4">
                   <img :src="items.picture" class="img-fluid rounded">
                 </div>
-                <div class="col-10">
+                <div class="col-lg-10 col-md-9 col-sm-8">
                   <div class="row d-block">
                     <p class="small">{{items.type}} à partir de <b>{{items._from}}</b></p>
                     <p class="small">Sortie le {{items.updated_at}}</p>
@@ -50,7 +38,7 @@
           </li>
         </ul>
       </div>
-      <div v-if="results.tracks" class="col-10 offset-1">
+      <div v-if="results.tracks" class="col-lg-10 offset-lg-1 col-md-12">
         <hr classe="my-2">
         <h3>Tracks</h3>
         <p class="small">{{results.tracks.length}} résultats</p>
@@ -81,7 +69,6 @@ export default {
   data() {
     return {
       search: null,
-      error: null,
       loading: false,
       results: null,
     }
@@ -94,9 +81,9 @@ export default {
       var element = document.getElementById("search");
       var search = element.value;
       if (!search) {
-        this.error = 'Saisir qqchose à chercher';
+        this.$emit('error', "Saisir le nom d'un artiste ou d'un album")
       } else {
-        this.error = null;
+        this.$emit('startLoading', 'Recherche en cours...');
         this.results = null;
         this.loading = true;
         axios.get(process.env.VUE_APP_ROOT_API+"/tool/search?q="+encodeURIComponent(search))
@@ -110,25 +97,9 @@ export default {
           })
           .catch((error) => {
             this.loading = false;
-            this.showError(error)
+            this.$emit('error', error)
           });
       }
-    },
-    showError(error) {
-      let payload = {
-        type: 'error',
-      }
-
-      if(error.response) {
-        if (error.response.data && error.response.data.error) {
-          payload.message = error.response.data.error.message||error.response.statusText;
-        } else {
-          payload.message = error.response.message||error.response.statusText;
-        }
-      } else {
-        payload.message = error.message;
-      }
-      this.$store.dispatch('toast/show', payload)
     }
   }
 }

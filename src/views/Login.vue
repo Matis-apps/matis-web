@@ -64,20 +64,14 @@ export default {
 
         this.$store.dispatch('auth/login', params)
           .then(() => {
-            this.$router.push({ path: 'account' });
+            if (this.$route.query.redirect) {
+              this.$router.push({ path: this.$route.query.redirect });
+            } else {
+              this.$router.push({ path: 'account' });
+            } 
           })
           .catch(error => {
-            if (error.response) {
-              if (error.response.status === 403) {
-                this.errorMessage = "Utilisateur introuvable";
-              } else if (error.response.status === 401) {
-                this.errorMessage = "Mot de passe invalide";
-              } else {
-                this.errorMessage = error.response.message;
-              }
-            } else {
-                this.errorMessage = error.message;
-            }
+            this.$emit('error', error);
           })
       }
     }

@@ -77,8 +77,8 @@ export default {
   },
   methods: {
     fetchAccount () {
+      this.$emit('startLoading','Chargement des données...');
       const url = "/users/me";
-
       this.loadingAccounts = true;
       axios.get(url)
         .then((response) => {
@@ -100,8 +100,8 @@ export default {
       }
     },
     getDeezerToken (code) {
+      this.$emit('startLoading','Chargement des données de Deezer...');
       const url = "/users/token/deezer?code="+code;
-
       axios.get(url)
         .then((response) => {
           if (response.status === 200) {
@@ -112,11 +112,11 @@ export default {
             this.successToast('Deezer');
           }
         })
-        .catch(err => this.showError(err));
+        .catch(error => this.$emit('error', error));
     },
     getSpotifyToken (code) {
+      this.$emit('startLoading','Chargement des données de Spotify...');
       const url = "/users/token/spotify?code="+code;
-
       axios.get(url)
         .then((response) => {
           if (response.status === 200) {
@@ -127,7 +127,7 @@ export default {
             this.successToast('Spotify');
           }
         })
-        .catch(err => this.showError(err));
+        .catch(error => this.$emit('error', error));
     },
     successToast(from) {
       let payload = {
@@ -136,19 +136,6 @@ export default {
       }
       this.$store.dispatch('toast/show', payload)
     },
-    showError(error) {
-      let payload = {
-        type: 'error',
-      }
-
-      if(error.response) {
-        payload.message = error.response.message||error.response.statusText;
-      } else {
-        payload.message = error.message;
-      }
-      this.$store.dispatch('toast/show', payload)
-    }
   }
-
 }
 </script>

@@ -8,19 +8,30 @@
         <button :id="'btn-genre-'+item.key" type="button" class="btn btn-sm btn-link" :class='item.isClicked == true ? "text-success" : "text-primary"' v-on:click="onSelectGenre(item.key)">{{item.value}}</button>&nbsp;|&nbsp;
       </span>
     </div>
-    <div class="row">
-      <div class="card mb-2" :class="{ 'border-primary' : releaseDays(item.content.updated_at) == 0 }" v-for="(item, index) in releases" v-bind:key="item._uid" v-show="item.display == true">
-        <div class="card-header d-flex justify-content-between">
-          <img v-show="item.author.picture" :src="item.author.picture" class="card-img-top img-fluid rounded" alt="picture artist" style="max-height: 50px; max-width: 50px;">
+    <div class="row d-flex flex-column">
+      <div class="card mb-2" 
+        v-for="(item, index) in releases" 
+        v-bind:key="item._uid" 
+        v-show="item.display == true">
+        <div class="card-header d-flex justify-content-between" style="background-color: #86a8e2">
+          <img v-if="item.author.picture" :src="item.author.picture" class="card-img-top img-fluid rounded" alt="picture artist" style="max-height: 50px; max-width: 50px;">
           <p>{{ capitalize(item.content.type) }} by <span class="font-weight-bold">{{ item.author.name }}</span></p>
         </div>
         <div class="card-body text-left">
-          <h5 class="card-title"><b>#{{index+1}}</b><small> | {{ item.content.title }}</small></h5>
-          <p class="small" v-if="releaseDays(item.content.updated_at) > 0">Il y a {{ releaseDays(item.content.updated_at) }} jours ({{ item.content.updated_at }})</p>
-          <p class="small" v-else-if="releaseDays(item.content.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(item.content.updated_at)) }} jours ({{ item.content.updated_at }})</p>
-          <p class="small" v-else>Sortie aujourd'hui</p>
-          <p class="small font-weight-lighter">{{item.content.description}}</p>
-          <img :src="item.content.picture" class="img-fluid rounded" alt="picture artist" v-if="item.content.picture">
+          <h5 class="card-title text-center">
+            <span v-if="releaseDays(item.content.updated_at) <= 7" class="mx-2"><i class="text-danger medium material-icons">fiber_new</i></span>
+            <b>#{{index+1}}</b>
+            <small> | {{ item.content.title }}</small>
+          </h5>
+          <p class="small text-center">
+            <span v-if="releaseDays(item.content.updated_at) > 0">Il y a {{ releaseDays(item.content.updated_at) }} jours ({{ item.content.updated_at }})</span>
+            <span v-else-if="releaseDays(item.content.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(item.content.updated_at)) }} jours ({{ item.content.updated_at }})</span>
+            <span v-else>Sortie aujourd'hui</span>
+          </p>
+          <p class="small font-weight-lighter" v-html="item.content.description"></p>
+          <p class="text-center">
+            <img style="max-height: 200px; max-width: 100%;" :src="item.content.picture" class="img-fluid rounded" alt="picture artist" v-if="item.content.picture">          
+          </p>
           <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-link" v-on:click="$emit('showRelease',item)">Voir plus</button>
           </div>
@@ -39,8 +50,11 @@ export default {
       return this.releases.length;
     }
   },
+  created() {
+    console.log('ReleasesList created) releases.length = ' + this.releases.length)
+  },
   mounted() {
-    //
+    console.log('ReleasesList mounted) releases.length = ' + this.releases.length)
   },
   methods: {
     releaseDays: function (day) {

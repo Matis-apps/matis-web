@@ -1,27 +1,13 @@
 <template>
   <div>
-    <div v-if="errorMessage" class="row">
-      <div class="mx-auto" style="width: 400px;">
-        <div class="alert alert-secondary text-center">
-          <div class="spinner-grow text-danger" role="status"></div>
-          <span class="mx-3 small">{{errorMessage}}</span>
-        </div>
-      </div>
-    </div>
-    <div v-else-if="loadingSocial" class="row justify-content-center">
-      <div class="alert alert-secondary">
-        <div class="spinner-border text-success" role="status"></div>
-        <span class="mx-3">Chargement des amis...</span>      
-      </div>
-    </div>
-    <div id="selectFriend" class="row mb-2 d-flex">
-      <div class="offset-1 col-3">
-        <div class="card bg-light border-success mb-3">
+    <div v-if="friends.length > 0" id="selectedFriend" class="row mb-2 d-flex">
+      <div class="col-lg-4 px-lg-6 col-md-5 px-md-4 col-sm-12 px-sm-4 order-2 order-md-12 mx-0">
+        <div class="card bg-light mb-3" style="border-color: #9286e2;">
           <div class="card-header">Voir l'activitié de ton pote</div>
           <div class="card-body text-success">
             <div class="row" v-if="selectedFriend">
               <div class="col-6">
-                <h5 class="card-title">{{selectedFriend.name}}</h5>
+                <h5 class="card-title" style="color: #9286e2;">{{selectedFriend.name}}</h5>
                 <p class="card-text"><a :href="'https://www.deezer.com/profile/'+selectedFriend.id" target="_blank">Profile</a></p>
               </div>
               <div class="col-6">
@@ -34,9 +20,9 @@
           </div>
         </div>
       </div>
-      <div class="col-7 align-self-center">
-        <p><small>{{friends.length}} amis suivis</small></p>
-        <select class="custom-select" @change="onChangeFriend($event)">
+      <div class="col-lg-8 col-md-7 px-md-4 col-sm-12 px-sm-4 order-1 order-md-12 mx-0 align-self-center">
+        <p class="small">{{friends.length}} amis suivis</p>
+        <select class="mb-2 custom-select" @change="onChangeFriend($event)">
           <option v-for="friend in friends" 
             v-bind:key="'friend-'+friend.id"
             :value="friend.id">
@@ -46,26 +32,26 @@
       </div>
     </div>
     <div id="releases" v-if="selectedFriend">
-      <div v-show="loadingReleases" class="row justify-content-center">
-        <div class="alert alert-secondary">
-          <div class="spinner-border text-success" role="status"></div>
-          <span class="mx-3">Chargement des nouveautés...</span>      
-        </div>
+      <div v-if="!displayContent" class="d-flex justify-content-center text-muted">
+        <div v-show="loadingReleases" class="spinner-border" style="width: 2rem; height: 2rem;" role="status"></div>
+        <h3 class="mx-3">Nouveautés</h3>
       </div>
       <div class="row">
-        <div class="social offset-1 col-3">
-          <transition name="slide-fade" >
-            <DeezerReleaseList
-              v-bind:user_id="selectedFriend.id"
-              v-on:error="onError"
-              v-on:endingLoad="onEndingLoad"
-              v-on:showRelease="onRelease"/>
+        <div class="col-lg-4 px-lg-6 col-md-5 px-md-4 col-sm-12 px-sm-4 order-2 order-md-12 mx-0">
+          <transition name="slide-fade">
+          <DeezerReleaseList
+            v-bind:user_id="selectedFriend.id"
+            v-on:startLoading="$emit('startLoading',$event)"
+            v-on:error="onError"
+            v-on:endLoading="onEndLoading"
+            v-on:showRelease="onRelease"/>
           </transition>
         </div>
-        <div class="col-7">
-          <ReleaseContent 
-            v-if="displayContent"
-            v-bind:release="selectedRelease"/>
+        <div v-if="displayContent" class="col-lg-8 col-md-7 px-md-4 col-sm-12 px-sm-4 order-1 order-md-12 mx-0">
+          <ReleaseContent
+            v-bind:release="selectedRelease"
+            v-on:startLoading="$emit('startLoading',$event)"
+            v-on:error="$emit('error',$event)"/>
         </div>
       </div>
     </div>
@@ -88,12 +74,9 @@ export default {
     return {
       friends: [],
       selectedFriend: null,
-
-      errorMessage: null,
-      loadingReleases: false,
-      loadingSocial: false,
       selectedRelease: null,
       displayContent: false,
+      loadingReleases: false,
     }
   },
   mounted() {
@@ -102,12 +85,9 @@ export default {
 
     // nullable variables
     this.selectedFriend = null;
-    this.errorMessage = null;
     this.selectedRelease = null;
 
     // init booleans
-    this.loadingSocial = false;
-    this.loadingReleases = false;
     this.displayContent = false;
 
     // load the friends
@@ -115,52 +95,47 @@ export default {
   },
   methods: {
     fetchFriends () {
-      this.loadingSocial = true;
+      this.$emit('startLoading','Chargement des amis suivis...');
       axios.get("/deezer/me/social")
         .then((response) => {
-          this.loadingSocial = false;
           if (response.status === 200 && response.data.data) {
             response.data.data.followings.forEach(friend => (
               this.friends.push(friend)
-            ));   
+            ));
           }
+          this.$emit('endLoading');
         })
         .catch((error) => {
-          this.loadingSocial = false;
-          switch(error.response.status) {
-            case 401:
-              this.errorMessage = "Il faut refresh le token";
-              break;
-            default:
-              this.errorMessage = error;
-              break;
-          }
+          this.$emit('endLoading');
+          this.$emit('error', error);
         });
     },
     onChangeFriend(event) {
       this.selectedRelease = null;
+      this.loadingReleases = true;
+      this.displayContent = false;
 
       const friend_id = event.target.value;
       this.selectedFriend = this.friends.find(item => {
         return item.id == friend_id;
       })
+    },
+    onError(error) {
       this.displayContent = false;
-      this.loadingReleases = true;
-    },
-    onError: function (error) {
-      console.log(error)
-      this.errorMessage = error;
-    },
-    onEndingLoad: function () {
       this.loadingReleases = false;
-      this.displayContent = true;
+      this.$emit('error', error);
     },
-    onRelease: function (item) {
+    onEndLoading() {
+      this.displayContent = true;
+      this.loadingReleases = false;
+    },
+    onRelease(item) {
       this.selectedRelease = item;
     }
   }
 }
 </script>
+
 
 <style type="text/css">
 /* Enter and leave animations can use different */

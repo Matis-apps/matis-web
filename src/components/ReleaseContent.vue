@@ -1,16 +1,13 @@
 <template>
   <div id="release-content">
-    <div v-if="release == null" class="alert alert-warning">
-      <h4 class="alert-heading">Pas de nouveauté selectionnée !</h4>
-      <hr>
-      <p class="mb-0">Selectionne un élément dans la liste pour voir son contenu.</p>
-    </div>
-    <div v-else>
+    <div v-if="release">
       <div v-if="releaseType == 'album'">
         <CrossAlbum
           from="*"
           v-bind:query="release.author.name + ' ' + release.content.title"
-          v-bind:upc="upc"/>
+          v-bind:upc="upc"
+          v-on:startLoading="$emit('startLoading',$event)"
+          v-on:error="$emit('error',$event)"/>
       </div>
       <div class="card text-left">
         <div class="card-header d-flex">
@@ -23,12 +20,9 @@
             </p>
           </div>
         </div>
-
         <div class="card-body">
-          
           <h5 class="card-title">{{capitalize(release.content.type)}}</h5>
-          <p class="card-text"><small class="text-muted">Sortie le {{ release.content.updated_at }}</small></p>
-
+          <p class="card-text text-muted small">Sortie le {{ release.content.updated_at }}</p>
           <div v-if="loadingTracklist">
             <div class="alert alert-light">
               <div class="spinner-border text-primary" role="status"></div>
@@ -36,7 +30,7 @@
             </div>
           </div>
           <div v-else-if="tracklist.length > 0">
-            <p><small>{{totalTracks}} tracks</small></p>
+            <p class="small">{{totalTracks}} tracks</p>
             <ul class="list-group my-2">
               <li class="list-group-item align-items-center"
                 v-for="(track, index) in tracklist"
@@ -44,6 +38,9 @@
                 <b>#{{index+1}}</b> | <span v-for="artist in track.artist" v-bind:key="artist._uid"><a :href="artist.link" target="_blank">{{artist.name}}</a> | </span><a :href="track.link" target="_blank" class="text-success">{{track.name}}</a>
               </li>
             </ul>
+          </div>
+          <div v-else>
+            <p class="small">La tracklist est vide.</p>
           </div>
           <div v-if="release._obj == 'album'">
             <hr>
@@ -77,6 +74,11 @@
         </div>
       </div>
     </div>
+    <div v-else class="alert alert-warning">
+      <h4 class="alert-heading">Pas de nouveauté selectionnée !</h4>
+      <hr>
+      <p class="mb-0">Selectionne un élément dans la liste pour voir son contenu.</p>
+    </div>
   </div>
 </template>
 
@@ -102,15 +104,11 @@ export default {
     }
   },
   mounted() {
-    if (this.release) {
-      this.init(this.release);
-    }
+    if (this.release) this.init(this.release);
   },
   watch: { 
     release: function(newVal, oldVal) { // watch it
-      if (newVal) {
-        this.init(newVal)
-      }
+      if (newVal) this.init(newVal);
     }
   },
   methods: {
@@ -136,7 +134,7 @@ export default {
       return s.charAt(0).toUpperCase() + s.slice(1);
     },
     fetchReleaseContent (obj, id) {
-      this.showLoading('Chargement du contenu...');
+      this.$emit('startLoading','Chargement du contenu...');
       this.loadingTracklist = true;
       axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/release/"+obj+"/"+id)
         .then((response) => {
@@ -153,13 +151,13 @@ export default {
         });
     },
     fetchRelatedArtists (id) {
-      this.showLoading('Chargement des artistes relatives...');
+      this.$emit('startLoading','Chargement des artistes relatives...');
       this.loadingRelated = true;
       axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/artist/"+id+"/related")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.relatedArtists = response.data.data;
-            //this.relatedArtists.sort((a,b) => this.sortLastReleases(a,b));
+            this.relatedArtists.sort((a,b) => this.sortLastReleases(a,b));
           }
           this.loadingRelated = false;
         })
@@ -167,13 +165,6 @@ export default {
           this.loadingRelated = false;
           this.$emit('error', error);
         });
-    },
-    showLoading(message) {
-      let payload = {
-        type: 'loading',
-        message: message
-      }
-      this.$store.dispatch('toast/show', payload)
     },
     sortLastReleases ( a, b ) {
       if ( a.content.updated_at == null ) return 1;

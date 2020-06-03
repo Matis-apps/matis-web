@@ -7,7 +7,8 @@
     <PlaylistsFeed
       v-if="platform"
       v-bind:platform="platform"
-      v-on:endingLoad="onEndingLoad"/>
+      v-on:startLoading="$emit('startLoading',$event)"
+      v-on:error="$emit('error',$event)"/>
   </div>
 </template>
 
@@ -25,15 +26,5 @@ export default {
       return this.$store.getters['platform/getCurrentPlatform'];
     },
   },
-  methods: {
-    onEndingLoad: function(e) {
-      var buttons = document.querySelectorAll("#buttonsSection button");
-      if (buttons.length > 0) {
-        buttons.forEach(button => {
-          button.disabled = false;
-        })
-      }
-    }
-  }
 }
 </script>

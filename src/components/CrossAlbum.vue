@@ -54,8 +54,6 @@ export default {
     }
   },
   mounted() {
-    console.log("mounted")
-
     if (this.upc) {
       this.loadSearch();
     } else if (this.query) {
@@ -64,13 +62,11 @@ export default {
   },
   watch: { 
     query: function(newVal, oldVal) { // watch it
-      console.log(newVal)
       if(newVal) {
         this.waiting = true;
       }
     },
     upc: function(newVal, oldVal) { // watch it
-      console.log(newVal)
       if(newVal) {
         this.loadSearch()
       }
@@ -91,7 +87,7 @@ export default {
 
       this.waiting = false;
       this.loading = true;
-      this.showLoading('Recherche sur toutes les plateformes...');
+      this.$emit('startLoading','Recherche sur toutes les plateformes...');
       axios.get(url)
         .then((response) => {
           if (response.status === 200) {
@@ -102,33 +98,9 @@ export default {
         })
         .catch((error) => {
           this.loading = false;
-          this.showError(error)
-          //this.$emit('error', error);
+          this.$emit('error', error);
           //this.$emit('endingLoad');
         });
-    },
-    showLoading(message) {
-      let payload = {
-        type: 'loading',
-        message: message
-      }
-      this.$store.dispatch('toast/show', payload)
-    },
-    showError(error) {
-      let payload = {
-        type: 'error',
-      }
-
-      if(error.response) {
-        if (error.response.data && error.response.data.error) {
-          payload.message = error.response.data.error.message||error.response.statusText;
-        } else {
-          payload.message = error.response.message||error.response.statusText;
-        }
-      } else {
-        payload.message = error.message;
-      }
-      this.$store.dispatch('toast/show', payload)
     }
   }
 }

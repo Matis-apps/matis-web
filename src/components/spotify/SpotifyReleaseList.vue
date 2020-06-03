@@ -6,7 +6,6 @@
     v-bind:processingTime="processingTime"
     v-on:showRelease="onShowRelease"
     v-on:selectGenre="onSelectGenre"/>
-
 </template>
 
 <script>
@@ -48,9 +47,10 @@ export default {
      * @params index int - For pagination
      * @params retry int - Number of retries remaining
      */
-    fetchReleases () {  
-      let start = Date.now();
+    fetchReleases () {
+      this.$emit('startLoading','Chargement des nouveautés...');
 
+      let start = Date.now();
       const url = 
         this.user_id
           ? "/spotify/releases/" + this.user_id
@@ -65,11 +65,11 @@ export default {
             this.genres = response.data.genres;
             this.genres.map(g => g.isClicked = false);
             this.processingTime = (end - start)/1000;
-            this.$emit('endingLoad');
+            this.$emit('endLoading');
           }
         })
         .catch((error) => {
-          this.$emit('endingLoad');
+          this.$emit('endLoading');
           this.$emit('error', error);
         });
     },

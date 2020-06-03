@@ -51,14 +51,6 @@ axios.interceptors.response.use(response => {
   return Promise.reject(error);
 })
 
-if (!store.getters['auth/isAuthenticated']) {
-  try {
-    store.dispatch('auth/refresh')
-  } catch (err) {
-    // Redirect to login ?
-  }
-}
-
 new Vue({
   router,
   store,

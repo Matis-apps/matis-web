@@ -3,8 +3,10 @@
     <div id="nav">
       <Navbar/>
     </div>
-    <div class="container-fluid">
-      <router-view/>
+    <div id="view" class="container-fluid mb-2">
+      <router-view
+        v-on:startLoading="showLoading"
+        v-on:error="showError"/>
     </div>
   </div>
 </template>
@@ -18,8 +20,30 @@ export default {
   components: {
      Navbar, 
   },
-  created() {
-    
+  methods: {
+    showLoading(message) {
+      let payload = {
+        type: 'loading',
+        message: message
+      }
+      this.$store.dispatch('toast/show', payload)
+    },
+    showError(error) {
+      let payload = {
+        type: 'error',
+      }
+
+      if(error.response) {
+        if (error.response.data && error.response.data.error) {
+          payload.message = error.response.data.error.message||error.response.statusText;
+        } else {
+          payload.message = error.response.message||error.response.statusText;
+        }
+      } else {
+        payload.message = error.message||error;
+      }
+      this.$store.dispatch('toast/show', payload)
+    }
   },
 }
 </script>
@@ -38,7 +62,8 @@ export default {
     color: #2c3e50;
 
     &.router-link-exact-active {
-      color: #42b983;
+      font-weight: bold;
+      color: #86a8e2;
     }
   }
 }

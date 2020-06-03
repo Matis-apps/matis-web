@@ -5,9 +5,10 @@
       <span v-else>Selectionnez une plateforme ci-dessus</span>
     </h2>
     <ReleasesFeed
-       v-if="platform"
-       v-bind:platform="platform"
-       v-on:endingLoad="onEndingLoad"/>
+      v-if="platform"
+      v-bind:platform="platform"
+      v-on:startLoading="$emit('startLoading',$event)"
+      v-on:error="$emit('error', $event)"/>
   </div>
 </template>
 
@@ -25,18 +26,5 @@ export default {
       return this.$store.getters['platform/getCurrentPlatform'];
     }
   },
-  created() {
-
-  },
-  methods: {
-    onEndingLoad: function(e) {
-      var buttons = document.querySelectorAll("#buttonsSection button");
-      if (buttons.length > 0) {
-        buttons.forEach(button => {
-          button.disabled = false;
-        })
-      }
-    }
-  }
 }
 </script>
