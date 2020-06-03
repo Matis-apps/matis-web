@@ -1,4 +1,4 @@
-<template>
+error<template>
   <div id="release-content">
     <div v-if="release">
       <div v-if="releaseType == 'album'">
@@ -35,7 +35,7 @@
               <li class="list-group-item align-items-center"
                 v-for="(track, index) in tracklist"
                 v-bind:key="track.id">
-                <b>#{{index+1}}</b> | <span v-for="artist in track.artist" v-bind:key="artist._uid"><a :href="artist.link" target="_blank">{{artist.name}}</a> | </span><a :href="track.link" target="_blank" class="text-success">{{track.name}}</a>
+                <b>#{{index+1}}</b> | <span v-for="artist in track.artist" v-bind:key="'content-'+artist._uid"><a :href="artist.link" target="_blank">{{artist.name}}</a> | </span><a :href="track.link" target="_blank" class="text-success">{{track.name}}</a>
               </li>
             </ul>
           </div>
@@ -54,7 +54,7 @@
             <div class="d-flex justify-content-around row" v-else-if="relatedArtists.length > 0">
               <div class="card col-5 my-2"
                 v-for="artist in relatedArtists"
-                v-bind:key="artist.author.id">
+                v-bind:key="'related-'+artist._uid">
 
                 <div class="row d-flex justify-content-center align-items-center">
                   <img class="img-fluid rounded m-4" style="max-width: 60%;" :src="artist.author.picture" alt="Card image cap">

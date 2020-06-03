@@ -11,7 +11,7 @@
     <div class="row d-flex flex-column">
       <div class="card mb-2" 
         v-for="(item, index) in releases" 
-        v-bind:key="item._uid" 
+        v-bind:key="'tracklist-'+item._uid" 
         v-show="item.display == true">
         <div class="card-header d-flex justify-content-between" style="background-color: #86a8e2">
           <img v-if="item.author.picture" :src="item.author.picture" class="card-img-top img-fluid rounded" alt="picture artist" style="max-height: 50px; max-width: 50px;">
@@ -49,12 +49,6 @@ export default {
     countReleases: function() {
       return this.releases.length;
     }
-  },
-  created() {
-    console.log('ReleasesList created) releases.length = ' + this.releases.length)
-  },
-  mounted() {
-    console.log('ReleasesList mounted) releases.length = ' + this.releases.length)
   },
   methods: {
     releaseDays: function (day) {

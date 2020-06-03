@@ -1,52 +1,62 @@
 <template>
-  <div>
-    <div class="card mb-3">
-      <div class="card-header text-white bg-primary">
-        Account
-      </div>
-      <div class="card-body">
-        <div v-if="user">
-          <p>Mail: {{ user.email }}</p>    
-          <p>User: {{ user.name }}</p>
-        </div>
-        <p v-else>No user</p>
-
-        <p v-if="token">Token: <span class="small">{{token}}</span></p>
-        <p v-else>No token</p>
-      </div>
-    </div>
-
-    <div v-if="loadingAccounts">
-      <div class="alert alert-light">
-        <div class="spinner-border text-primary" role="status"></div>
-        <span class="mx-3">Chargement des données du compte...</span>      
-      </div>
-    </div>
+  <div id="account">
     <div v-if="user">
-      <div class="card mb-3">
-        <div class="card-header">
-          Deezer
+      <h2 class="mb-3">Vue d'ensemble du compte</h2>
+      <div class="mb-4">
+        <h3 class="mb-2">Profil</h3>
+        <div class="d-flex justify-content-between">
+          <span class="col-4 font-weight-lighter">Adresse e-mail</span>
+          <span class="col-8 font-weight-bold text-right">{{ user.email }}</span>
         </div>
-        <div class="card-body">
-          <div v-if="user.deezer">
-            <p><b>#{{user.deezer.account.id}}</b> - {{user.deezer.account.name}}</p>
-            <p>Access Token: {{user.deezer.token.access_token}}</p>
+        <hr>
+        <div class="d-flex justify-content-between">
+          <span class="col-4 font-weight-lighter">Nom</span>
+          <span class="col-8 font-weight-bold text-right">{{ user.name }}</span>
+        </div>
+        <hr>
+        <div v-if="token" class="d-flex justify-content-between">
+          <span class="col-4 font-weight-lighter">Token</span>
+          <span class="col-8 font-weight-bold text-truncate text-right">{{ token }}</span>
+        </div>
+        <hr>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="mb-2">Deezer</h3>
+        <div v-if="user.deezer">
+          <div class="d-flex justify-content-between">
+            <span class="col-4 font-weight-lighter">Login</span>
+            <span class="col-8 font-weight-bold text-right"><small>#{{user.deezer.account.id}} -</small> {{user.deezer.account.name}}</span>
           </div>
+          <hr>
+          <div class="d-flex justify-content-between">
+            <span class="col-4 font-weight-lighter">Access Token</span>
+            <span class="col-8 font-weight-bold text-truncate text-right">{{user.deezer.token.access_token}}</span>
+          </div>
+          <hr>
           <p><a class="btn btn-primary" :href="deezerConnect" role="button">{{user.deezer ? 'Refresh':'Connect'}}</a></p>
         </div>
       </div>
-      <div class="card mb-3">
-        <div class="card-header">
-          Spotify
-        </div>
-        <div class="card-body">
-          <div v-if="user.spotify">
-            <p><b>#{{user.spotify.account.id}}</b> - {{user.spotify.account.display_name}}</p>
-            <p>Access Token: {{user.spotify.token.access_token}}</p>
+
+      <div class="mb-4">
+        <h3 class="mb-2">Spotify</h3>    
+        <div v-if="user.spotify">
+          <div class="d-flex justify-content-between">
+            <span class="col-4 font-weight-lighter">Login</span>
+            <span class="col-8 font-weight-bold text-right"><small>#{{user.spotify.account.id}} -</small> {{user.spotify.account.display_name}}</span>
           </div>
+          <hr>
+          <div class="d-flex justify-content-between">
+            <span class="col-4 font-weight-lighter">Access Token</span>
+            <span class="col-8 font-weight-bold text-truncate text-right">{{user.spotify.token.access_token}}</span>
+          </div>
+          <hr>
           <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Refresh':'Connect'}}</a></p>
         </div>
       </div>
+    </div>
+    <div v-else>
+      <h2 class="mb-3">Le compte n'existe pas</h2>
     </div>
   </div>
 </template>
@@ -139,3 +149,18 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+#account {
+  h2 {
+    color: #9286e2;
+    font-size: 2.02em;
+    font-weight: bold;
+  }
+  h3 {
+    color: #86a8e2;
+    font-size: 1.66em;
+    font-weight: bold;
+  } 
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card bg-light border-secondary mb-3">
+    <div v-if="display" class="card bg-light border-secondary mb-3">
       <div class="card-header">Liens vers les autres plateformes</div>
       <div v-if="waiting" class="card-body">
         <div class="alert alert-secondary">
@@ -51,6 +51,7 @@ export default {
       albums: null,
       waiting: false,
       loading: false,
+      display: true,
     }
   },
   mounted() {
@@ -74,6 +75,7 @@ export default {
   },
   methods: {
     loadSearch: function () {
+      this.display = true;
       this.albums = null;
       this.fetchSearch();
     },
@@ -90,16 +92,19 @@ export default {
       this.$emit('startLoading','Recherche sur toutes les plateformes...');
       axios.get(url)
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status == 200 && response.data.data) {
             this.albums = response.data.data;
-            this.loading = false;
-            //this.$emit('endingLoad');
+            this.display = true;
+          } else {
+            this.$emit('error', 'Impossible de trouver les liens vers les autres platformes');
+            this.display = false;
           }
+          this.loading = false;
         })
         .catch((error) => {
+          this.display = false;
           this.loading = false;
           this.$emit('error', error);
-          //this.$emit('endingLoad');
         });
     }
   }

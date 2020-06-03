@@ -2,7 +2,7 @@ export default {
   namespaced: true,
   state: {
     platform: null,
-    availables: ['Deezer', 'Spotify', 'Test'],
+    availables: ['Deezer', 'Spotify'],
     enables: [],
   },
   mutations: {
