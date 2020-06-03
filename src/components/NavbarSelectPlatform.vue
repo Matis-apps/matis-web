@@ -7,7 +7,7 @@
       </a>
       <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
         <a class="dropdown-item" href="#"
-          v-bind:class="{ 'text-muted': !isActive(platform), 'text-success': isCurrent(platform) }" 
+          v-bind:class="{ 'text-muted disabled': !isActive(platform), 'text-success': isCurrent(platform) }"
           v-for="platform in platforms"
           v-bind:key="platform.name"
           v-on:click="onSelectPlatform(platform)">
@@ -51,3 +51,8 @@ export default {
   },
 };
 </script>
+<style type="text/css">
+a.disabled {
+  pointer-events: none;
+}
+</style>

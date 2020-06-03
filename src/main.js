@@ -22,6 +22,11 @@ axios.defaults.withCredentials = true;
 axios.interceptors.response.use(response => {
   return response; // Successful case
 }, async (error) => { // Error case
+
+  if(!error.response) {
+    return Promise.reject(error.message||error);
+  }
+ 
   const {
     config,
     response : {status, data}

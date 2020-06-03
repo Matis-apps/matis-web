@@ -9,14 +9,14 @@ export default {
     SET_PLATFORMS (state, platforms) {
       if (platforms.length > 0) {
         platforms.forEach(p => {
-          if(state.availables.includes(p)) {
+          if(state.availables.includes(p) && !state.enables.includes(p)) {
             state.enables.push(p);
           }
         })
       }
     },
     ADD_PLATFORM (state, platform) {
-      if (state.enables.includes(platform)) {
+      if (state.availables.includes(platform) && !state.enables.includes(platform)) {
         state.enables.push(platform);
       }
     },
@@ -52,6 +52,7 @@ export default {
     }
   },
   getters: {
+    isUsingPlatform: state => !!state.platform,
     getCurrentPlatform: state => {
       return state.platform;
     },

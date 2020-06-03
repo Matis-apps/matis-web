@@ -34,8 +34,8 @@
             <span class="col-8 font-weight-bold text-truncate text-right">{{user.deezer.token.access_token}}</span>
           </div>
           <hr>
-          <p><a class="btn btn-primary" :href="deezerConnect" role="button">{{user.deezer ? 'Refresh':'Connect'}}</a></p>
         </div>
+        <p><a class="btn btn-primary" :href="deezerConnect" role="button">{{user.deezer ? 'Refresh':'Connect'}}</a></p>
       </div>
 
       <div class="mb-4">
@@ -51,8 +51,8 @@
             <span class="col-8 font-weight-bold text-truncate text-right">{{user.spotify.token.access_token}}</span>
           </div>
           <hr>
-          <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Refresh':'Connect'}}</a></p>
         </div>
+        <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Refresh':'Connect'}}</a></p>
       </div>
     </div>
     <div v-else>
@@ -142,9 +142,11 @@ export default {
     successToast(from) {
       let payload = {
         type: 'success',
-        message: 'Le compte '+from+' a été refresh'
+        message: 'Le compte '+from+' a été mis à jour'
       }
       this.$store.dispatch('toast/show', payload)
+      this.$store.dispatch('platform/addPlatform', from);
+      this.$store.dispatch('platform/setCurrentPlatform', from);
     },
   }
 }

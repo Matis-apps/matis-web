@@ -44,25 +44,25 @@ const routes = [
     path: '/releases',
     name: 'Releases',
     component: Releases,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, platform: true, },
   },
   {
     path: '/social',
     name: 'Social',
     component: Social,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, platform: true, },
   },
   {
     path: '/search',
     name: 'Search',
     component: Search,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, platform: true, },
   },
   {
     path: '/playlists',
     name: 'Playlists',
     component: Playlists,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, platform: true, },
   }
 ]
 
@@ -75,6 +75,15 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   store.dispatch('toast/clearStates');
+
+  document.title = 'Matis - ' + to.name;
+
+  /* In progress ...
+  if (to.matched.some(record => record.meta.platform) && !store.getters['platform/isUsingPlatform']) {
+    let payload = { type: 'error', message: 'Il faut utiliser une platforme pour accéder à cette page.', keepIt: true }
+    store.dispatch('toast/show', payload);
+  }
+  */
 
   if (to.matched.length == 0) {
     let payload = { type: 'error', message: 'Page inexistante.', keepIt: true }
