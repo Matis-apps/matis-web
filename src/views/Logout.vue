@@ -8,12 +8,13 @@ export default {
   created() {
     this.$store.dispatch('auth/logout')
       .then(() => {
-        console.log('Logout')
         this.showLogout()
-        this.$router.push({ path: '/' });
       })
       .catch(error => {
-        console.log(error)
+        this.$emit('error', error)
+      })
+      .finally(() => {
+        this.$router.push({ path: '/' });
       })
   },
   methods: {

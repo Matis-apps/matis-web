@@ -18,7 +18,7 @@
             </div>
             <div class="form-group">
               <label for="inputPassword1">Mot de passe</label>
-              <input v-model="password" type="password" class="form-control" id="inputPassword1" placeholder="azerty">
+              <input v-model="password" type="password" class="form-control" id="inputPassword1" placeholder="N'utilisez pas azerty...">
             </div>
             <button type="submit" class="btn btn-primary">Enregister</button>
           </form>

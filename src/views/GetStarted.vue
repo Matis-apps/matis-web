@@ -29,9 +29,25 @@
         </div>
       </li>
       <li>
+        <p class="main">Sélectionner une plateforme</p>
+        <div class="description">
+            <span>
+              Afin de naviguer entre les différentes plateformes, un bouton est disponible dans le menu comme affiché ici : 
+            </span>
+            <div class="mx-2 dropdown dropleft d-inline">
+              <button class="btn btn-light dropdown-toggle" type="button" id="dropdownExample">
+                Platform
+              </button>
+            </div>
+            <span>
+              Ainsi, les données seront automatiquement calculée en fonction de la plateforme ayant été selectionnée.
+            </span>
+        </div>
+      </li>
+      <li>
         <p class="main">Voir les nouveautés</p>
         <div class="description">
-          <p>Une fois les actions ci-dessus réalisées, leurs données seront traités pour proposer du contenu sur les nouveautés qui pourront vous intéresser.</p>
+          <p>Une fois les actions ci-dessus réalisées, les données seront traitées pour proposer du contenu sur les nouveautés qui pourront vous intéresser.</p>
         </div>
       </li>
     </ol>
@@ -42,6 +58,10 @@
       <li>Les données sont aggrégées par un serveur <a href="https://nodejs.org" target="_blank">Node.js</a></li>
       <li>Cette application web est développée avec <a href="https://vuejs.org" target="_blank">Vue.js</a></li>
     </ul>
+    <hr>
+    <h2>Privacy</h2>
+    <p>Matis tient à la confidentialité des données de ses utilisateurs. Lorsque vous vous connectez, uniquement les données liées au compte sont stockées : nom d'utilisateur, identifiant (généralement numérique, 14728472 ...), lien vers la photo de profile et préférences.</p>
+    <p>Vous pouvez demander à tout moment de supprimer ces données.</p>
     <hr>
     <h2>About</h2>
     <div class="d-flex align-self-center">
@@ -68,6 +88,7 @@ export default {
   }
   li {
     .main {
+      margin-top: 2em;
       font-weight: bold;
       font-style: italic;
     }

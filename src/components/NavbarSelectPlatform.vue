@@ -6,7 +6,7 @@
         <span v-else>Platform</span>
       </a>
       <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-        <button type="button" class="dropdown-item btn btn-link"
+        <button type="button" class="dropdown-item btn btn-link" data-toggle="collapse" data-target="#navbarNavDropdown"
           v-bind:class="{ 'text-muted font-italic font-weight-light': !isActive(platform), 'text-success font-weight-bold': isCurrent(platform) }"
           v-for="platform in platforms"
           v-bind:key="platform.name"
@@ -17,7 +17,7 @@
       </div>
     </li>
     <li class="nav-item">
-      <router-link class="nav-link text-danger" to="/logout" exact>Logout</router-link>
+      <router-link class="nav-link text-danger" to="/logout" data-toggle="collapse" data-target="#navbarNavDropdown" exact>Logout</router-link>
     </li>
   </ul>
 </template>

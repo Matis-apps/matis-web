@@ -14,7 +14,7 @@
             </div>
             <div class="form-group">
               <label for="inputPassword">Mot de passe</label>
-              <input v-model="password" type="password" class="form-control" id="inputPassword" placeholder="azerty">
+              <input v-model="password" type="password" class="form-control" id="inputPassword" placeholder="azerty ?">
             </div>
             <button type="submit" class="btn btn-primary">Connexion</button>
           </form>

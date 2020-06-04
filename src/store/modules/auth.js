@@ -62,7 +62,7 @@ export default {
             }
             dispatch('toast/show', payload, {root: true})
             const platforms = response.data.has;
-            dispatch('platform/setPlatforms', {root: true});
+            dispatch('platform/setPlatforms', platforms, {root: true});
             resolve(response);
           })
         .catch(error => {
