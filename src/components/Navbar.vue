@@ -7,8 +7,8 @@
         <i class="text-secondary medium material-icons">menu</i>
       </span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav mr-auto" v-if="isAuthenticated">
+    <div v-if="isAuthenticated" class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav mr-auto">
         <li class="nav-item">
           <router-link class="nav-link" to="/account" exact-path>Account</router-link>
         </li>
@@ -25,7 +25,11 @@
           <router-link class="nav-link" to="/search" exact>Search</router-link>
         </li>
       </ul>
-      <ul v-else class="navbar-nav mr-auto">
+      <NavbarSelectPlatform
+        v-if="isAuthenticated"/>
+    </div>
+    <div v-else class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav mr-auto">
         <li class="nav-item">
           <router-link class="nav-link" to="/login" exact>Login</router-link>
         </li>
@@ -33,8 +37,11 @@
           <router-link class="nav-link" to="/register" exact>Register</router-link>
         </li>
       </ul>
-      <NavbarSelectPlatform
-        v-if="isAuthenticated"/>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <router-link class="nav-link" to="/get-started" exact>Get Started</router-link>
+        </li>
+      </ul>
     </div>
   </nav>
 </template>

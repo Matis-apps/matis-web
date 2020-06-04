@@ -9,6 +9,7 @@ import Search from '../views/Search.vue'
 import Playlists from '../views/Playlists.vue'
 import Home from '../views/Home.vue'
 import Logout from '../views/Logout.vue'
+import GetStarted from '../views/GetStarted.vue'
 import store from '../store' // your vuex store 
 
 Vue.use(VueRouter)
@@ -18,6 +19,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/get-started',
+    name: 'Get Started',
+    component: GetStarted,
   },
   {
     path: '/login',
@@ -39,7 +45,7 @@ const routes = [
     name: 'Account',
     component: Account,
     meta: { requiresAuth: true },
-  },  
+  },
   {
     path: '/releases',
     name: 'Releases',

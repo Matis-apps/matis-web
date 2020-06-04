@@ -1,7 +1,10 @@
 <template>
   <div id="login">
-    <div class="row">
-      <div class="offset-4 col-4">
+    <div class="my-4">
+      <h2 class="text-center">Login</h2>
+    </div>
+    <div class="row mb-2">
+      <div class="offset-lg-3 col-lg-6 offset-md-2 col-md-8 offset-sm-1 col-sm-10 col-xs-12">
         <div class="card p-3">
           <form @submit.prevent="checkForm">
             <div class="form-group">
@@ -18,13 +21,13 @@
         </div>
       </div>
     </div>
-    <div class="row mt-2">
-      <div class="offset-4 col-4">
+    <div class="row">
+      <div class="offset-lg-3 col-lg-6 offset-md-2 col-md-8 offset-sm-1 col-sm-10 col-xs-12">
         <div v-if="errorMessage" class="alert alert-danger" role="alert">
           {{errorMessage}}
         </div>
         <div class="alert alert-warning" role="alert">
-          Première connextion sur #matis ? Enregister toi <router-link to="/register">ici</router-link> !
+          Première connextion sur Matis ? Enregister toi ici : <router-link to="/register">Register</router-link> !
         </div>
       </div>
     </div>

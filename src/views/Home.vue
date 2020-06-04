@@ -12,7 +12,7 @@
           {{platform.name}}
         </li>
       </ul>
-      <a class="btn btn-primary btn-md mb-2" href="#" role="button">Get started</a>
+      <router-link class="btn btn-primary btn-md mb-2" role="button" to="/get-started">Get started</router-link>
     </div>
   </div>
 </template>

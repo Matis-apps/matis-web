@@ -76,7 +76,7 @@ export default {
         .finally(() => {
           this.done = true;
         });
-    },    
+    },
     stillAlive() {
       if (!this.done) {
         this.$emit('startLoading','Cela prend un peu de temps...');

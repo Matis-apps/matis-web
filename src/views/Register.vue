@@ -1,7 +1,10 @@
 <template>
-  <div>
-    <div class="row">
-      <div class="offset-4 col-4">
+  <div id="register">
+    <div class="my-4">
+      <h2 class="text-center">Register</h2>
+    </div>
+    <div class="row mb-2">
+      <div class="offset-lg-3 col-lg-6 offset-md-2 col-md-8 offset-sm-1 col-sm-10 col-xs-12">
         <div class="card p-3">
           <form @submit="checkForm">
             <div class="form-group">
@@ -22,17 +25,10 @@
         </div>
       </div>
     </div>
-    <div v-if="errorMessage" class="row mt-2">
-      <div class="offset-4 col-4">
+    <div v-if="errorMessage" class="row">
+      <div class="offset-lg-3 col-lg-6 offset-md-2 col-md-8 offset-sm-1 col-sm-10 col-xs-12">
         <div class="alert alert-danger" role="alert">
           {{errorMessage}}
-        </div>
-      </div>
-    </div>
-    <div v-if="successMessage" class="row mt-2">
-      <div class="offset-4 col-4">
-        <div class="alert alert-success" role="alert">
-          {{successMessage}}
         </div>
       </div>
     </div>
@@ -47,7 +43,6 @@ export default {
   name: 'Login',
   data() {
     return {
-      successMessage: null,
       errorMessage: null,
       name: '',
       email: '',
