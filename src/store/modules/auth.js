@@ -25,6 +25,29 @@ export default {
     }
   },
   actions: {
+    register ({commit, dispatch}, params) {
+      return new Promise((resolve, reject) => { // The Promise used for router redirect in login
+        commit('AUTH_REQUEST')
+        axios.post("/auth/register", params)
+          .then(response => {
+            const token = response.data.access_token.token;
+            commit('AUTH_SUCCESS', token);
+            let payload = {
+              type: 'success',
+              message: 'Have a nice trip on Matis !',
+              keepIt: true,
+            }
+            dispatch('toast/show', payload, {root: true})
+            const platforms = response.data.has;
+            dispatch('platform/setPlatforms', platforms, {root: true});
+            resolve(response);
+          })
+        .catch(error => {
+          commit('AUTH_ERROR', error)
+          reject(error)
+        })
+      })
+    },
     login ({commit, dispatch}, params) {
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
         commit('AUTH_REQUEST')
@@ -35,10 +58,11 @@ export default {
             let payload = {
               type: 'success',
               message: 'Welcome back !',
+              keepIt: true,
             }
             dispatch('toast/show', payload, {root: true})
             const platforms = response.data.has;
-            dispatch('platform/setPlatforms', platforms, {root: true});
+            dispatch('platform/setPlatforms', {root: true});
             resolve(response);
           })
         .catch(error => {
@@ -57,6 +81,7 @@ export default {
             let payload = {
               type: 'success',
               message: 'Back in the game !',
+              keepIt: true,
             }
             dispatch('toast/show', payload, {root: true})
             const platforms = response.data.has;

@@ -6,13 +6,14 @@
         <span v-else>Platform</span>
       </a>
       <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-        <a class="dropdown-item" href="#"
-          v-bind:class="{ 'text-muted disabled': !isActive(platform), 'text-success': isCurrent(platform) }"
+        <button type="button" class="dropdown-item btn btn-link"
+          v-bind:class="{ 'text-muted font-italic font-weight-light': !isActive(platform), 'text-success font-weight-bold': isCurrent(platform) }"
           v-for="platform in platforms"
           v-bind:key="platform.name"
           v-on:click="onSelectPlatform(platform)">
             {{ platform.name }}
-          </a>
+        </button>
+
       </div>
     </li>
     <li class="nav-item">
@@ -38,9 +39,7 @@ export default {
   },
   methods: {
     onSelectPlatform(item) {
-      if (this.isActive(item)) {
-        this.$store.dispatch('platform/setCurrentPlatform', item.name)
-      }
+      this.$store.dispatch('platform/setCurrentPlatform', item.name)
     },
     isActive: function(item) {
       return item.active;
@@ -51,8 +50,3 @@ export default {
   },
 };
 </script>
-<style type="text/css">
-a.disabled {
-  pointer-events: none;
-}
-</style>

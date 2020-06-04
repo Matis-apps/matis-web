@@ -21,9 +21,7 @@ export default {
       }
     },
     SET_CURRENT_PLATFORM (state, platform) {
-      if (state.availables.includes(platform) && state.enables.includes(platform)) {
-        state.platform = platform;
-      }
+      state.platform = platform;
     },
   },
   actions: {
@@ -42,13 +40,21 @@ export default {
     addPlatform ({commit}, platform) {
       commit('ADD_PLATFORM', platform);
     },
-    setCurrentPlatform ({commit, dispatch}, platform) {
-      commit('SET_CURRENT_PLATFORM', platform);
-      let payload = {
-        type: 'success',
-        message: 'Platforme selectionnée : ' + platform,
-      }
-      dispatch('toast/show', payload, {root: true})
+    setCurrentPlatform ({commit, dispatch, state}, platform) {
+      if (state.availables.includes(platform) && state.enables.includes(platform)) {
+        commit('SET_CURRENT_PLATFORM', platform);
+        let payload = {
+          type: 'success',
+          message: 'Platforme selectionnée : ' + platform,
+        }
+        dispatch('toast/show', payload, {root: true})
+      } else {
+        let payload = {
+          type: 'error',
+          message: "Vous n'avez pas accès à cette plateforme",
+        }
+        dispatch('toast/show', payload, {root: true})
+      }      
     }
   },
   getters: {

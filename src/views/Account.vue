@@ -22,8 +22,15 @@
       </div>
 
       <div class="mb-4">
-        <h3 class="mb-2">Deezer</h3>
+        <h3 class="mb-3">Deezer</h3>
         <div v-if="user.deezer">
+          <div class="d-flex justify-content-between align-items-end">
+            <span class="col-2">
+              <img :src="user.deezer.account.picture" class="img-fluid rounded">
+            </span>
+            <span class="col-10 font-weight-lighter text-right">Console pour accéder aux données : <a href="https://developers.deezer.com/api/explorer" target="_blank">https://developers.deezer.com/api/explorer</a></span>
+          </div>
+          <hr>
           <div class="d-flex justify-content-between">
             <span class="col-4 font-weight-lighter">Login</span>
             <span class="col-8 font-weight-bold text-right"><small>#{{user.deezer.account.id}} -</small> {{user.deezer.account.name}}</span>
@@ -35,12 +42,28 @@
           </div>
           <hr>
         </div>
-        <p><a class="btn btn-primary" :href="deezerConnect" role="button">{{user.deezer ? 'Refresh':'Connect'}}</a></p>
+        <div v-else>
+          <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="tiny material-icons mr-2">add_alert</i>
+            Le compte Deezer n'est pas connecté. Cela peut limiter certaines fonctionnalités.
+          </div>
+        </div>
+        <p><a class="btn btn-primary" :href="deezerConnect" role="button">{{user.deezer ? 'Mettre à jour':'Connecter'}}</a></p>
       </div>
 
       <div class="mb-4">
-        <h3 class="mb-2">Spotify</h3>    
+        <h3 class="mb-3">Spotify</h3>    
         <div v-if="user.spotify">
+          <div v-if="user.spotify.account.images && user.spotify.account.images.length > 0" class="d-flex justify-content-between align-items-end">
+            <span class="col-2">
+              <img :src="user.spotify.account.images[0].url" class="img-fluid rounded">
+            </span>
+            <span class="col-10 font-weight-lighter text-right">Console pour accéder aux données : <a href="https://developer.spotify.com/console/" target="_blank">https://developer.spotify.com/console/</a></span>
+          </div>
+          <div v-else>
+            <span class="col-12 font-weight-lighter">Console pour accéder aux données : <a href="https://developer.spotify.com/console/" target="_blank">https://developer.spotify.com/console/</a></span>
+          </div>
+          <hr>
           <div class="d-flex justify-content-between">
             <span class="col-4 font-weight-lighter">Login</span>
             <span class="col-8 font-weight-bold text-right"><small>#{{user.spotify.account.id}} -</small> {{user.spotify.account.display_name}}</span>
@@ -52,7 +75,13 @@
           </div>
           <hr>
         </div>
-        <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Refresh':'Connect'}}</a></p>
+        <div v-else>
+          <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="tiny material-icons mr-2">add_alert</i>
+            Le compte Spotify n'est pas connecté. Cela peut limiter certaines fonctionnalités.
+          </div>
+        </div>
+        <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Mettre à jour':'Connecter'}}</a></p>
       </div>
     </div>
     <div v-else>

@@ -55,6 +55,11 @@ export default {
   },
   mutations: {
     SHOW_TOAST (state, {type, message, keepIt}) {
+      if(state.toasts.length > 8) { // limit the number of toasts displayed
+        state.toasts[0].goAway(0);
+        state.toasts.shift();
+      }
+
       let options = state.options[type || 'default'];
       let toast = this._vm.$toasted.show(message, options);
       toast.keepIt = keepIt;

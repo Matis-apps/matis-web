@@ -25,13 +25,6 @@
         </div>
       </div>
     </div>
-    <div v-if="errorMessage" class="row">
-      <div class="offset-lg-3 col-lg-6 offset-md-2 col-md-8 offset-sm-1 col-sm-10 col-xs-12">
-        <div class="alert alert-danger" role="alert">
-          {{errorMessage}}
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -43,7 +36,6 @@ export default {
   name: 'Login',
   data() {
     return {
-      errorMessage: null,
       name: '',
       email: '',
       password: '',
@@ -58,13 +50,13 @@ export default {
       e.preventDefault();
 
       if (this.name == '') {
-        this.errorMessage = "Un p'tit nom est obligatoire";
+        this.$emit('error', "Un p'tit nom est obligatoire");
       }
       else if (this.email == '') {
-        this.errorMessage = "L'adresse email est obligatoire";
+        this.$emit('error', "L'adresse email est obligatoire");
       }
       else if (this.password == '') {
-        this.errorMessage = "Mot de passe manquant";
+        this.$emit('error', "Mot de passe manquant");
       } else {
         const url = "/auth/register";
         const params = {
@@ -78,17 +70,7 @@ export default {
             this.$router.push({ path: 'account' });
           })
           .catch(error => {
-            if (error.response) {
-              if (error.response.status === 403) {
-                this.errorMessage = "Utilisateur introuvable";
-              } else if (error.response.status === 401) {
-                this.errorMessage = "Mot de passe invalide";
-              } else {
-                this.errorMessage = error.response.message;
-              }
-            } else {
-                this.errorMessage = error.message;
-            }
+            this.$emit('error', error);
           })
       }
     }

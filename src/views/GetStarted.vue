@@ -1,14 +1,14 @@
 <template>
   <div id="getstarted">
     <h2>Description</h2>
-    <p class="lead">Cette plateforme s'inscrit dans une démarche de décourte et partage de nouveautés musicales. Cela permet de faciliter l'accès aux musiques de façon standard, en s'abstenant du fonctionnement spécifique de chaque application.</p>
+    <p class="lead">Cette plateforme s'inscrit dans une démarche de découverte et partage de nouveautés musicales. Cela permet de faciliter l'accès aux musiques de façon standard, en s'abstenant du fonctionnement spécifique de chaque application.</p>
     <hr>
     <h2>Get Started</h2>
     <ol>
       <li>
         <p class="main">Créer un compte sur matis</p>
         <div class="description">
-          <p>Ce compte est la référence pour se connecter sur Matis. Il permettra ensuite de stocker les informations nécessaire au bon fonctionnement de l'application</p>
+          <p>Ce compte est la référence pour se connecter sur Matis. Il permettra ensuite de stocker les informations nécessaires au bon fonctionnement de l'application.</p>
           <p>Vous pouver créer un compte ici : <router-link to="/register">Register</router-link>.</p>
           <p>Si vous avez déjà un compte, vous pouvez vous connecter directement ici : <router-link to="/login">Login</router-link>.</p>
         </div>
@@ -17,6 +17,9 @@
         <p class="main">Relier vos compte d'applications musicales</p>
         <div class="description">
           <p>Une fois le compte créé, vous pouvez reliez vos applications sur cette page : <router-link to="/account">Account</router-link>.</p>
+          <div class="alert alert-warning mx-4" role="alert">
+            Après s'être connecté, un token sera fournis afin de vous identifier à l'avenir. Si une erreur se produit, vous pourrez mettre à jour manuellement cette information sur la même page ci-dessus.
+          </div>
         </div>
       </li>
       <li>
@@ -58,6 +61,11 @@ export default {
 
 <style lang="scss">
 #getstarted {
+    h2 {
+    color: #9286e2;
+    font-size: 2.02em;
+    font-weight: bold;
+  }
   li {
     .main {
       font-weight: bold;

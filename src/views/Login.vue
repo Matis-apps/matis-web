@@ -23,11 +23,8 @@
     </div>
     <div class="row">
       <div class="offset-lg-3 col-lg-6 offset-md-2 col-md-8 offset-sm-1 col-sm-10 col-xs-12">
-        <div v-if="errorMessage" class="alert alert-danger" role="alert">
-          {{errorMessage}}
-        </div>
-        <div class="alert alert-warning" role="alert">
-          Première connextion sur Matis ? Enregister toi ici : <router-link to="/register">Register</router-link> !
+        <div class="alert alert-warning mx-4" role="alert">
+          Première connexion sur Matis ? Enregistres toi ici : <router-link to="/register">Register</router-link>
         </div>
       </div>
     </div>
@@ -41,7 +38,6 @@ export default {
   name: 'Login',
   data() {
     return {
-      errorMessage: null,
       email: '',
       password: '',
     }
@@ -54,10 +50,10 @@ export default {
       e.preventDefault();
 
       if (this.email == '') {
-        this.errorMessage = "L'adresse email est obligatoire";
+        this.$emit('error', "L'adresse email est obligatoire");
       }
       else if (this.password == '') {
-        this.errorMessage = "Mot de passe manquant";
+        this.$emit('error', "Mot de passe manquant");
       } else {
         const url = "/auth/login";
         const params = {
