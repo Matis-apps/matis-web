@@ -9,23 +9,23 @@
         <p class="main">Créer un compte sur matis</p>
         <div class="description">
           <p>Ce compte est la référence pour se connecter sur Matis. Il permettra ensuite de stocker les informations nécessaires au bon fonctionnement de l'application.</p>
-          <p>Vous pouver créer un compte ici : <router-link to="/register">Register</router-link>.</p>
+          <p>Vous pouvez créer un compte ici : <router-link to="/register">Register</router-link>.</p>
           <p>Si vous avez déjà un compte, vous pouvez vous connecter directement ici : <router-link to="/login">Login</router-link>.</p>
         </div>
       </li>
       <li>
-        <p class="main">Relier vos compte d'applications musicales</p>
+        <p class="main">Attacher vos comptes d'applications musicales</p>
         <div class="description">
-          <p>Une fois le compte créé, vous pouvez reliez vos applications sur cette page : <router-link to="/account">Account</router-link>.</p>
+          <p>Une fois le compte créé, vous pouvez relier vos applications sur cette page : <router-link to="/account">Account</router-link>.</p>
           <div class="alert alert-warning mx-4" role="alert">
-            Après s'être connecté, un token sera fournis afin de vous identifier à l'avenir. Si une erreur se produit, vous pourrez mettre à jour manuellement cette information sur la même page ci-dessus.
+            Après s'être connecté, un token pour chaque application sera fourni afin de vous identifier à l'avenir. Si une erreur se produit, vous pourrez mettre à jour manuellement cet identifiant sur la même page ci-dessus.
           </div>
         </div>
       </li>
       <li>
         <p class="main">Afficher du contenu en se basant sur vos favoris</p>
         <div class="description">
-          <p>Pour proposer du contenu, il faut un peu d'activité sur vos applications. Matis peut alors récupérer vos artistes favoris, vos playlists suivis avec les données des artistes, albums et musiques associés.</p>
+          <p>Pour proposer du contenu, il faut un peu d'activité sur vos applications... À partir de ça, Matis peut alors récupérer vos artistes favoris, vos playlists suivis avec les données des artistes, albums et musiques associés.</p>
         </div>
       </li>
       <li>
@@ -40,7 +40,7 @@
               </button>
             </div>
             <span>
-              Ainsi, les données seront automatiquement calculée en fonction de la plateforme ayant été selectionnée.
+              Ainsi, les données seront automatiquement calculées en fonction de la plateforme ayant été sélectionnée.
             </span>
         </div>
       </li>
@@ -54,13 +54,13 @@
     <hr>
     <h2>Comment ça marche Jamy ?</h2>
     <ul>
-      <li>Les données sont founies par les APIs des applications respectives</li>
-      <li>Les données sont aggrégées par un serveur <a href="https://nodejs.org" target="_blank">Node.js</a></li>
+      <li>Les données sont fournies par les APIs des applications respectives</li>
+      <li>Les données sont agrégées par un serveur <a href="https://nodejs.org" target="_blank">Node.js</a></li>
       <li>Cette application web est développée avec <a href="https://vuejs.org" target="_blank">Vue.js</a></li>
     </ul>
     <hr>
     <h2>Privacy</h2>
-    <p>Matis tient à la confidentialité des données de ses utilisateurs. Lorsque vous vous connectez, uniquement les données liées au compte sont stockées : nom d'utilisateur, identifiant (généralement numérique, 14728472 ...), lien vers la photo de profile et préférences.</p>
+    <p>Matis tient à la confidentialité des données de ses utilisateurs. Lorsque vous vous connectez, uniquement les données liées au compte sont stockées : nom d'utilisateur, identifiant (généralement numérique, 14728472 ...), lien vers la photo de profil et préférences.</p>
     <p>Vous pouvez demander à tout moment de supprimer ces données.</p>
     <hr>
     <h2>About</h2>
