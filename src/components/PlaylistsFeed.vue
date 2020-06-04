@@ -80,7 +80,6 @@ export default {
       releases: [],
       playlists: [],
       selectedPlaylist: null,
-
       displayContent: false,
       loadingReleases: false,
       loadingPlaylists: false,
@@ -88,18 +87,15 @@ export default {
       processingTime: 0,
     }
   },
-
   mounted() {
     this.init();
   },
   watch: { 
     platform: function(newVal, oldVal) { // watch it
-      if(newVal) {
-        this.init();
-      }
+      if(newVal) this.init();
     },
     selectedPlaylist: function(newVal, oldVal) {
-      this.fetchReleases(newVal.id);
+      if (newVal) this.fetchReleases(newVal.id);
     }
   },
   methods: {
@@ -149,6 +145,7 @@ export default {
       this.initPlaylistList();
       this.$emit('startLoading', 'Chargement de la playlist...');
 
+      setTimeout(this.stillAlive, 15000);
       this.loadingReleases = true;
       let start = Date.now();
       const url = "/"+this.platform+"/me/playlist/" + id + "/releases"
@@ -159,18 +156,23 @@ export default {
             this.releases = response.data.data;
             this.releases.map(r => r.display = true);
             this.processingTime = (end - start)/1000;
-            this.loadingReleases = false;
             this.displayContent = true;
-
-            this.$emit('endLoading');
           }
         })
         .catch((error) => {
           this.displayContent = false;
+          this.$emit('error', error);
+        })
+        .finally(() => {
           this.loadingReleases = false;
           this.$emit('endLoading');
-          this.$emit('error', error);
         });
+    },
+    stillAlive() {
+      if (this.loadingReleases) {
+        this.$emit('startLoading','Cela prend un peu de temps...');
+        setTimeout(this.stillAlive, 15000);
+      }
     },
     onChangePlaylist(event) {
       this.initPlaylistList()

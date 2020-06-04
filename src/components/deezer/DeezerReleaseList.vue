@@ -22,6 +22,7 @@ export default {
     return {
       releases: [],
       genres: [],
+      done: false,
       processingTime:0,
     }
   },
@@ -30,9 +31,7 @@ export default {
   },
   watch: { 
     user_id: function(newVal, oldVal) { // watch it
-      if(newVal) {
-        this.loadReleaseList()
-      }
+      if(newVal) this.loadReleaseList()
     }
   },
   methods: {
@@ -40,6 +39,8 @@ export default {
       this.processingTime = 0;
       this.releases = [];
       this.genres = [];
+      this.done = false;
+      setTimeout(this.stillAlive, 15000);
       this.fetchReleases();
     },
     /**
@@ -71,7 +72,16 @@ export default {
         .catch((error) => {
           this.$emit('endLoading');
           this.$emit('error', error);
+        })
+        .finally(() => {
+          this.done = true;
         });
+    },    
+    stillAlive() {
+      if (!this.done) {
+        this.$emit('startLoading','Cela prend un peu de temps...');
+        setTimeout(this.stillAlive, 15000);
+      }
     },
     onShowRelease(item) {
       this.$emit('showRelease',item)
