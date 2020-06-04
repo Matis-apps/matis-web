@@ -23,6 +23,10 @@ export default {
     SET_CURRENT_PLATFORM (state, platform) {
       state.platform = platform;
     },
+    CLEAR_PLATFORMS (state) {
+      state.platform = null;
+      state.enables = [];
+    }
   },
   actions: {
     setPlatforms ({commit, dispatch, state}, platforms) {
@@ -40,12 +44,16 @@ export default {
     addPlatform ({commit}, platform) {
       commit('ADD_PLATFORM', platform);
     },
+    clearPlatforms ({commit}) {
+      commit('CLEAR_PLATFORMS');
+    },
     setCurrentPlatform ({commit, dispatch, state}, platform) {
       if (state.availables.includes(platform) && state.enables.includes(platform)) {
         commit('SET_CURRENT_PLATFORM', platform);
         let payload = {
           type: 'success',
           message: 'Platforme selectionnée : ' + platform,
+          keepIt: true,
         }
         dispatch('toast/show', payload, {root: true})
       } else {

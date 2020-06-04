@@ -98,7 +98,8 @@ export default {
       return new Promise((resolve, reject) => {
         axios.get("/auth/logout")
           .then(() => {
-            commit('AUTH_LOGOUT')
+            commit('AUTH_LOGOUT');
+            dispatch('platform/clearPlatforms', undefined, {root: true});
             resolve()
           })
         .catch(error => {
