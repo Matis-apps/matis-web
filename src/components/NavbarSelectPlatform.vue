@@ -1,6 +1,6 @@
 <template>
   <ul class="navbar-nav ml-auto">
-    <li class="nav-item dropdown dropleft mx-2" v-if="platforms">
+    <li class="nav-item dropdown mx-2" v-if="platforms">
       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span v-if="platform">{{platform}}</span>
         <span v-else>Platform</span>
@@ -16,6 +16,24 @@
 
       </div>
     </li>
+
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" :class="{ 'disabled' : countNotify <= 0 }" href="#" id="navbarNotif" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Notifications <span v-show="countNotify > 0" class="badge badge-pill" :class="notifyStatus">{{countNotify}}</span>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarNotif">
+        <a class="dropdown-item d-flex align-items-center" href="#"
+          v-for="(notify, index) in notifications"
+          v-bind:key="index">
+          <i v-if="notify.type == 'error'" class="tiny small text-danger material-icons mr-2">add_alert</i>
+          <i v-else-if="notify.type == 'loading'" class="tiny small text-primary material-icons mr-2">hourglass_empty</i>
+          <i v-else-if="notify.type == 'success'" class="tiny small text-success material-icons mr-2">check</i>
+          {{notify.message}}
+          <div class="dropdown-divider"></div>
+        </a>
+      </div>
+    </li>
+
     <li class="nav-item">
       <router-link class="nav-link text-danger" to="/logout" data-toggle="collapse" data-target="#navbarNavDropdown.show" exact>Logout</router-link>
     </li>
@@ -32,6 +50,15 @@ export default {
     },
     platform: function() {
       return this.$store.getters['platform/getCurrentPlatform'];
+    },
+    countNotify: function() {
+      return this.notifications.length;
+    },
+    notifications: function() {
+      return this.$store.getters['toast/getToasts'];
+    },
+    notifyStatus: function() {
+      return this.$store.getters['toast/getWorstSTatus'];
     }
   },
   created() {

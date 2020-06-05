@@ -37,6 +37,21 @@ axios.interceptors.response.use(response => {
     return Promise.reject(error);
   }
 
+  if (status === 403 && !config.__isRetryRequest) {
+    if (data.error.message) {
+      if (data.error.message == 'Deezer : Invalid OAuth access token.') {
+        let payload = {
+          type: 'error',
+          message: 'La session Deezer a expirée, redirection dans 5 secondes...',
+        }
+        store.dispatch('toast/show', payload)
+        setTimeout(() => {
+          window.location.href = "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT
+        }, 5000)
+      }
+    }
+  }
+
   // 1. Catching all 401 errors
   // 2. Unauthorized indicated that the token is not valid or that the user is not authenticated
   // 3. __isRetryRequest is a tag to avoid looping on the same request
