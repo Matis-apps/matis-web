@@ -8,15 +8,15 @@
       <div class="row">
         <div class="col-lg-4 px-lg-6 col-md-5 px-md-4 col-sm-12 px-sm-4 order-2 order-md-12 mx-0">
           <div class="card bg-light mb-3" style="border-color: #9286e2;">
-            <div class="card-header">Voir l'activitié des artists dans la playlist</div>
+            <div class="card-header">Voir l'activitié des artistes dans la playlist</div>
             <div class="card-body text-success">
               <div class="row" v-if="selectedPlaylist">
-                <div class="col-6">
+                <div class="col-6 text-left">
+                  <img class="img-fluid rounded" v-bind:src="selectedPlaylist.picture">
+                </div>
+                <div class="col-6 text-right">
                   <h5 class="card-title" style="color: #9286e2;">{{selectedPlaylist.name}}</h5>
                   <p class="card-text"><a :href="selectedPlaylist.link" target="_blank">Lien</a></p>
-                </div>
-                <div class="col-6">
-                  <img class="img-fluid" v-bind:src="selectedPlaylist.picture">
                 </div>            
               </div>
               <div v-else class="alert alert-warning">

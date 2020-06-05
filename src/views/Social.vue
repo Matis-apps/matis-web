@@ -1,8 +1,7 @@
 <template>
   <div>
-    <h2 class="ml-5 small font-weight-light">
-      <span v-if="platform == 'Deezer'">{{platform}}</span>
-      <span v-else class="text-danger">Disponible seulement sur Deezer</span>
+    <h2 class="small font-weight-bold">
+      <span v-if="platform != 'Deezer'" class="text-danger">Disponible seulement sur Deezer</span>
     </h2>
     <SocialFeed
       v-if="platform"

@@ -56,29 +56,28 @@ export default {
   mutations: {
     SHOW_TOAST (state, {type, message, keepIt}) {
       if(state.toasts.length > 8) { // limit the number of toasts displayed
-        state.toasts[0].goAway(0);
-        state.toasts.shift();
+        if (state.toasts[state.toasts.length-1].alert) state.toasts[state.toasts.length-1].alert.goAway(0);
+        state.toasts.pop();
       }
 
-      let options = state.options[type || 'default'];
-      let toast = this._vm.$toasted.show(message, options);
-      toast.keepIt = keepIt;
-      if (type != 'error') {
-        toast.goAway(5000)
-      } else {
-        toast.goAway(30000)
+      let toast = {message, type, keepIt}
+
+      if (type == 'error') {
+        let options = state.options[type];
+        let alert = this._vm.$toasted.show(message, options);
+        alert.goAway(7000)
+        toast.alert = alert;
       }
-      state.toasts.push(toast);
+
+      state.toasts.unshift(toast);
     },
     CLEAR_TOASTS (state) {
       for (let i = 0; i < state.toasts.length; i++) {
-        if(!state.toasts[i].keepIt) {
-          state.toasts[i].goAway(0);
-        } else {
-          state.toasts[i].goAway(2500);
+        if(state.toasts[i].alert) {
+          state.toasts[i].alert.goAway(3000);
         }
-        state.toasts.slice(i, 1);
       }
+      state.toasts = [];
     }
   },
   actions: {
@@ -93,4 +92,13 @@ export default {
       commit('CLEAR_TOASTS')
     }
   },
+  getters: {
+    getToasts: state => state.toasts,
+    getWorstSTatus: state => {
+      if (state.toasts.find(t => t.type == 'error')) {
+        return 'badge-danger'
+      }
+      return 'badge-success';
+    },
+  }
 }

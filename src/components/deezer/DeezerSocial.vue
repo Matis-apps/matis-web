@@ -6,12 +6,12 @@
           <div class="card-header">Voir l'activitié de ton pote</div>
           <div class="card-body text-success">
             <div class="row" v-if="selectedFriend">
-              <div class="col-6">
+              <div class="col-6 text-left">
+                <img class="img-fluid rounded" v-bind:src="selectedFriend.picture">                
+              </div>
+              <div class="col-6 text-right">
                 <h5 class="card-title" style="color: #9286e2;">{{selectedFriend.name}}</h5>
                 <p class="card-text"><a :href="'https://www.deezer.com/profile/'+selectedFriend.id" target="_blank">Profile</a></p>
-              </div>
-              <div class="col-6">
-                <img class="img-fluid" v-bind:src="selectedFriend.picture">
               </div>            
             </div>
             <div v-else class="alert alert-warning">
@@ -31,7 +31,7 @@
         </select>
       </div>
     </div>
-    <div id="releases" v-if="selectedFriend">
+    <div id="friendList" v-if="selectedFriend">
       <div v-if="!displayContent" class="d-flex justify-content-center text-muted">
         <div v-show="loadingReleases" class="spinner-border" style="width: 2rem; height: 2rem;" role="status"></div>
         <h3 class="mx-3">Nouveautés</h3>

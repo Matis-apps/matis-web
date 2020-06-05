@@ -1,7 +1,11 @@
 <template>
   <div id="account">
+    <div class="d-flex flex-row mb-3">
+      <h2 v-if="loading||user">Vue d'ensemble du compte</h2>
+      <h2 v-else>Le compte n'existe pas</h2>
+      <div v-show="loading" class="spinner-border mx-3" style="width: 2rem; height: 2rem;" role="status"></div>
+    </div>
     <div v-if="user">
-      <h2 class="mb-3">Vue d'ensemble du compte</h2>
       <div class="mb-4">
         <h3 class="mb-2">Profil</h3>
         <div class="d-flex justify-content-between">
@@ -38,7 +42,7 @@
           <hr>
           <div class="d-flex justify-content-between">
             <span class="col-4 font-weight-lighter">Access Token</span>
-            <span class="col-8 font-weight-bold text-truncate text-right">{{user.deezer.token.access_token}}</span>
+            <span class="col-8 font-weight-bold text-truncate text-right" v-on:click="showDeezerToken = !showDeezerToken">{{showDeezerToken ? user.deezer.token.access_token : 'Cliquer pour afficher'}}</span>
           </div>
           <hr>
         </div>
@@ -71,7 +75,7 @@
           <hr>
           <div class="d-flex justify-content-between">
             <span class="col-4 font-weight-lighter">Access Token</span>
-            <span class="col-8 font-weight-bold text-truncate text-right">{{user.spotify.token.access_token}}</span>
+            <span class="col-8 font-weight-bold text-truncate text-right" v-on:click="showSpotifyToken = !showSpotifyToken">{{showSpotifyToken ? user.spotify.token.access_token : 'Cliquer pour afficher'}}</span>
           </div>
           <hr>
         </div>
@@ -84,9 +88,6 @@
         <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Mettre à jour':'Connecter'}}</a></p>
       </div>
     </div>
-    <div v-else>
-      <h2 class="mb-3">Le compte n'existe pas</h2>
-    </div>
   </div>
 </template>
 
@@ -98,7 +99,9 @@ export default {
   data() {
     return {
       user: null,
-      loadingAccounts: false,
+      loading: false,
+      showDeezerToken: false,
+      showSpotifyToken: false,
       deezerConnect: "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT,
       spotifyConnect: "https://accounts.spotify.com/authorize?client_id=" + process.env.VUE_APP_SPOTIFY_CLIENT_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_SPOTIFY_REDIRECT + "&response_type=code&scope=" + encodeURIComponent('user-library-read user-follow-read'),
     }
@@ -118,15 +121,17 @@ export default {
     fetchAccount () {
       this.$emit('startLoading','Chargement des données...');
       const url = "/users/me";
-      this.loadingAccounts = true;
+      this.loading = true;
       axios.get(url)
         .then((response) => {
-          this.loadingAccounts = false;
           if (response.status === 200) {
             this.user = response.data;
           }
         })
-        .catch(err => this.showError(err));
+        .catch(err => this.showError(err))
+        .finally(() => {
+          this.loading = false;
+        })
     },
     handleCallback(query) {
       switch(query.from) {
