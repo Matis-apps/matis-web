@@ -62,9 +62,9 @@ error<template>
                     <p class="mb-0 pb-0 font-weight-bold"> {{artist.author.name}}</p>
                   </span>
                   <span class="col-lg-9 text-lg-right col-md-12">
-                    <p class="text-muted" v-if="releaseDays(artist.content.updated_at) > 0">Il y a {{ releaseDays(artist.content.updated_at) }} jours</p>
-                    <p class="text-muted" v-else-if="releaseDays(artist.content.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(artist.content.updated_at)) }} jours</p>
-                    <p class="text-muted" v-else>Sortie aujourd'hui</p>
+                    <p class="text-muted small" v-if="releaseDays(artist.content.updated_at) > 0">Il y a {{ releaseDays(artist.content.updated_at) }} jours</p>
+                    <p class="text-muted small" v-else-if="releaseDays(artist.content.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(artist.content.updated_at)) }} jours</p>
+                    <p class="text-muted small" v-else>Sortie aujourd'hui</p>
                     <p class="mb-0 pb-0">Nouveau {{ artist.content.type }} : <a :href="artist.content.link" target="_blank">{{artist.content.title}}</a></p>
                   </span>
                 </li>
@@ -121,8 +121,8 @@ export default {
       return today.diff(dateofvisit, 'days');
     },
     init: function(release) {
-      var element = document.getElementById("release-content");
-      element.scrollIntoView({behavior: "smooth"});
+      var element = document.getElementById("top");
+      element.scrollIntoView({behavior: "smooth", block: "start"});
 
       this.totalTracks = 0;
       this.tracklist = [];

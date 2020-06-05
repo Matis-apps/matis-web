@@ -7,7 +7,7 @@
     <form v-on:submit.prevent="onSearch" class="my-2 col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-10 offset-sm-1 col-xs-12">
       <div class="row">
         <input id="search" class="form-control form-control-lg" type="text" aria-describedby="searchHelp" placeholder="Musique, gloire et beauté ...">
-        <small id="searchHelp" class="form-text text-muted">* Préciser au maxium le résultat à trouver car la recherche est imprécise...</small>
+        <small id="searchHelp" class="form-text text-muted">* Préciser au maxium le résultat à trouver car la recherche est un peu imprécise...</small>
       </div>
       <div class="row my-2">
         <button type="submit" class="btn btn-primary">Search</button>

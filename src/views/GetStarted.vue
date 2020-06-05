@@ -34,7 +34,7 @@
             <span>
               Afin de naviguer entre les différentes plateformes, un bouton est disponible dans le menu comme affiché ici : 
             </span>
-            <div class="mx-2 dropdown dropleft d-inline">
+            <div class="mx-2 dropdown d-inline">
               <button class="btn btn-light dropdown-toggle" type="button" id="dropdownExample">
                 Platform
               </button>
@@ -64,6 +64,8 @@
     <p>Vous pouvez demander à tout moment de supprimer ces données.</p>
     <hr>
     <h2>About</h2>
+    <p>Contributeurs : <a href="https://github.com/mmaheo" target="_blank">Maxime Maheo</a>, <a href="https://raphael.thibierge.dev" target="_blank">Raphael Thibierge</a>, <a href="https://github.com/nvalaise" target="_blank">Nicolas Valaise</a></p>
+    <p>Contact : <a href="mailto:my.matis.dev@gmail.com">my.matis.dev@gmail.com</a></p>
     <div class="d-flex align-self-center">
       <i class="tiny material-icons">copyright</i>
       <p class="ml-2"><span class="font-weight-bold">2020</span> ~ Nicolas Valaise | <a href="https://github.com/Matis-apps" target="_blank">Github</a></p>

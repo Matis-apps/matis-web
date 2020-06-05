@@ -1,37 +1,37 @@
 <template>
   <div>
-    <div v-if="display" class="card bg-light border-secondary mb-3">
+    <div v-if="display" class="card bg-light mb-3" style="border-color: #86a8e2">
       <div class="card-header">Liens vers les autres plateformes</div>
       <div v-if="waiting" class="card-body">
-        <div class="alert alert-secondary">
-          <div class="spinner-border text-primary" role="status"></div>
+        <div class="alert alert-secondary align-items-center">
+          <div class="spinner-grow text-primary" role="status"></div>
           <span class="mx-3">Attente de la tracklist...</span>
         </div>
       </div>
       <div v-else-if="loading" class="card-body">
-        <div class="alert alert-secondary">
+        <div class="alert alert-secondary d-flex align-items-center">
           <div class="spinner-border text-primary" role="status"></div>
           <span class="mx-3">Recherche en cours...</span>
         </div>
       </div>
-      <div v-else-if="albums" class="card-body text-success">
+      <div v-else-if="albums" class="card-body text-success text-center">
         <div class="row">
           <div class="col-6">
             <h5 class="card-title">Deezer</h5>
             <div v-if="albums.deezer">
-              <p><a :href="albums.deezer.link" target="_blank">{{albums.deezer.name}}</a></p>
+              <span><a :href="albums.deezer.link" target="_blank">{{albums.deezer.name}}</a></span>
             </div>
             <div v-else>
-              <p class="text-danger">Nope</p>
+              <i class="medium text-danger material-icons mr-2">block</i>
             </div>
           </div>
           <div class="col-6">
             <h5 class="card-title">Spotify</h5>
             <div v-if="albums.spotify">
-              <p><a :href="albums.spotify.link" target="_blank">{{albums.spotify.name}}</a></p>
+              <span><a :href="albums.spotify.link" target="_blank">{{albums.spotify.name}}</a></span>
             </div>
             <div v-else>
-              <p class="text-danger">Nope</p>
+              <i class="medium text-danger material-icons mr-2">block</i>
             </div>
           </div>            
         </div>

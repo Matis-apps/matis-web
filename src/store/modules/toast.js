@@ -74,7 +74,7 @@ export default {
     CLEAR_TOASTS (state) {
       for (let i = 0; i < state.toasts.length; i++) {
         if(state.toasts[i].alert) {
-          state.toasts[i].alert.goAway(0);
+          state.toasts[i].alert.goAway(3000);
         }
       }
       state.toasts = [];
