@@ -9,7 +9,7 @@ error<template>
           v-on:startLoading="$emit('startLoading',$event)"
           v-on:error="$emit('error',$event)"/>
       </div>
-      <div class="card text-left">
+      <div class="card text-left" style="border-color: #86a8e2">
         <div class="card-header d-flex">
           <div class="col-2" v-show="release.content.picture">
             <img class="card-img-top img-fluid img-circle" :src="release.content.picture" alt="Card image cap"> 
@@ -24,7 +24,7 @@ error<template>
           <h5 class="card-title">{{capitalize(release.content.type)}}</h5>
           <p class="card-text text-muted small">Sortie le {{ release.content.updated_at }}</p>
           <div v-if="loadingTracklist">
-            <div class="alert alert-light">
+            <div class="alert alert-light d-flex align-items-center">
               <div class="spinner-border text-primary" role="status"></div>
               <span class="mx-3">Chargement de la tracklist...</span>      
             </div>
@@ -44,28 +44,31 @@ error<template>
           </div>
           <div v-if="release._obj == 'album'">
             <hr>
-            <h5 class="card-title">Artists associés</h5>
+            <h5 class="card-title">Artistes associés</h5>
+            <p class="card-text text-muted small">Avec leur dernière sortie</p>
             <div v-if="loadingRelated">
-              <div class="alert alert-light">
+              <div class="alert alert-light d-flex align-items-center">
                 <div class="spinner-border text-primary" role="status"></div>
                 <span class="mx-3">Chargement des artistes associés...</span>      
               </div>
             </div>
-            <div class="d-flex justify-content-around row" v-else-if="relatedArtists.length > 0">
-              <div class="card col-5 my-2"
-                v-for="artist in relatedArtists"
-                v-bind:key="'related-'+artist._uid">
-
-                <div class="row d-flex justify-content-center align-items-center">
-                  <img class="img-fluid rounded m-4" style="max-width: 60%;" :src="artist.author.picture" alt="Card image cap">
-                  <p class="card-text"> {{artist.author.name}}</p>
-                </div>
-                <hr>
-                <div class="row small mx-1 d-block" v-if="artist.content">
-                  <p v-if="artist.content.updated_at">Dernière sortie le {{artist.content.updated_at}}</p>
-                  <p>{{ capitalize(artist.content.type) }}: <a :href="artist.content.link" target="_blank">{{artist.content.title}}</a></p>
-                </div>
-              </div>
+            <div v-else-if="relatedArtists.length > 0">
+              <ul class="list-group">
+                <li class="list-group-item d-lg-flex justify-content-lg-around align-items-lg-center"
+                  v-for="artist in relatedArtists"
+                  v-bind:key="'related-'+artist._uid">
+                  <span class="col-lg-3 d-lg-block text-lg-center col-md-12 d-md-flex justify-content-md-between align-items-md-start d-sm-flex justify-content-sm-between align-items-sm-start d-flex justify-content-between align-items-start">
+                    <p><img class="img-fluid rounded" :src="artist.author.picture" alt="Card image cap"></p>
+                    <p class="mb-0 pb-0 font-weight-bold"> {{artist.author.name}}</p>
+                  </span>
+                  <span class="col-lg-9 text-lg-right col-md-12">
+                    <p class="text-muted" v-if="releaseDays(artist.content.updated_at) > 0">Il y a {{ releaseDays(artist.content.updated_at) }} jours</p>
+                    <p class="text-muted" v-else-if="releaseDays(artist.content.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(artist.content.updated_at)) }} jours</p>
+                    <p class="text-muted" v-else>Sortie aujourd'hui</p>
+                    <p class="mb-0 pb-0">Nouveau {{ artist.content.type }} : <a :href="artist.content.link" target="_blank">{{artist.content.title}}</a></p>
+                  </span>
+                </li>
+              </ul>
             </div>
             <div v-else class="alert alert-light" role="alert">
               Cet artiste est unique dans son genre
@@ -112,6 +115,11 @@ export default {
     }
   },
   methods: {
+    releaseDays: function (day) {
+      var dateofvisit = this.$moment(day, 'YYYY-MM-DD-MM');
+      var today = this.$moment();
+      return today.diff(dateofvisit, 'days');
+    },
     init: function(release) {
       var element = document.getElementById("release-content");
       element.scrollIntoView({behavior: "smooth"});
@@ -142,12 +150,15 @@ export default {
             this.upc = response.data.data.content.upc;
             this.tracklist = response.data.data.content.tracks;
             this.totalTracks = response.data.data.content.tracks.length;
+          } else {
+            this.upc = 0;
           }
-          this.loadingTracklist = false;
         })
         .catch((error) => {
-          this.loadingTracklist = false;
           this.$emit('error', error);
+        })
+        .finally(() => {
+          this.loadingTracklist = false;
         });
     },
     fetchRelatedArtists (id) {
@@ -159,11 +170,12 @@ export default {
             this.relatedArtists = response.data.data;
             this.relatedArtists.sort((a,b) => this.sortLastReleases(a,b));
           }
-          this.loadingRelated = false;
         })
         .catch((error) => {
-          this.loadingRelated = false;
           this.$emit('error', error);
+        })
+        .finally(() => {
+          this.loadingRelated = false;
         });
     },
     sortLastReleases ( a, b ) {
