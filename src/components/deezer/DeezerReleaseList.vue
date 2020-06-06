@@ -66,6 +66,7 @@ export default {
             this.genres = response.data.genres;
             this.genres.map(g => g.isClicked = false);
             this.processingTime = (end - start)/1000;
+            this.$emit('success', 'Récupération des nouveautés avec succès !');
             this.$emit('endLoading');
           }
         })

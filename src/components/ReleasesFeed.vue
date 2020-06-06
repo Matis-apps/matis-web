@@ -11,6 +11,7 @@
             v-if="platform == 'Deezer'"
             v-on:error="onError"
             v-on:startLoading="$emit('startLoading',$event)"
+            v-on:success="$emit('success',$event)"
             v-on:endLoading="onEndLoading"
             v-on:showRelease="onRelease"/>
 
@@ -18,6 +19,7 @@
             v-if="platform == 'Spotify'"
             v-on:error="onError"
             v-on:startLoading="$emit('startLoading',$event)"
+            v-on:success="$emit('success',$event)"
             v-on:endLoading="onEndLoading"
             v-on:showRelease="onRelease"/>
         </transition>
@@ -26,6 +28,7 @@
         <ReleaseContent 
           v-bind:release="selectedRelease"
           v-on:startLoading="$emit('startLoading',$event)"
+          v-on:success="$emit('success',$event)"
           v-on:error="$emit('error',$event)"/>
       </div>
     </div>

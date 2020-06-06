@@ -104,6 +104,7 @@ export default {
           if (response.status == 200 && response.data.data) {
             this.albums = response.data.data;
             this.display = true;
+            this.$emit('success', 'Récupération des plateformes avec succès !');
           } else {
             this.$emit('error', 'Impossible de trouver les liens vers les autres platformes');
             this.display = false;

@@ -8,6 +8,7 @@
       <DeezerSocial
         v-if="platform == 'Deezer'"
         v-on:startLoading="$emit('startLoading',$event)"
+        v-on:success="$emit('success',$event)"
         v-on:endLoading="onEndLoading"
         v-on:error="onError"/>
     </div>

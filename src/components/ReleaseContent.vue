@@ -7,6 +7,7 @@ error<template>
           v-bind:query="release.author.name + ' ' + release.content.title"
           v-bind:upc="upc"
           v-on:startLoading="$emit('startLoading',$event)"
+          v-on:success="$emit('success',$event)"
           v-on:error="$emit('error',$event)"/>
       </div>
       <div class="card text-left" style="border-color: #86a8e2">
@@ -150,6 +151,7 @@ export default {
             this.upc = response.data.data.content.upc;
             this.tracklist = response.data.data.content.tracks;
             this.totalTracks = response.data.data.content.tracks.length;
+            this.$emit('success', 'Récupération du contenu avec succès !');
           } else {
             this.upc = 0;
           }
@@ -162,13 +164,14 @@ export default {
         });
     },
     fetchRelatedArtists (id) {
-      this.$emit('startLoading','Chargement des artistes relatives...');
+      this.$emit('startLoading','Chargement des artistes en commun...');
       this.loadingRelated = true;
       axios.get(process.env.VUE_APP_ROOT_API+"/"+ this.release._from +"/artist/"+id+"/related")
         .then((response) => {
           if (response.status === 200 && response.data.data) {
             this.relatedArtists = response.data.data;
             this.relatedArtists.sort((a,b) => this.sortLastReleases(a,b));
+            this.$emit('success', 'Récupération des artistes en commun avec succès !');
           }
         })
         .catch((error) => {
