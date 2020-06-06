@@ -62,7 +62,7 @@ export default {
 
       let toast = {message, type, keepIt}
 
-      if (keepIt === true || 'error' === type) {
+      if (keepIt === true||'error' === type) {
         let options = state.options[type||'default'];
         let alert = this._vm.$toasted.show(message, options);
         alert.goAway(5000)
