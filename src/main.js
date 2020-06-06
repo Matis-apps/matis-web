@@ -42,7 +42,7 @@ axios.interceptors.response.use(response => {
       if (data.error.message == 'Deezer : Invalid OAuth access token.') {
         let payload = {
           type: 'error',
-          message: 'La session Deezer a expirée, redirection dans 4 secondes...',
+          message: 'La session Deezer a expiré, redirection dans 4 secondes...',
           keepIt: true,
         }
         store.dispatch('toast/show', payload)
