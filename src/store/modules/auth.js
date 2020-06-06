@@ -58,6 +58,7 @@ export default {
             let payload = {
               type: 'success',
               message: 'Welcome back !',
+              keepIt: true,
             }
             dispatch('toast/show', payload, {root: true})
             const platforms = response.data.has;
