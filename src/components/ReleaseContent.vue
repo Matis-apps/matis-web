@@ -59,11 +59,11 @@ error<template>
                   v-bind:key="'related-'+artist._uid">
                   <span class="col-lg-3 d-lg-block text-lg-center col-md-12 d-md-flex justify-content-md-between align-items-md-start d-sm-flex justify-content-sm-between align-items-sm-start d-flex justify-content-between align-items-start">
                     <p><img class="img-fluid rounded" :src="artist.author.picture" alt="Card image cap"></p>
-                    <p class="mb-0 pb-0 font-weight-bold"> {{artist.author.name}}</p>
+                    <p class="mb-0 pb-0 font-weight-bold text-lg-center text-md-right"> {{artist.author.name}}</p>
                   </span>
                   <span class="col-lg-9 text-lg-right col-md-12">
-                    <p class="text-muted small" v-if="releaseDays(artist.content.updated_at) > 0">Il y a {{ releaseDays(artist.content.updated_at) }} jours</p>
-                    <p class="text-muted small" v-else-if="releaseDays(artist.content.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(artist.content.updated_at)) }} jours</p>
+                    <p class="text-muted small" v-if="releaseDays(artist.content.updated_at) > 0">Il y a {{ releaseDays(artist.content.updated_at) }} jours ({{artist.content.updated_at}})</p>
+                    <p class="text-muted small" v-else-if="releaseDays(artist.content.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(artist.content.updated_at)) }} jours ({{artist.content.updated_at}})</p>
                     <p class="text-muted small" v-else>Sortie aujourd'hui</p>
                     <p class="mb-0 pb-0">Nouveau {{ artist.content.type }} : <a :href="artist.content.link" target="_blank">{{artist.content.title}}</a></p>
                   </span>
@@ -121,7 +121,7 @@ export default {
       return today.diff(dateofvisit, 'days');
     },
     init: function(release) {
-      var element = document.getElementById("top");
+      var element = document.getElementById("release-content");
       element.scrollIntoView({behavior: "smooth", block: "start"});
 
       this.totalTracks = 0;

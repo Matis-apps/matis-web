@@ -47,7 +47,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/releases',
+    path: '/news',
     name: 'Releases',
     component: Releases,
     meta: { requiresAuth: true, platform: true, },
