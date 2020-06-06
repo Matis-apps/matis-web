@@ -59,6 +59,7 @@ export default {
         let payload = {
           type: 'error',
           message: "Vous n'avez pas accès à cette plateforme",
+          keepIt: true,
         }
         dispatch('toast/show', payload, {root: true})
       }      
