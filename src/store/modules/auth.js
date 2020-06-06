@@ -58,7 +58,6 @@ export default {
             let payload = {
               type: 'success',
               message: 'Welcome back !',
-              keepIt: true,
             }
             dispatch('toast/show', payload, {root: true})
             const platforms = response.data.has;
@@ -81,7 +80,6 @@ export default {
             let payload = {
               type: 'success',
               message: 'Back in the game !',
-              keepIt: true,
             }
             dispatch('toast/show', payload, {root: true})
             const platforms = response.data.has;

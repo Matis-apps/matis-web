@@ -53,7 +53,6 @@ export default {
         let payload = {
           type: 'success',
           message: 'Platforme selectionnée : ' + platform,
-          keepIt: true,
         }
         dispatch('toast/show', payload, {root: true})
       } else {

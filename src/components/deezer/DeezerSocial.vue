@@ -42,6 +42,7 @@
           <DeezerReleaseList
             v-bind:user_id="selectedFriend.id"
             v-on:startLoading="$emit('startLoading',$event)"
+            v-on:success="$emit('success',$event)"
             v-on:error="onError"
             v-on:endLoading="onEndLoading"
             v-on:showRelease="onRelease"/>
@@ -102,6 +103,7 @@ export default {
             response.data.data.followings.forEach(friend => (
               this.friends.push(friend)
             ));
+            this.$emit('success', 'Chargement des amis avec succès !');
           }
           this.$emit('endLoading');
         })

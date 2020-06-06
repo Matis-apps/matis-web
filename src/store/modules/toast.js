@@ -62,10 +62,10 @@ export default {
 
       let toast = {message, type, keepIt}
 
-      if (type == 'error') {
-        let options = state.options[type];
+      if (keepIt === true) {
+        let options = state.options[type||'default'];
         let alert = this._vm.$toasted.show(message, options);
-        alert.goAway(7000)
+        alert.goAway(5000)
         toast.alert = alert;
       }
 
@@ -98,7 +98,12 @@ export default {
       if (state.toasts.find(t => t.type == 'error')) {
         return 'badge-danger'
       }
-      return 'badge-success';
+      else if (state.toasts.find(t => t.type == 'success')) {
+        return 'badge-success'
+      }
+      else {
+        return 'badge-primary';
+      }
     },
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <ul class="navbar-nav ml-auto">
-    <li class="nav-item dropdown mx-2" v-if="platforms">
+    <li class="nav-item dropdown" v-if="platforms">
       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span v-if="platform">{{platform}}</span>
         <span v-else>Platform</span>

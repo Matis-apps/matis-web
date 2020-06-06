@@ -11,7 +11,7 @@
           <router-link class="nav-link" to="/account" data-toggle="collapse" data-target="#navbarNavDropdown.show" exact-path>Account</router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/releases" data-toggle="collapse" data-target="#navbarNavDropdown.show" exact>Releases</router-link>
+          <router-link class="nav-link" to="/news" data-toggle="collapse" data-target="#navbarNavDropdown.show" exact>News</router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/playlists" data-toggle="collapse" data-target="#navbarNavDropdown.show" exact>Playlists</router-link>

@@ -54,6 +54,7 @@
           <ReleaseContent 
             v-bind:release="selectedRelease"
             v-on:startLoading="$emit('startLoading',$event)"
+            v-on:success="$emit('success',$event)"
             v-on:error="$emit('error',$event)"/>
         </div>
       </div>
@@ -132,6 +133,7 @@ export default {
             response.data.data.forEach(playlist => (
               this.playlists.push(playlist)
             ));
+            this.$emit('success', 'Récupération des playlists avec succès !');
           }
           this.$emit('endLoading');
         })
@@ -157,6 +159,7 @@ export default {
             this.releases.map(r => r.display = true);
             this.processingTime = (end - start)/1000;
             this.displayContent = true;
+            this.$emit('success', 'Récupération des nouveautés de la playlist avec succès !');
           }
         })
         .catch((error) => {

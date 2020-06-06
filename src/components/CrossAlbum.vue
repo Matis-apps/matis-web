@@ -3,7 +3,7 @@
     <div v-if="display" class="card bg-light mb-3" style="border-color: #86a8e2">
       <div class="card-header">Liens vers les autres plateformes</div>
       <div v-if="waiting" class="card-body">
-        <div class="alert alert-secondary align-items-center">
+        <div class="alert alert-secondary d-flex align-items-center">
           <div class="spinner-grow text-primary" role="status"></div>
           <span class="mx-3">Attente de la tracklist...</span>
         </div>
@@ -36,6 +36,10 @@
           </div>            
         </div>
       </div>
+      <div v-show="albums" class="card-footer text-muted">
+        <p class="mb-0">{{countSuccess}} résultats</p>
+        <span v-show="countSuccess<=1" class="small text-danger">Impossible de trouver la correspondance <b class="text-uppercase font-weight-bold">exacte</b> de l'album sur toutes les platfeformes. La comparaison peut être vérifiée ici : <router-link to="/search">Search</router-link>.</span>
+      </div>
     </div>
   </div>
 </template>
@@ -53,6 +57,11 @@ export default {
       loading: false,
       display: true,
     }
+  },
+  computed: {
+    countSuccess: function() {
+      return !this.albums ? 0 : Object.keys(this.albums).length;
+    },
   },
   mounted() {
     if (this.upc) {
@@ -75,8 +84,8 @@ export default {
   },
   methods: {
     loadSearch: function () {
-      this.display = true;
       this.albums = null;
+      this.display = true;
       this.fetchSearch();
     },
     /**
@@ -95,6 +104,7 @@ export default {
           if (response.status == 200 && response.data.data) {
             this.albums = response.data.data;
             this.display = true;
+            this.$emit('success', 'Récupération des plateformes avec succès !');
           } else {
             this.$emit('error', 'Impossible de trouver les liens vers les autres platformes');
             this.display = false;

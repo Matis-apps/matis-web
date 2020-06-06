@@ -20,7 +20,7 @@
         <hr>
         <div v-if="token" class="d-flex justify-content-between">
           <span class="col-4 font-weight-lighter">Token</span>
-          <span class="col-8 font-weight-bold text-truncate text-right">{{ token }}</span>
+          <span class="col-8 font-weight-bold text-truncate text-right" v-on:click="showAccountToken = !showAccountToken">{{showAccountToken ? token : 'Cliquer pour afficher'}}</span>
         </div>
         <hr>
       </div>
@@ -100,6 +100,7 @@ export default {
     return {
       user: null,
       loading: false,
+      showAccountToken: false,
       showDeezerToken: false,
       showSpotifyToken: false,
       deezerConnect: "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT,
@@ -119,7 +120,6 @@ export default {
   },
   methods: {
     fetchAccount () {
-      this.$emit('startLoading','Chargement des données...');
       const url = "/users/me";
       this.loading = true;
       axios.get(url)
@@ -144,7 +144,7 @@ export default {
       }
     },
     getDeezerToken (code) {
-      this.$emit('startLoading','Chargement des données de Deezer...');
+      this.$emit('startLoading','Mise à jour du compte Deezer...');
       const url = "/users/token/deezer?code="+code;
       axios.get(url)
         .then((response) => {
@@ -159,7 +159,7 @@ export default {
         .catch(error => this.$emit('error', error));
     },
     getSpotifyToken (code) {
-      this.$emit('startLoading','Chargement des données de Spotify...');
+      this.$emit('startLoading','Mise à jour du compte Spotify...');
       const url = "/users/token/spotify?code="+code;
       axios.get(url)
         .then((response) => {
@@ -174,11 +174,7 @@ export default {
         .catch(error => this.$emit('error', error));
     },
     successToast(from) {
-      let payload = {
-        type: 'success',
-        message: 'Le compte '+from+' a été mis à jour'
-      }
-      this.$store.dispatch('toast/show', payload)
+      this.$emit('success', 'Le compte '+from+' a été mis à jour')
       this.$store.dispatch('platform/addPlatform', from);
       this.$store.dispatch('platform/setCurrentPlatform', from);
     },

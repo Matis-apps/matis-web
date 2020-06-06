@@ -6,6 +6,7 @@
     <div id="view" class="container-fluid mb-2">
       <router-view
         v-on:startLoading="showLoading"
+        v-on:success="showSuccess"
         v-on:error="showError"/>
     </div>
   </div>
@@ -24,6 +25,13 @@ export default {
     showLoading(message) {
       let payload = {
         type: 'loading',
+        message: message
+      }
+      this.$store.dispatch('toast/show', payload)
+    },
+    showSuccess(message) {
+      let payload = {
+        type: 'success',
         message: message
       }
       this.$store.dispatch('toast/show', payload)

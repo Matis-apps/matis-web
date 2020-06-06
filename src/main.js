@@ -42,12 +42,13 @@ axios.interceptors.response.use(response => {
       if (data.error.message == 'Deezer : Invalid OAuth access token.') {
         let payload = {
           type: 'error',
-          message: 'La session Deezer a expirée, redirection dans 5 secondes...',
+          message: 'La session Deezer a expirée, redirection dans 4 secondes...',
+          keepIt: true,
         }
         store.dispatch('toast/show', payload)
         setTimeout(() => {
           window.location.href = "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT
-        }, 5000)
+        }, 4000)
       }
     }
   }
