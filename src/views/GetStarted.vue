@@ -25,7 +25,7 @@
       <li>
         <p class="main">Afficher du contenu en se basant sur vos favoris</p>
         <div class="description">
-          <p>Pour proposer du contenu, il faut un peu d'activité sur vos applications... À partir de ça, Matis peut alors récupérer vos artistes favoris, vos playlists suivis avec les données des artistes, albums et musiques associés.</p>
+          <p>Pour proposer du contenu, il faut un peu d'activité sur vos applications... À partir de ça, Matis peut alors récupérer vos artistes favoris, vos playlists suivies avec les données des artistes, albums et musiques associés.</p>
         </div>
       </li>
       <li>
