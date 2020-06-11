@@ -38,8 +38,6 @@ export default {
               keepIt: true,
             }
             dispatch('toast/show', payload, {root: true})
-            const platforms = response.data.has;
-            dispatch('platform/setPlatforms', platforms, {root: true});
             resolve(response);
           })
         .catch(error => {

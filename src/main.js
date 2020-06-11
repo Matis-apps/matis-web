@@ -3,10 +3,12 @@ import App from './App.vue'
 import router from './router'
 import axios from 'axios'
 import moment from 'moment'
+import jquery from 'jquery'
 import material from 'material-icons'
 import Toasted from 'vue-toasted';
 import store from './store'
 
+Vue.prototype.$ = jquery;
 Vue.config.productionTip = false;
 Vue.prototype.$moment = moment;
 Vue.use(Toasted, { 

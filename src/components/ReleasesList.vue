@@ -1,7 +1,7 @@
 <template>
   <div v-if="releases.length > 0">
     <div class="row">
-      <p class="font-weight-lighter text-left">{{ releases.length }} items <span class="small"> (en {{processingTime}} s.)</span></p>    
+      <p class="small font-weight-lighter my-2">{{ countReleases }} items affichés<span class="small"> (en {{processingTime}} s.)</span></p>    
     </div>
     <div class="row" v-if="genres && genres.length > 0">
       <span v-for="item in genres" v-bind:key="item.key" class="small">
@@ -15,7 +15,7 @@
         v-show="item.display == true">
         <div class="card-header d-flex justify-content-between" style="background-color: #86a8e2">
           <img v-if="item.author.picture" :src="item.author.picture" class="card-img-top img-fluid rounded" alt="picture artist" style="max-height: 50px; max-width: 50px;">
-          <p>{{ capitalize(item.content.type) }} by <span class="font-weight-bold">{{ item.author.name }}</span></p>
+          <p class="text-capitalize">{{ item.content.type }} by <span class="font-weight-bold">{{ item.author.name }}</span></p>
         </div>
         <div class="card-body text-left">
           <h5 class="card-title text-center">
@@ -47,7 +47,7 @@ export default {
   props: ['genres', 'releases', 'processingTime'],
   computed: {
     countReleases: function() {
-      return this.releases.length;
+      return this.releases.filter(i => i.display).length;
     }
   },
   methods: {
@@ -55,10 +55,6 @@ export default {
       var dateofvisit = this.$moment(day, 'YYYY-MM-DD-MM');
       var today = this.$moment();
       return today.diff(dateofvisit, 'days');
-    },
-    capitalize: function (s) {
-      if (typeof s !== 'string') return '';
-      return s.charAt(0).toUpperCase() + s.slice(1);
     },
     onSelectGenre(key) {
       if(key) {

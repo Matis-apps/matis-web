@@ -20,6 +20,9 @@
           <router-link class="nav-link" to="/social" data-toggle="collapse" data-target="#navbarNavDropdown.show" exact>Social</router-link>
         </li>
         <li class="nav-item">
+          <router-link class="nav-link" to="/tool" data-toggle="collapse" data-target="#navbarNavDropdown.show" exact-path>Tools</router-link>
+        </li>
+        <li class="nav-item">
           <router-link class="nav-link" to="/search" data-toggle="collapse" data-target="#navbarNavDropdown.show" exact>Search</router-link>
         </li>
       </ul>

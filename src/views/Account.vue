@@ -47,9 +47,9 @@
           <hr>
         </div>
         <div v-else>
-          <div class="alert alert-danger d-flex align-items-center" role="alert">
+          <div class="alert alert-warning d-flex align-items-center" role="alert">
             <i class="tiny material-icons mr-2">add_alert</i>
-            Le compte Deezer n'est pas connecté. Cela peut limiter certaines fonctionnalités.
+            Connectez le compte Deezer pour avoir les fonctionnalités associées.
           </div>
         </div>
         <p><a class="btn btn-primary" :href="deezerConnect" role="button">{{user.deezer ? 'Mettre à jour':'Connecter'}}</a></p>
@@ -80,12 +80,46 @@
           <hr>
         </div>
         <div v-else>
-          <div class="alert alert-danger d-flex align-items-center" role="alert">
+          <div class="alert alert-warning d-flex align-items-center" role="alert">
             <i class="tiny material-icons mr-2">add_alert</i>
-            Le compte Spotify n'est pas connecté. Cela peut limiter certaines fonctionnalités.
+            Connectez le compte Spotify pour avoir les fonctionnalités associées.
           </div>
         </div>
         <p><a class="btn btn-primary" :href="spotifyConnect" role="button">{{user.spotify ? 'Mettre à jour':'Connecter'}}</a></p>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="mb-3">Discogs</h3>
+        <div v-if="user.discogs">
+          <div class="d-flex justify-content-start">
+            <span class="col-2">
+              <img :src="user.discogs.account.avatar_url" class="img-fluid rounded">
+            </span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between">
+            <span class="col-4 font-weight-lighter">Login</span>
+            <span class="col-8 font-weight-bold text-right"><small>#{{user.discogs.account.id}} -</small> {{user.discogs.account.name}}</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between">
+            <span class="col-4 font-weight-lighter">Access Token</span>
+            <span class="col-8 font-weight-bold text-truncate text-right" v-on:click="showDiscogsToken = !showDiscogsToken">{{showDiscogsToken ? 'oauth_token=' + user.discogs.token.oauth_token + ',oauth_token_secret=' + user.discogs.token.oauth_token_secret : 'Cliquer pour afficher'}}</span>
+          </div>
+          <hr>
+        </div>
+        <div v-else-if="!hasDiscogs">
+          <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="tiny material-icons mr-2">add_alert</i>
+            Connectez le compte Discogs pour avoir les fonctionnalités associées.
+          </div>
+          <p><a class="btn btn-primary" :href="discogsConnect" role="button">Connecter</a></p>
+
+        </div>        
+        <div v-else class="alert alert-danger d-flex align-items-center" role="alert">
+          <i class="tiny material-icons mr-2">add_alert</i>
+          Erreur
+        </div>
       </div>
     </div>
   </div>
@@ -103,30 +137,52 @@ export default {
       showAccountToken: false,
       showDeezerToken: false,
       showSpotifyToken: false,
+      showDiscogsToken: false,
       deezerConnect: "https://connect.deezer.com/oauth/auth.php?app_id=" + process.env.VUE_APP_DEEZER_APP_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_DEEZER_REDIRECT,
       spotifyConnect: "https://accounts.spotify.com/authorize?client_id=" + process.env.VUE_APP_SPOTIFY_CLIENT_ID + "&redirect_uri=" + process.env.VUE_APP_URL + process.env.VUE_APP_SPOTIFY_REDIRECT + "&response_type=code&scope=" + encodeURIComponent('user-library-read user-follow-read'),
+      discogsToken: ''
     }
   },
   computed: {
     token: function() {
       return this.$store.getters['auth/getToken'];
+    },
+    discogsConnect: function() {
+      return "https://discogs.com/oauth/authorize?oauth_token=" + this.discogsToken;
+    },
+    hasDiscogs: function() {
+      return this.$store.getters['platform/isEnabled']('Discogs');
     }
   },
   created() {
-    this.fetchAccount();
+    this.loading = true;
     if (Object.keys(this.$route.query).length > 0) {
-      this.handleCallback(this.$route.query)
+      const from = this.$route.query.from;
+      if (from) {
+        const capitalizeFrom = from.charAt(0).toUpperCase() + from.slice(1);
+        this.handleCallback(this.$route.query)
+          .finally(() => {
+            this.fetchAccount(capitalizeFrom)
+          })
+      }
+    }
+    else {
+      this.fetchAccount()
     }
   },
   methods: {
-    fetchAccount () {
+    fetchAccount (from = null) {
       const url = "/users/me";
-      this.loading = true;
       axios.get(url)
         .then((response) => {
           if (response.status === 200) {
-            this.user = response.data;
+            this.user = response.data.data;
+            this.discogsToken = response.data.discogsToken;
+            this.$store.dispatch('platform/setPlatforms', response.data.has);
           }
+        })
+        .then(() => {
+          if (from) this.$store.dispatch('platform/setCurrentPlatform', from); // capitalize
         })
         .catch(err => this.showError(err))
         .finally(() => {
@@ -134,25 +190,34 @@ export default {
         })
     },
     handleCallback(query) {
-      switch(query.from) {
-        case 'deezer':
-          if(query.code) this.getDeezerToken(query.code)
-          break;
-        default:
-          if(query.code) this.getSpotifyToken(query.code)
-          break;
-      }
+      return new Promise((resolve, reject) => {
+        switch(query.from) {
+          case 'deezer':
+            if(query.code) this.getDeezerToken(query.code).finally(() => resolve())
+            break;
+          case 'spotify':
+            if(query.code) this.getSpotifyToken(query.code).finally(() => resolve())
+            break;
+          case 'discogs':
+            if(query.oauth_token && query.oauth_verifier) this.getDiscogsToken(query.oauth_token, query.oauth_verifier).finally(() => resolve())
+            break;
+          default:
+             this.$emit('error', 'Plateforme non supportée')
+             resolve()
+            break;
+        }
+      })
     },
     getDeezerToken (code) {
       this.$emit('startLoading','Mise à jour du compte Deezer...');
       const url = "/users/token/deezer?code="+code;
-      axios.get(url)
+      return axios.get(url)
         .then((response) => {
           if (response.status === 200) {
             this.user = {
               ...this.user,
               deezer: response.data
-            };
+            };            
             this.successToast('Deezer');
           }
         })
@@ -161,7 +226,7 @@ export default {
     getSpotifyToken (code) {
       this.$emit('startLoading','Mise à jour du compte Spotify...');
       const url = "/users/token/spotify?code="+code;
-      axios.get(url)
+      return axios.get(url)
         .then((response) => {
           if (response.status === 200) {
             this.user = {
@@ -173,10 +238,23 @@ export default {
         })
         .catch(error => this.$emit('error', error));
     },
+    getDiscogsToken (token, verify) {
+      this.$emit('startLoading','Mise à jour du compte Discogs...');
+      const url = "/users/token/discogs?token="+token+"&verify="+verify;
+      return axios.get(url)
+        .then((response) => {
+          if (response.status === 200) {
+            this.user = {
+              ...this.user,
+              discogs: response.data
+            };
+            this.successToast('Discogs');
+          }
+        })
+        .catch(error => this.$emit('error', error));
+    },
     successToast(from) {
       this.$emit('success', 'Le compte '+from+' a été mis à jour')
-      this.$store.dispatch('platform/addPlatform', from);
-      this.$store.dispatch('platform/setCurrentPlatform', from);
     },
   }
 }

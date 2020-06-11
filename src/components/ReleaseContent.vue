@@ -22,7 +22,7 @@ error<template>
           </div>
         </div>
         <div class="card-body">
-          <h5 class="card-title">{{capitalize(release.content.type)}}</h5>
+          <h5 class="card-title text-capitalize">{{release.content.type}}</h5>
           <p class="card-text text-muted small">Sortie le {{ release.content.updated_at }}</p>
           <div v-if="loadingTracklist">
             <div class="alert alert-light d-flex align-items-center">
@@ -36,7 +36,7 @@ error<template>
               <li class="list-group-item align-items-center"
                 v-for="(track, index) in tracklist"
                 v-bind:key="track.id">
-                <b>#{{index+1}}</b> | <span v-for="artist in track.artist" v-bind:key="'content-'+artist._uid"><a :href="artist.link" target="_blank">{{artist.name}}</a> | </span><a :href="track.link" target="_blank" class="text-success">{{track.name}}</a>
+                <b>#{{index+1}}</b> | <a :href="track.link" target="_blank" class="text-success">{{track.name}}</a><span v-for="artist in track.artist" v-bind:key="'content-'+artist._uid"> | <a :href="artist.link" target="_blank">{{artist.name}}</a></span>
               </li>
             </ul>
           </div>
@@ -137,10 +137,6 @@ export default {
           this.fetchRelatedArtists(release.author.id);
         }
       }
-    },
-    capitalize: function (s) {
-      if (typeof s !== 'string') return '';
-      return s.charAt(0).toUpperCase() + s.slice(1);
     },
     fetchReleaseContent (obj, id) {
       this.$emit('startLoading','Chargement du contenu...');
