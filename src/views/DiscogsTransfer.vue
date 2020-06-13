@@ -38,72 +38,77 @@
           {{countCollection}} vinyles affichés / {{countCheckedCollection}} selectionnés
         </div>
       </div>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col" class="text-center align-middle">
-              <input type="checkbox" id="selectAll" @change="onSelectAll">
-            </th>
-            <th scope="col" class="text-center">#</th>
-            <th scope="col">Cover</th>
-            <th scope="col">Vinyle</th>
-            <th scope="col">Status</th>
-          </tr>
-        </thead>
-         <tbody id="collection">
-          <tr 
-            v-for="(item, index) in collection"
-            v-bind:key="item._uid"
-            v-show="item.display"
-            @click="onClickItem(index)">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th style="width: 5%" scope="col" class="text-center align-middle">
+                <input type="checkbox" id="selectAll" @change="onSelectAll">
+              </th>
+              <th style="width: 5%" scope="col" class="text-center">#</th>
+              <th style="width: 10%" scope="col">Cover</th>
+              <th style="width: 40%" scope="col">Vinyle</th>
+              <th style="width: 40%" scope="col">Status</th>
+            </tr>
+          </thead>
+           <tbody id="collection">
+            <tr 
+              v-for="(item, index) in collection"
+              v-bind:key="item._uid"
+              v-show="item.display"
+              @click="onClickItem(index)">
 
-            <th style="width: 5%" class="text-center align-middle">
-              <input type="checkbox" v-model="item.checked" :checked="item.checked" @change="onChangeChecked($event, index)" :id="'select'+item.id">
-            </th>
-            <th style="width: 5%" class="text-center align-middle">{{index+1}}</th>
-            <th style="width: 10%"><img :src="item.picture" class="img-fluid rounded"></th>
-            <th style="width: 30%">
-              <p><a :href="item.link" class="text-success" target="_blank">{{item.name}}</a><span v-for="artist in item.artists" v-bind:key="item.id+'-'+artist.id"> <span class="text-muted"> |</span> <a class="text-primary" :href="'https://www.discogs.com/artist/'+artist.id" target="_blank">{{artist.name}}</a></span></p>
-              <p class="text-muted small">Date d'ajout : {{releaseDate(item.added_at)}} | Sortie en {{item.updated_at}}</p>
-            </th>
-            <th style="width: 40°%">
-              <div v-if="item.offline">
-                <div class="small">
-                  <span v-if="item.deezer">
-                    <p class="d-flex justify-content-between">
-                      <span>
-                        <b>Deezer : </b><a :href="item.deezer.album.link" target="_blank">{{item.deezer.album.name}}</a>
-                      </span>
-                      <span class="align-self-center badge badge-primary">{{item.deezer.validity_percent}} %</span>
-                    </p>
-                  </span>
-                  <span v-else>
-                    <p class="text-warning"><b>Deezer : </b>Non trouvé</p>
-                  </span>
+              <th scope="row" class="text-center align-middle">
+                <input type="checkbox" v-model="item.checked" :checked="item.checked" @change="onChangeChecked($event, index)" :id="'select'+item.id">
+              </th>
+              <th scope="row" class="text-center align-middle">{{index+1}}</th>
+              <th ><img :src="item.picture" class="img-fluid rounded"></th>
+              <th >
+                <p><a :href="item.link" class="text-success" target="_blank">{{item.name}}</a><span v-for="artist in item.artists" v-bind:key="item.id+'-'+artist.id"> <span class="text-muted"> |</span> <a class="text-primary" :href="'https://www.discogs.com/artist/'+artist.id" target="_blank">{{artist.name}}</a></span></p>
+                <p class="text-muted small">Date d'ajout : {{releaseDate(item.added_at)}} | Sortie en {{item.updated_at}}</p>
+              </th>
+              <th class="align-middle">
+                <div v-if="item.offline">
+                  <div class="small">
+                    <span v-if="item.deezer">
+                      <p class="d-flex justify-content-between">
+                        <span>
+                          <b>Deezer : </b><a :href="item.deezer.album.link" target="_blank">{{item.deezer.album.name}}</a>
+                        </span>
+                        <span class="align-self-center badge badge-primary">{{item.deezer.validity_percent}} %</span>
+                      </p>
+                    </span>
+                    <span v-else>
+                      <p class="text-warning"><b>Deezer : </b>Non trouvé</p>
+                    </span>
+                  </div>
+                  <div class="small">
+                    <span v-if="item.spotify">
+                      <p class="d-flex justify-content-between">
+                        <span>
+                          <b>Spotify : </b><a :href="item.spotify.album.link" target="_blank">{{item.spotify.album.name}}</a>                      
+                        </span>
+                        <span class="align-self-center badge badge-primary">{{item.spotify.validity_percent}} %</span>
+                      </p>
+                    </span>
+                    <span v-else>
+                      <p class="text-warning"><b>Spotify : </b>Non trouvé</p>
+                    </span>
+                  </div>
                 </div>
-                <div class="small">
-                  <span v-if="item.spotify">
-                    <p class="d-flex justify-content-between">
-                      <span>
-                        <b>Spotify : </b><a :href="item.spotify.album.link" target="_blank">{{item.spotify.album.name}}</a>                      
-                      </span>
-                      <span class="align-self-center badge badge-primary">{{item.spotify.validity_percent}} %</span>
-                    </p>
-                  </span>
-                  <span v-else>
-                    <p class="text-warning"><b>Spotify : </b>Non trouvé</p>
-                  </span>
-                </div>
-              </div>
-            </th>
-            <th style="width: 10°%" class="text-right align-middle">
-              <i v-if="item.checkTransfer" class="text-warning material-icons">autorenew</i>
-              <i v-else-if="item.offline" class="text-success material-icons">cloud_done</i>
-              <i v-else class="text-secondary material-icons">cloud_off</i>
-            </th>
-          </tr>
-        </tbody>
-      </table>
+              </th>
+              <th class="text-center align-middle">
+                <i v-if="item.checkTransfer" class="text-warning material-icons">autorenew</i>
+                <i v-else-if="item.offline" class="text-success material-icons">cloud_done</i>
+                <i v-else class="text-secondary material-icons">cloud_off</i>
+                <button v-if="item.offline" @click="onAction('bug', index)" type="button" class="d-block text-center btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Signaler un bug">
+                  <i  class="material-icons text-warning">bug_report</i>
+                </button>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -145,6 +150,9 @@ export default {
     }
   },
   computed: {
+    countAll: function() {
+      return this.collection.length;
+    },
     countCollection: function() {
       return this.collection.filter(i => i.display).length;
     },
@@ -211,7 +219,7 @@ export default {
         })
     },
     onChangeChecked(event, id) {
-      if (id < this.collection.length) {
+      if (id < this.countAll) {
         let item = this.collection[id];
         item.checked = event.target.checked;
         this.$set(this.collection, id, item)
@@ -219,7 +227,7 @@ export default {
       }
     },
     onClickItem(id) {
-      if (id < this.collection.length) {
+      if (id < this.countAll) {
         let item = this.collection[id];
         item.checked = !item.checked;
         this.$set(this.collection, id, item)
@@ -253,7 +261,7 @@ export default {
       }
       document.getElementById("selectAll").checked = this.countCheckedDisplayedCollection == this.countCollection;
     },
-    onAction(actionType) {
+    onAction(actionType, id) {
       this.action = new Object;
       this.action.type = actionType;
       switch(this.action.type) {
@@ -273,6 +281,16 @@ export default {
             $('#exampleModal').modal('show'); // eslint-disable-line no-undef
           }
           break;
+        case 'bug':
+          if (id !=null && id >= 0 && id < this.countAll) {
+            let item = this.collection[id];
+            this.action.title = 'Signaler un bug';
+            this.action.message = 'Un problème avec ' + item.name + ' ?';
+            this.action.subMessage = 'Une nouvelle recherche sera effectuée.';
+            this.action.params = item.id;
+            $('#exampleModal').modal('show'); // eslint-disable-line no-undef
+          }
+          break;
         case 'creation':
           this.action.title = 'Transférer la collection sélectionnée';
           break;
@@ -286,6 +304,9 @@ export default {
       switch(this.action.type) {
         case 'compatibility':
           this.fetchCompatibility();
+          break;
+        case 'bug':
+          this.sendBug();
           break;
         case 'creation':
           //
@@ -313,8 +334,8 @@ export default {
         .then((response) => {
           this.$emit('success', 'Une exécution a bien été lancée ! Le résultat sera visible dans quelques instants.');
           this.collection = this.collection.map(item => {
-            if (item.checked) {
-              item.checkTransfer = true
+            if (checkedList.includes(item.id)) {
+              item.checkTransfer = true;
             }
             return item;
           });
@@ -325,9 +346,34 @@ export default {
         .finally(() => {
           this.loading = false;
         })
-
       // on success
-      
+    },
+    sendBug() {
+      let paramsID = this.action.params;
+      if (!paramsID) {
+        this.$emit('error', 'Aucun vinyle à signaler');
+      } else {
+        this.loading = true;
+        this.$emit('startLoading', 'Envoie du bug à traiter...')
+        const url = "/discogs/transfer/bug";
+        const params = JSON.stringify(paramsID);
+        axios.post(url,{release_id: params})
+          .then((response) => {
+            this.$emit('success', 'Le bug a été signalé ! Une nouvelle recherche sera effectuée.');
+            this.collection = this.collection.map(item => {
+              if (item.checked) {
+                item.checkTransfer = true
+              }
+              return item;
+            });
+          })
+          .catch((error) => {
+            this.$emit('error', error);
+          })
+          .finally(() => {
+            this.loading = false;
+          })
+      }
     }
   }
 }
