@@ -11,7 +11,7 @@ import Home from '../views/Home.vue'
 import Logout from '../views/Logout.vue'
 import GetStarted from '../views/GetStarted.vue'
 import Tool from '../views/Tool.vue'
-import DiscogsTransfer from '../views/DiscogsTransfer.vue'
+import DiscogsManagement from '../views/DiscogsManagement.vue'
 import SocialNetwork from '../views/SocialNetwork.vue'
 import store from '../store' // your vuex store 
 
@@ -51,7 +51,7 @@ const routes = [
   },
   {
     path: '/news',
-    name: 'Releases',
+    name: 'News',
     component: Releases,
     meta: { requiresAuth: true, platform: true, },
   },
@@ -81,8 +81,8 @@ const routes = [
   },
   {
     path: '/tool/discogs',
-    name: 'Tool Discogs',
-    component: DiscogsTransfer,
+    name: 'Discogs Management',
+    component: DiscogsManagement,
     meta: { requiresAuth: true, platform: true, },
   },
   {

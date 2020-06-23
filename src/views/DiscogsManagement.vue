@@ -4,7 +4,7 @@
       <router-link to="/tool" class="d-inline-flex align-items-center" style="text-decoration: none;"><i class="small text-primary material-icons mr-1">keyboard_arrow_left</i>Outils</router-link>
       <div class="flex-grow-1 d-flex justify-content-center text-muted">
         <div v-show="loading" class="spinner-border" style="width: 2rem; height: 2rem;" role="status"></div>
-        <h3 class="mx-3">Discogs transfert</h3>
+        <h3 class="mx-3">Gestion de Discogs</h3>
       </div>
     </div>
     <div v-if="folder.length > 0">
@@ -20,9 +20,8 @@
         <div class="card-body">
           <p class="card-title text-center text-uppercase font-weight-bold">Opérations</p>
           <div class="row d-flex justify-content-around">
-            <button class="my-2 btn btn-sm btn-primary" @click="onAction('compatibility')">Vérifier la compatibilité</button>          
-            <button class="my-2 btn btn-sm btn-secondary" @click="onAction('creation')" disabled>Créer une playlist</button>          
-            <button class="my-2 btn btn-sm btn-secondary" @click="onAction('status')" disabled>Voir le status du transfert</button>          
+            <button class="my-2 btn btn-sm btn-primary" @click="onAction('compatibility')">Vérifier la compatibilité</button>
+            <button class="my-2 btn btn-sm btn-secondary" @click="onAction('creation')" style="cursor: not-allowed;" disabled>Créer une playlist</button>
           </div>
           <div v-if="genres && genres.length > 0">
             <hr class="my-2">
@@ -39,40 +38,44 @@
         </div>
       </div>
       <div class="table-responsive">
-        <table class="table table-hover">
+        <table class="table table-sm table-hover">
           <thead>
             <tr>
               <th style="width: 5%" scope="col" class="text-center align-middle">
                 <input type="checkbox" id="selectAll" @change="onSelectAll">
               </th>
-              <th style="width: 5%" scope="col" class="text-center">#</th>
-              <th style="width: 10%" scope="col">Cover</th>
-              <th style="width: 40%" scope="col">Vinyle</th>
-              <th style="width: 40%" scope="col">Status</th>
+              <th style="width: 5%" scope="col" class="align-middle">#</th>
+              <th style="width: 10%" class="text-center align-middle">Cover</th>
+              <th style="width: 50%" class="text-center align-middle">Vinyle</th>
+              <th style="width: 25%" class="align-middle">Status</th>
+              <th style="width: 5%" class="text-center align-middle">
+                <i class="text-primary material-icons align-middle" style="opacity: 0.8;">info</i>
+              </th>
             </tr>
           </thead>
-           <tbody id="collection">
-            <tr 
+          <tbody id="collection">
+            <tr
+              :id="'item-'+index"
               v-for="(item, index) in collection"
               v-bind:key="item._uid"
               v-show="item.display"
               @click="onClickItem(index)">
 
-              <th scope="row" class="text-center align-middle">
-                <input type="checkbox" v-model="item.checked" :checked="item.checked" @change="onChangeChecked($event, index)" :id="'select'+item.id">
-              </th>
-              <th scope="row" class="text-center align-middle">{{index+1}}</th>
-              <th ><img :src="item.picture" class="img-fluid rounded"></th>
-              <th >
-                <p><a :href="item.link" class="text-success" target="_blank">{{item.name}}</a><span v-for="artist in item.artists" v-bind:key="item.id+'-'+artist.id"> <span class="text-muted"> |</span> <a class="text-primary" :href="'https://www.discogs.com/artist/'+artist.id" target="_blank">{{artist.name}}</a></span></p>
-                <p class="text-muted small">Date d'ajout : {{releaseDate(item.added_at)}} | Sortie en {{item.updated_at}}</p>
-              </th>
-              <th class="align-middle">
+              <td scope="row" class="text-center align-middle">
+                <input type="checkbox" v-model="item.checked" :checked="item.checked" @change="onChangeChecked($event, index)" :id="'select)'+item._uid">
+              </td>
+              <td scope="row" class="align-middle">{{index+1}}</td>
+              <td class="align-middle text-center"><img :src="item.album.picture" class="img-fluid rounded"></td>
+              <td class="align-middle text-center">
+                <p><a :href="item.album.link" class="text-success" target="_blank">{{item.album.name}}</a><span v-for="artist in item.album.artists" v-bind:key="item.album.id+'-'+artist.id"> <span class="text-muted"> |</span> <a class="text-primary" :href="artist.link" target="_blank">{{artist.name}}</a></span></p>
+                <p class="text-muted small">Date d'ajout : {{releaseDate(item.added_at)}} | Sortie en {{item.album.release_date}}</p>
+              </td>
+              <td class="align-middle">
                 <div v-if="item.offline">
                   <div class="small">
                     <span v-if="item.deezer">
                       <p class="d-flex justify-content-between">
-                        <span>
+                        <span class="mr-2">
                           <b>Deezer : </b><a :href="item.deezer.album.link" target="_blank">{{item.deezer.album.name}}</a>
                         </span>
                         <span class="align-self-center badge badge-primary">{{item.deezer.validity_percent}} %</span>
@@ -85,8 +88,8 @@
                   <div class="small">
                     <span v-if="item.spotify">
                       <p class="d-flex justify-content-between">
-                        <span>
-                          <b>Spotify : </b><a :href="item.spotify.album.link" target="_blank">{{item.spotify.album.name}}</a>                      
+                        <span class="mr-2">
+                          <b>Spotify : </b><a :href="item.spotify.album.link" target="_blank">{{item.spotify.album.name}}</a>
                         </span>
                         <span class="align-self-center badge badge-primary">{{item.spotify.validity_percent}} %</span>
                       </p>
@@ -96,15 +99,15 @@
                     </span>
                   </div>
                 </div>
-              </th>
-              <th class="text-center align-middle">
+              </td>
+              <td class="text-center align-middle">
                 <i v-if="item.checkTransfer" class="text-warning material-icons">autorenew</i>
                 <i v-else-if="item.offline" class="text-success material-icons">cloud_done</i>
                 <i v-else class="text-secondary material-icons">cloud_off</i>
-                <button v-if="item.offline" @click="onAction('bug', index)" type="button" class="d-block text-center btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Signaler un bug">
-                  <i  class="material-icons text-warning">bug_report</i>
+                <button v-if="item.offline" @click="onAction('bug', index)" type="button" class="text-center btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Signaler un bug">
+                  <i class="material-icons text-warning">bug_report</i>
                 </button>
-              </th>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -138,7 +141,7 @@
 import axios from "axios";
 
 export default {
-  name: 'DiscogsTransfer',
+  name: 'DiscogsManagement',
   data() {
     return {
       loading: false,
@@ -163,7 +166,7 @@ export default {
       return this.collection.filter(i => i.display && i.checked).length
     },
     countCheckedOfflineCollection: function () {
-      return this.collection.filter(i => !i.offline && i.checked).length
+      return this.collection.filter(i => i.checked && (!i.offline || (!i.deezer && !i.spotify))).length
     },
   },
   mounted() {
@@ -199,13 +202,15 @@ export default {
           if (response.status === 200 && response.data) {
             this.collection = response.data.data;
             this.collection = this.collection.map(r => {
-              r.display = true; 
+              r.display = true;
               r.checked = false;
               r.checkTransfer = false;
               return r;
             });
             this.genres = response.data.genres;
             this.genres.map(g => g.isClicked = false);
+            let selectAll = document.getElementById("selectAll");
+            if (selectAll) selectAll.checked = false;
             this.$emit('success', 'Récupération de le collection avec succès !');
           }
           this.$emit('endLoading');
@@ -250,7 +255,7 @@ export default {
 
       if(key == 1) {
         this.collection = this.collection.map(r => {
-          r.display = true; 
+          r.display = true;
           return r;
         });
       } else {
@@ -277,7 +282,7 @@ export default {
             } else {
               this.action.subMessage = 'Les vinyles déjà vérifiés ne seront pas intégrés à la recherche.';
             }
-            this.action.notice = 'Temps estimé : ' + Math.ceil(this.countCheckedOfflineCollection*2/60) + ' minute(s)';
+            this.action.notice = 'Temps estimé : ' + Math.ceil(this.countCheckedOfflineCollection*2.5/60) + ' minute(s)';
             $('#exampleModal').modal('show'); // eslint-disable-line no-undef
           }
           break;
@@ -285,9 +290,9 @@ export default {
           if (id !=null && id >= 0 && id < this.countAll) {
             let item = this.collection[id];
             this.action.title = 'Signaler un bug';
-            this.action.message = 'Un problème avec ' + item.name + ' ?';
+            this.action.message = 'Un problème avec ' + item.album.name + ' ?';
             this.action.subMessage = 'Une nouvelle recherche sera effectuée.';
-            this.action.params = item.id;
+            this.action.params = item.album.id;
             $('#exampleModal').modal('show'); // eslint-disable-line no-undef
           }
           break;
@@ -319,34 +324,32 @@ export default {
     fetchCompatibility() {
       var checkedList = [];
       this.collection.forEach(item => {
-        if (item.checked && !item.offline) {
-          checkedList.push(item.id);
+        if (item.checked && (!item.offline || (!item.deezer && !item.spotify))) {
+          checkedList.push(item.album.id);
         }
       })
-
       checkedList = checkedList.slice(0, this.maxSizeForCompatibility);
 
       this.loading = true;
       this.$emit('startLoading', 'Envoie des vinyles à synchroniser...')
-      const url = "/discogs/transfer/collection";
+      const url = "/discogs/compatibility";
       const params = JSON.stringify(checkedList);
       axios.post(url,{releases: params})
-        .then((response) => {
-          this.$emit('success', 'Une exécution a bien été lancée ! Le résultat sera visible dans quelques instants.');
-          this.collection = this.collection.map(item => {
-            if (checkedList.includes(item.id)) {
-              item.checkTransfer = true;
-            }
-            return item;
-          });
-        })
-        .catch((error) => {
-          this.$emit('error', error);
-        })
-        .finally(() => {
-          this.loading = false;
-        })
-      // on success
+      .then((response) => {
+        this.$emit('success', 'Une exécution a bien été lancée ! Le résultat sera visible dans quelques instants.');
+        this.collection = this.collection.map(item => {
+          if (checkedList.includes(item.album.id)) {
+            item.checkTransfer = true;
+          }
+          return item;
+        });
+      })
+      .catch((error) => {
+        this.$emit('error', error);
+      })
+      .finally(() => {
+        this.loading = false;
+      })
     },
     sendBug() {
       let paramsID = this.action.params;
@@ -355,26 +358,44 @@ export default {
       } else {
         this.loading = true;
         this.$emit('startLoading', 'Envoie du bug à traiter...')
-        const url = "/discogs/transfer/bug";
-        const params = JSON.stringify(paramsID);
-        axios.post(url,{release_id: params})
-          .then((response) => {
-            this.$emit('success', 'Le bug a été signalé ! Une nouvelle recherche sera effectuée.');
-            this.collection = this.collection.map(item => {
-              if (item.checked) {
-                item.checkTransfer = true
-              }
-              return item;
-            });
-          })
-          .catch((error) => {
-            this.$emit('error', error);
-          })
-          .finally(() => {
-            this.loading = false;
-          })
+        const url = "/discogs/bug";
+        const index = this.collection.findIndex(item => item.album.id == paramsID);
+        $('#item-'+index).css('background-color','rgba(255, 204, 153, 0.5)'); // eslint-disable-line no-undef
+        this.collection[index].checkTransfer=true;
+        axios.post(url,{release_id: paramsID})
+        .then(response => {
+
+          const solvedItem = response.data;
+          const index = this.collection.findIndex(item => item.album.id == paramsID);
+          var item = this.collection[index];
+          item.deezer = solvedItem.deezer;
+          item.spotify = solvedItem.spotify;
+
+          this.$set(this.collection, index, item)
+          $('#item-'+index).css('background-color','rgba(153, 255, 153, 0.5)'); // eslint-disable-line no-undef
+          this.$emit('success', 'Le résultat a été mis à jour.');
+        })
+        .catch((error) => {
+          $('#item-'+index).css('background-color','rgba(255, 153, 153, 0.5)'); // eslint-disable-line no-undef
+          this.$emit('error', error);
+        })
+        .finally(() => {
+          this.collection[index].checkTransfer=false;
+          setTimeout(() => {
+            $('#item-'+index).css('background-color',''); // eslint-disable-line no-undef
+          }, 3000)
+          this.loading = false;
+        })
       }
     }
   }
 }
 </script>
+
+<style lang="scss">
+#collection {
+  tr {
+    transition: background-color 0.5s ease;
+  };
+}
+</style>
