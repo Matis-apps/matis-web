@@ -50,7 +50,7 @@
                 <p class="small">Sortie le {{items.updated_at}}</p>
               </div>
               <div class="row">
-                <p><span><a :href="items.link" class="text-success" target="_blank">{{ items.name }}</a></span><span v-for="artist in items.artist" v-bind:key="artist._uid"> | <a :href="artist.link" class="text-primary" target="_blank">{{ artist.name }}</a></span></p>
+                <p><span><a :href="items.link" class="text-success" target="_blank">{{ items.name }}</a></span><span v-for="artist in items.artists" v-bind:key="artist._uid"> | <a :href="artist.link" class="text-primary" target="_blank">{{ artist.name }}</a></span></p>
               </div>
             </div>
           </li>

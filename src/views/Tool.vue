@@ -15,16 +15,18 @@
           <span class="small">Gérer et tansférer ma collection</span>
         </div>
       </router-link>
-      <router-link to="/tool/netwok" class="list-group-item list-group-item-action flex-column align-items-start">
+      <!--router-link to="/tool/netwok" class="list-group-item list-group-item-action flex-column align-items-start"-->
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">Réseaux</h5>
-          <small>In progress</small>
+          <small>En développement</small>
         </div>
         <div class="my-3 d-flex align-items-center">
           <span class="d-inline-flex bg-dark p-3 rounded mr-3" ><i class="large material-icons" style="color: white; font-size: 4rem;">people_outline</i></span>
           <span class="small">Suivre mes amis avec Matis</span>
         </div>
-      </router-link>
+      </a>
+      <!--/router-link-->
     </div>
   </div>
 </template>
