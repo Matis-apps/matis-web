@@ -10,6 +10,9 @@ import Playlists from '../views/Playlists.vue'
 import Home from '../views/Home.vue'
 import Logout from '../views/Logout.vue'
 import GetStarted from '../views/GetStarted.vue'
+import Tool from '../views/Tool.vue'
+import DiscogsManagement from '../views/DiscogsManagement.vue'
+import SocialNetwork from '../views/SocialNetwork.vue'
 import store from '../store' // your vuex store 
 
 Vue.use(VueRouter)
@@ -48,7 +51,7 @@ const routes = [
   },
   {
     path: '/news',
-    name: 'Releases',
+    name: 'News',
     component: Releases,
     meta: { requiresAuth: true, platform: true, },
   },
@@ -69,6 +72,24 @@ const routes = [
     name: 'Playlists',
     component: Playlists,
     meta: { requiresAuth: true, platform: true, },
+  },
+  {
+    path: '/tool',
+    name: 'Tool',
+    component: Tool,
+    meta: { requiresAuth: true, platform: true, },
+  },
+  {
+    path: '/tool/discogs',
+    name: 'Discogs Management',
+    component: DiscogsManagement,
+    meta: { requiresAuth: true, platform: true, },
+  },
+  {
+    path: '/tool/netwok',
+    name: 'Netwok',
+    component: SocialNetwork,
+    meta: { requiresAuth: true, platform: true, },
   }
 ]
 
@@ -84,12 +105,10 @@ router.beforeEach((to, from, next) => {
 
   document.title = 'Matis - ' + to.name;
 
-  /* In progress ...
-  if (to.matched.some(record => record.meta.platform) && !store.getters['platform/isUsingPlatform']) {
+  if (to.matched.some(record => record.meta.platform) && !store.getters['platform/isUsingPlatform'] && store.getters['auth/isAuthenticated']) {
     let payload = { type: 'error', message: 'Il faut utiliser une platforme pour accéder à cette page.', keepIt: true }
     store.dispatch('toast/show', payload);
   }
-  */
 
   if (to.matched.length == 0) {
     let payload = { type: 'error', message: 'Page inexistante.', keepIt: true }

@@ -13,7 +13,7 @@ error<template>
       <div class="card text-left" style="border-color: #86a8e2">
         <div class="card-header d-flex">
           <div class="col-2" v-show="release.content.picture">
-            <img class="card-img-top img-fluid img-circle" :src="release.content.picture" alt="Card image cap"> 
+            <img class="card-img-top img-fluid img-circle" :src="release.content.picture" alt="Card image cap">
           </div>
           <div class="col-10 align-self-center">
             <p>
@@ -22,12 +22,12 @@ error<template>
           </div>
         </div>
         <div class="card-body">
-          <h5 class="card-title">{{capitalize(release.content.type)}}</h5>
+          <h5 class="card-title text-capitalize">{{release.content.type}}</h5>
           <p class="card-text text-muted small">Sortie le {{ release.content.updated_at }}</p>
           <div v-if="loadingTracklist">
             <div class="alert alert-light d-flex align-items-center">
               <div class="spinner-border text-primary" role="status"></div>
-              <span class="mx-3">Chargement de la tracklist...</span>      
+              <span class="mx-3">Chargement de la tracklist...</span>
             </div>
           </div>
           <div v-else-if="tracklist.length > 0">
@@ -36,7 +36,14 @@ error<template>
               <li class="list-group-item align-items-center"
                 v-for="(track, index) in tracklist"
                 v-bind:key="track.id">
-                <b>#{{index+1}}</b> | <span v-for="artist in track.artist" v-bind:key="'content-'+artist._uid"><a :href="artist.link" target="_blank">{{artist.name}}</a> | </span><a :href="track.link" target="_blank" class="text-success">{{track.name}}</a>
+                <b>#{{index+1}}</b>
+                | <a :href="track.link" target="_blank" class="text-success">{{track.name}}</a>
+                <span
+                  v-for="artist in track.artists"
+                  v-bind:key="'content-'+artist._uid">
+                  | <a :href="artist.link" target="_blank">{{artist.name}}</a>
+                </span>
+                <i v-if="releaseDays(track.updated_at) <= 7" :title="'Ajouté '+(releaseDays(track.updated_at) === 0 ? 'aujourd\'hui' : 'il y a '+releaseDays(track.updated_at)+' jours')" style="cursor: pointer;" class="mx-2 d-inline-flex align-middle text-danger small material-icons">fiber_new</i>
               </li>
             </ul>
           </div>
@@ -50,7 +57,7 @@ error<template>
             <div v-if="loadingRelated">
               <div class="alert alert-light d-flex align-items-center">
                 <div class="spinner-border text-primary" role="status"></div>
-                <span class="mx-3">Chargement des artistes associés...</span>      
+                <span class="mx-3">Chargement des artistes associés...</span>
               </div>
             </div>
             <div v-else-if="relatedArtists.length > 0">
@@ -59,8 +66,8 @@ error<template>
                   v-for="artist in relatedArtists"
                   v-bind:key="'related-'+artist._uid">
                   <span class="col-lg-3 d-lg-block text-lg-center col-md-12 d-md-flex justify-content-md-between align-items-md-start d-sm-flex justify-content-sm-between align-items-sm-start d-flex justify-content-between align-items-start">
-                    <p><img class="img-fluid rounded" :src="artist.author.picture" alt="Card image cap"></p>
-                    <p class="mb-0 pb-0 font-weight-bold text-lg-center text-md-right"> {{artist.author.name}}</p>
+                    <p class="col-lg-12 col-sm-4"><img class="img-fluid rounded" :src="artist.author.picture" alt="Card image cap"></p>
+                    <p class="col-lg-12 col-sm-8 mb-0 pb-0 font-weight-bold text-lg-center text-right"> {{artist.author.name}}</p>
                   </span>
                   <span class="col-lg-9 text-lg-right col-md-12">
                     <p class="text-muted small" v-if="releaseDays(artist.content.updated_at) > 0">Il y a {{ releaseDays(artist.content.updated_at) }} jours ({{artist.content.updated_at}})</p>
@@ -110,7 +117,7 @@ export default {
   mounted() {
     if (this.release) this.init(this.release);
   },
-  watch: { 
+  watch: {
     release: function(newVal, oldVal) { // watch it
       if (newVal) this.init(newVal);
     }
@@ -137,10 +144,6 @@ export default {
           this.fetchRelatedArtists(release.author.id);
         }
       }
-    },
-    capitalize: function (s) {
-      if (typeof s !== 'string') return '';
-      return s.charAt(0).toUpperCase() + s.slice(1);
     },
     fetchReleaseContent (obj, id) {
       this.$emit('startLoading','Chargement du contenu...');
