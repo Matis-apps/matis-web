@@ -18,10 +18,14 @@
     </li>
 
     <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" :class="{ 'disabled' : countNotify <= 0 }" href="#" id="navbarNotif" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Notifications <span v-show="countNotify > 0" class="badge badge-pill" :class="notifyStatus">{{countNotify}}</span>
+      <a class="nav-link dropdown-toggle" href="#" id="navbarNotif" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Notifications
+        <span v-show="countNotify > 0" class="badge badge-pill" :class="notifyStatus">{{countNotify}}</span>
       </a>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarNotif">
+        <a v-if='countNotify <= 0' class="dropdown-item d-flex align-items-center font-italic small" href="#">
+          Rien à déclarer chef !
+        </a>
         <a class="dropdown-item d-flex align-items-center" href="#"
           v-for="(notify, index) in notifications"
           v-bind:key="index">
@@ -63,7 +67,7 @@ export default {
     }
   },
   created() {
-    // 
+    //
   },
   methods: {
     onSelectPlatform(item) {
