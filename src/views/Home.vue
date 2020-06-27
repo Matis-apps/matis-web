@@ -15,8 +15,8 @@
       <div class="d-inline-flex flex-column">
         <router-link class="btn btn-primary btn-md mb-2" role="button" to="/get-started">Get started</router-link>
         <a class="btn btn-light btn-md" role="button" href="https://www.youtube.com/channel/UCto8Ll3DIeW0inerDZHijRg" target="_blank">
-          Démo sur Youtube
-          <img class="ml-2 img-fluid" src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="Logo Youtube">
+          <img class="mr-2 img-fluid" style="height: 2rem;" src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="Logo Youtube">
+          Voir la démo
         </a>
       </div>
     </div>
