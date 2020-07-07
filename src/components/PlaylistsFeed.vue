@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-6 text-right">
                   <h5 class="card-title" style="color: #9286e2;">{{selectedPlaylist.name}}</h5>
-                  <p class="card-text"><a :href="selectedPlaylist.link" target="_blank">Lien</a></p>
+                  <p class="card-text"><a :href="selectedPlaylist.link" target="_blank" rel="noopener">Lien</a></p>
                 </div>            
               </div>
               <div v-else class="alert alert-warning">

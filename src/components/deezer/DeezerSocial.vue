@@ -11,7 +11,7 @@
               </div>
               <div class="col-6 text-right">
                 <h5 class="card-title" style="color: #9286e2;">{{selectedFriend.name}}</h5>
-                <p class="card-text"><a :href="'https://www.deezer.com/profile/'+selectedFriend.id" target="_blank">Profile</a></p>
+                <p class="card-text"><a :href="'https://www.deezer.com/profile/'+selectedFriend.id" target="_blank" rel="noopener">Profile</a></p>
               </div>            
             </div>
             <div v-else class="alert alert-warning">

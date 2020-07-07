@@ -67,7 +67,7 @@
               <td scope="row" class="align-middle">{{index+1}}</td>
               <td class="align-middle text-center"><img :src="item.album.picture" class="img-fluid rounded"></td>
               <td class="align-middle text-center">
-                <p><a :href="item.album.link" class="text-success" target="_blank">{{item.album.name}}</a><span v-for="artist in item.album.artists" v-bind:key="item.album.id+'-'+artist.id"> <span class="text-muted"> |</span> <a class="text-primary" :href="artist.link" target="_blank">{{artist.name}}</a></span></p>
+                <p><a :href="item.album.link" class="text-success" target="_blank" rel="noopener">{{item.album.name}}</a><span v-for="artist in item.album.artists" v-bind:key="item.album.id+'-'+artist.id"> <span class="text-muted"> |</span> <a class="text-primary" :href="artist.link" target="_blank" rel="noopener">{{artist.name}}</a></span></p>
                 <p class="text-muted small">Date d'ajout : {{releaseDate(item.added_at)}} | Sortie en {{item.album.release_date}}</p>
               </td>
               <td class="align-middle">
@@ -76,7 +76,7 @@
                     <span v-if="item.deezer">
                       <p class="d-flex justify-content-between">
                         <span class="mr-2">
-                          <b>Deezer : </b><a :href="item.deezer.album.link" target="_blank">{{item.deezer.album.name}}</a>
+                          <b>Deezer : </b><a :href="item.deezer.album.link" target="_blank" rel="noopener">{{item.deezer.album.name}}</a>
                         </span>
                         <span class="align-self-center badge badge-primary">{{item.deezer.validity_percent}} %</span>
                       </p>
@@ -89,7 +89,7 @@
                     <span v-if="item.spotify">
                       <p class="d-flex justify-content-between">
                         <span class="mr-2">
-                          <b>Spotify : </b><a :href="item.spotify.album.link" target="_blank">{{item.spotify.album.name}}</a>
+                          <b>Spotify : </b><a :href="item.spotify.album.link" target="_blank" rel="noopener">{{item.spotify.album.name}}</a>
                         </span>
                         <span class="align-self-center badge badge-primary">{{item.spotify.validity_percent}} %</span>
                       </p>

@@ -32,7 +32,7 @@
             <span class="col-2">
               <img :src="user.deezer.account.picture" class="img-fluid rounded">
             </span>
-            <span class="col-10 font-weight-lighter text-right">Console pour accéder aux données : <a href="https://developers.deezer.com/api/explorer" target="_blank">https://developers.deezer.com/api/explorer</a></span>
+            <span class="col-10 font-weight-lighter text-right">Console pour accéder aux données : <a href="https://developers.deezer.com/api/explorer" target="_blank" rel="noopener">https://developers.deezer.com/api/explorer</a></span>
           </div>
           <hr>
           <div class="d-flex justify-content-between">
@@ -62,10 +62,10 @@
             <span class="col-2">
               <img :src="user.spotify.account.images[0].url" class="img-fluid rounded">
             </span>
-            <span class="col-10 font-weight-lighter text-right">Console pour accéder aux données : <a href="https://developer.spotify.com/console/" target="_blank">https://developer.spotify.com/console/</a></span>
+            <span class="col-10 font-weight-lighter text-right">Console pour accéder aux données : <a href="https://developer.spotify.com/console/" target="_blank" rel="noopener">https://developer.spotify.com/console/</a></span>
           </div>
           <div v-else>
-            <span class="col-12 font-weight-lighter">Console pour accéder aux données : <a href="https://developer.spotify.com/console/" target="_blank">https://developer.spotify.com/console/</a></span>
+            <span class="col-12 font-weight-lighter">Console pour accéder aux données : <a href="https://developer.spotify.com/console/" target="_blank" rel="noopener">https://developer.spotify.com/console/</a></span>
           </div>
           <hr>
           <div class="d-flex justify-content-between">

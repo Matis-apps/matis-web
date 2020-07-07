@@ -19,7 +19,7 @@
           <div class="col-6">
             <h5 class="card-title">Deezer</h5>
             <div v-if="albums.deezer">
-              <span><a :href="albums.deezer.link" target="_blank">{{albums.deezer.name}}</a></span>
+              <span><a :href="albums.deezer.link" target="_blank" rel="noopener">{{albums.deezer.name}}</a></span>
             </div>
             <div v-else>
               <i class="medium text-danger material-icons mr-2">block</i>
@@ -28,7 +28,7 @@
           <div class="col-6">
             <h5 class="card-title">Spotify</h5>
             <div v-if="albums.spotify">
-              <span><a :href="albums.spotify.link" target="_blank">{{albums.spotify.name}}</a></span>
+              <span><a :href="albums.spotify.link" target="_blank" rel="noopener">{{albums.spotify.name}}</a></span>
             </div>
             <div v-else>
               <i class="medium text-danger material-icons mr-2">block</i>

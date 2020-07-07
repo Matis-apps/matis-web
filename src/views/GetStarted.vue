@@ -55,8 +55,8 @@
     <h2>Comment ça marche Jamy ?</h2>
     <ul>
       <li>Les données sont fournies par les APIs des applications respectives</li>
-      <li>Les données sont agrégées par un serveur <a href="https://nodejs.org" target="_blank">Node.js</a></li>
-      <li>Cette application web est développée avec <a href="https://vuejs.org" target="_blank">Vue.js</a></li>
+      <li>Les données sont agrégées par un serveur <a href="https://nodejs.org" target="_blank" rel="noopener">Node.js</a></li>
+      <li>Cette application web est développée avec <a href="https://vuejs.org" target="_blank" rel="noopener">Vue.js</a></li>
     </ul>
     <hr>
     <h2>Privacy</h2>
@@ -64,11 +64,11 @@
     <p>Vous pouvez demander à tout moment de supprimer ces données.</p>
     <hr>
     <h2>About</h2>
-    <p>Contributeurs : <a href="https://github.com/mmaheo" target="_blank">Maxime Maheo</a>, <a href="https://raphael.thibierge.dev" target="_blank">Raphael Thibierge</a>, <a href="https://github.com/nvalaise" target="_blank">Nicolas Valaise</a></p>
+    <p>Contributeurs : <a href="https://github.com/mmaheo" target="_blank" rel="noopener">Maxime Maheo</a>, <a href="https://raphael.thibierge.dev" target="_blank" rel="noopener">Raphael Thibierge</a>, <a href="https://github.com/nvalaise" target="_blank" rel="noopener">Nicolas Valaise</a></p>
     <p>Contact : <a href="mailto:my.matis.dev@gmail.com">my.matis.dev@gmail.com</a></p>
     <div class="d-flex align-self-center">
       <i class="tiny material-icons">copyright</i>
-      <p class="ml-2"><span class="font-weight-bold">2020</span> ~ Nicolas Valaise | <a href="https://github.com/Matis-apps" target="_blank">Github</a></p>
+      <p class="ml-2"><span class="font-weight-bold">2020</span> ~ Nicolas Valaise | <a href="https://github.com/Matis-apps" target="_blank" rel="noopener">Github</a></p>
     </div>
   </div>
 </template>

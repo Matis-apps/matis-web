@@ -17,7 +17,7 @@ error<template>
           </div>
           <div class="col-10 align-self-center">
             <p>
-              <a :href="release.author.link" target="_blank">{{release.author.name}}</a> | <a :href="release.content.link" target="_blank" class="text-success">{{release.content.title}}</a>
+              <a :href="release.author.link" target="_blank" rel="noopener">{{release.author.name}}</a> | <a :href="release.content.link" target="_blank" rel="noopener" class="text-success">{{release.content.title}}</a>
             </p>
           </div>
         </div>
@@ -37,11 +37,11 @@ error<template>
                 v-for="(track, index) in tracklist"
                 v-bind:key="track.id">
                 <b>#{{index+1}}</b>
-                | <a :href="track.link" target="_blank" class="text-success">{{track.name}}</a>
+                | <a :href="track.link" target="_blank" rel="noopener" class="text-success">{{track.name}}</a>
                 <span
                   v-for="artist in track.artists"
                   v-bind:key="'content-'+artist._uid">
-                  | <a :href="artist.link" target="_blank">{{artist.name}}</a>
+                  | <a :href="artist.link" target="_blank" rel="noopener">{{artist.name}}</a>
                 </span>
                 <i v-if="releaseDays(track.updated_at) <= 7" :title="'Ajouté '+(releaseDays(track.updated_at) === 0 ? 'aujourd\'hui' : 'il y a '+releaseDays(track.updated_at)+' jours')" style="cursor: pointer;" class="mx-2 d-inline-flex align-middle text-danger small material-icons">fiber_new</i>
               </li>
@@ -73,7 +73,7 @@ error<template>
                     <p class="text-muted small" v-if="releaseDays(artist.content.updated_at) > 0">Il y a {{ releaseDays(artist.content.updated_at) }} jours ({{artist.content.updated_at}})</p>
                     <p class="text-muted small" v-else-if="releaseDays(artist.content.updated_at) < 0">Sortie prévue dans {{ Math.abs(releaseDays(artist.content.updated_at)) }} jours ({{artist.content.updated_at}})</p>
                     <p class="text-muted small" v-else>Sortie aujourd'hui</p>
-                    <p class="mb-0 pb-0">Nouveau {{ artist.content.type }} : <a :href="artist.content.link" target="_blank">{{artist.content.title}}</a></p>
+                    <p class="mb-0 pb-0">Nouveau {{ artist.content.type }} : <a :href="artist.content.link" target="_blank" rel="noopener">{{artist.content.title}}</a></p>
                   </span>
                 </li>
               </ul>
