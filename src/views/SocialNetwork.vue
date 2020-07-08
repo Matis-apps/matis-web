@@ -45,7 +45,7 @@
     </div>
     <hr class="my-2">
     <h4>Rechercher</h4>
-    <form class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-10 offset-sm-1 col-xs-12">
+    <form v-on:submit.prevent="onSearchUser" class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-10 offset-sm-1 col-xs-12">
       <div class="form-group row mb-2">
         <select class="col-sm-3 custom-select my-1" id="inlineFormCustomSelect">
           <option value="deezer">Deezer</option>
@@ -55,10 +55,31 @@
           <input type="text" class="form-control my-1" id="inlineFormInputUsername" placeholder="Username">
         </div>
         <div class="col-sm-2">
-          <button type="submit" class="btn btn-primary d-block my-1">Lancer</button>
+          <button type="submit" class="btn btn-success d-block my-1">Lancer</button>
         </div>
       </div>
     </form>
+    <div v-if="results && results.length > 0" class="offset-md-1 col-md-10 col-sm-12">
+      <ul class="list-group d-flex flex-column-reverse">
+        <li class="list-group-item" v-for="(user, index) in results" v-bind:key="'user-'+index">
+          <div class="row ">
+            <div class="col-lg-2 col-md-3 col-sm-4 text-sm-left text-center">
+              <img :src="user.picture" class="my-2 img-fluid rounded">
+            </div>
+            <div class="col-lg-10 col-md-9 col-sm-8 d-flex justify-content-between">
+              <div class="row d-block">
+                <p>{{user.fullname||user.name}} (#{{user.id}}) </p>
+                <p class="small">à partir de <b>{{user._from}}</b></p>
+                <p class="small"><a :href="user.profile" class="text-success" target="_blank" rel="noopener">{{ user.profile }}</a></p>
+              </div>
+              <div>
+                <button type="button" class="btn btn-primary">Suivre</button>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -71,10 +92,8 @@ export default {
     return {
       loading: false,
       selectedFriend: null,
+      results: [],
     }
-  },
-  computed: {
-
   },
   mounted() {
     try {
@@ -84,7 +103,38 @@ export default {
     }
   },
   methods: {
-    //
+    onSearchUser() {
+      console.log()
+      const from = document.getElementById("inlineFormCustomSelect").value;
+      const username = document.getElementById("inlineFormInputUsername").value;
+      if (!from) {
+        this.$emit('error', "Aucune plateforme sélectionnée");
+      } else if (!username) {
+        this.$emit('error', "Saisir le nom ou l'identifiant d'un utilisateur");
+      } else {
+        this.$emit('startLoading', 'Recherche en cours...');
+        this.loading = true;
+        axios.get(process.env.VUE_APP_ROOT_API+"/"+from+"/search?t=user&q="+encodeURIComponent(username))
+          .then((response) => {
+            if (response.status === 200) {
+              if ( response.data && response.data.data
+                && response.data.data.users
+                && response.data.data.users
+                && response.data.data.users.length > 0) {
+                  Array.prototype.push.apply(this.results, response.data.data.users);
+                  this.$emit('success', 'La liste des utilisateurs a été mise à jour');
+              } else {
+                this.$emit('error', 'Aucune utilisateur trouvé');
+              }
+            }
+            this.loading = false;
+          })
+          .catch((error) => {
+            this.loading = false;
+            this.$emit('error', error)
+          });
+      }
+    }
   }
 }
 </script>
