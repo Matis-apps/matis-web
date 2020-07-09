@@ -86,7 +86,7 @@ export default {
         this.$emit('startLoading', 'Recherche en cours...');
         this.results = null;
         this.loading = true;
-        axios.get(process.env.VUE_APP_ROOT_API+"/tool/search?q="+encodeURIComponent(search))
+        axios.get(process.env.VUE_APP_ROOT_API+"/tool/search?t=album,track&q="+encodeURIComponent(search))
           .then((response) => {
             if (response.status === 200) {
               this.search = search;

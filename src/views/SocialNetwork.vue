@@ -8,10 +8,10 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-lg-4 px-lg-6 col-md-5 px-md-4 col-sm-12 px-sm-4 order-2 order-md-12 mx-0">
+      <div class="col-lg-5 px-lg-6 col-md-6 px-md-4 col-sm-12 px-sm-4 order-2 order-md-12 mx-0">
         <div class="card bg-light mb-3" style="border-color: #9286e2;">
           <div v-if="selectedFriend" class="card-header">L'activité de cet ami est disponible <router-link to="/social">ici</router-link></div>
-          <div v-else class="card-header">Voir l'activité d'un(e) ami(e)</div>
+          <div v-else class="card-header">Voir les détails d'un(e) ami(e)</div>
           <div class="card-body text-success">
             <div class="row" v-if="selectedFriend">
               <div class="col-6 text-left">
@@ -28,7 +28,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-8 col-md-7 px-md-4 col-sm-12 px-sm-4 order-1 order-md-12 mx-0 align-self-center">
+      <div class="col-lg-7 col-md-6 px-md-4 col-sm-12 px-sm-4 order-1 order-md-12 mx-0 align-self-center">
         <select class="custom-select my-2">
           <optgroup label="Deezer">
             <option>Mustard</option>
@@ -114,6 +114,11 @@
           </div>
         </li>
       </ul>
+    </div>
+    <div v-else class="alert alert-warning offset-md-1 col-md-10 col-sm-12">
+      <h4 class="alert-heading">Aucun résultat...</h4>
+      <hr>
+      <p class="mb-0">Fais une recherche pour afficher tous les utilisateurs compatibles. Les résultats resteront affichés dans la section.</p>
     </div>
   </div>
 </template>
