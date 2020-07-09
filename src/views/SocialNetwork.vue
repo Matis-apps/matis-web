@@ -44,6 +44,40 @@
       </div>
     </div>
     <hr class="my-2">
+    <h4>Tu connais peut être ?</h4>
+    <div v-if="deezerFollowings && deezerFollowings.length > 0" class="offset-md-1 col-md-10 col-sm-12">
+      <ul class="list-group d-flex flex-column-reverse">
+        <li class="list-group-item" v-for="(user, index) in fiveDeezerFollowings" v-bind:key="'user-'+index">
+          <div class="row ">
+            <div class="col-lg-2 col-md-3 col-sm-4 text-sm-left text-center">
+              <img :src="user.picture" class="my-2 img-fluid rounded">
+            </div>
+            <div class="col-lg-10 col-md-9 col-sm-8 d-flex justify-content-between">
+              <div class="row d-block">
+                <p>{{user.fullname||user.name}} (#{{user.id}}) </p>
+                <p class="small">à partir de <b>{{user._from}}</b></p>
+                <p class="small"><a :href="user.profile" class="text-success" target="_blank" rel="noopener">{{ user.profile }}</a></p>
+              </div>
+              <div>
+                <button type="button" class="btn btn-primary btn-sm">Suivre</button>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <button v-if="deezerFollowings.length > 5" type="button" class="my-2 btn btn-success btn-sm" @click="suffleDeezerFollowing">Voir d'autres</button>
+    </div>
+    <div v-else-if="loading" class="alert alert-warning offset-md-1 col-md-10 col-sm-12">
+      <h4 class="alert-heading">Chargement...</h4>
+      <hr>
+      <p class="mb-0">Recherches des ami(e)s suivi(e)s sur tes réseaux.</p>
+    </div>
+    <div v-else class="alert alert-warning offset-md-1 col-md-10 col-sm-12">
+      <h4 class="alert-heading">Aucune connaissance...</h4>
+      <hr>
+      <p class="mb-0">Ne t'inquiètes pas, tu peux retrouver tes amis en les recherchant juste en dessous.</p>
+    </div>
+    <hr class="my-2">
     <h4>Rechercher</h4>
     <form v-on:submit.prevent="onSearchUser" class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-10 offset-sm-1 col-xs-12">
       <div class="form-group row mb-2">
@@ -59,9 +93,10 @@
         </div>
       </div>
     </form>
-    <div v-if="results && results.length > 0" class="offset-md-1 col-md-10 col-sm-12">
+    <div v-if="searchResults && searchResults.length > 0" class="offset-md-1 col-md-10 col-sm-12">
+      <p class="text-muted small">{{searchResults.length}} résultats en se basant sur les précédentes recherches</p>
       <ul class="list-group d-flex flex-column-reverse">
-        <li class="list-group-item" v-for="(user, index) in results" v-bind:key="'user-'+index">
+        <li class="list-group-item" v-for="(user, index) in searchResults" v-bind:key="'user-'+index">
           <div class="row ">
             <div class="col-lg-2 col-md-3 col-sm-4 text-sm-left text-center">
               <img :src="user.picture" class="my-2 img-fluid rounded">
@@ -69,11 +104,11 @@
             <div class="col-lg-10 col-md-9 col-sm-8 d-flex justify-content-between">
               <div class="row d-block">
                 <p>{{user.fullname||user.name}} (#{{user.id}}) </p>
-                <p class="small">à partir de <b>{{user._from}}</b></p>
+                <p class="small">à partir de <b>{{user._from}}</b> en cherchant <span class="font-italic">{{user._search}}</span></p>
                 <p class="small"><a :href="user.profile" class="text-success" target="_blank" rel="noopener">{{ user.profile }}</a></p>
               </div>
               <div>
-                <button type="button" class="btn btn-primary">Suivre</button>
+                <button type="button" class="btn btn-primary btn-sm">Suivre</button>
               </div>
             </div>
           </div>
@@ -92,19 +127,43 @@ export default {
     return {
       loading: false,
       selectedFriend: null,
-      results: [],
+      deezerFollowings: [],
+      searchResults: [],
+    }
+  },
+  computed: {
+    fiveDeezerFollowings: function() {
+      return this.deezerFollowings.slice(0, 5);
     }
   },
   mounted() {
-    try {
-      this.loading = true;
-    } finally {
-      this.loading = false;
-    }
+    this.fetchDeezerFollowing();
   },
   methods: {
+    fetchDeezerFollowing () {
+      this.$emit('startLoading','Chargement des amis suivis...');
+      this.loading = true;
+      axios.get("/deezer/me/social")
+        .then((response) => {
+          if (response.status === 200 && response.data.data) {
+            this.deezerFollowings = response.data.data.followings;
+            this.suffleDeezerFollowing();
+            this.$emit('success', 'Chargement des amis avec succès !');
+          }
+          this.$emit('endLoading');
+        })
+        .catch((error) => {
+          this.$emit('endLoading');
+          this.$emit('error', error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    suffleDeezerFollowing() {
+      this.deezerFollowings.sort(() => 0.5 - Math.random());
+    },
     onSearchUser() {
-      console.log()
       const from = document.getElementById("inlineFormCustomSelect").value;
       const username = document.getElementById("inlineFormInputUsername").value;
       if (!from) {
@@ -113,24 +172,24 @@ export default {
         this.$emit('error', "Saisir le nom ou l'identifiant d'un utilisateur");
       } else {
         this.$emit('startLoading', 'Recherche en cours...');
-        this.loading = true;
-        axios.get(process.env.VUE_APP_ROOT_API+"/"+from+"/search?t=user&q="+encodeURIComponent(username))
+        axios.get(process.env.VUE_APP_ROOT_API+"/"+from+"/search?t=user&s=false&q="+encodeURIComponent(username))
           .then((response) => {
             if (response.status === 200) {
               if ( response.data && response.data.data
                 && response.data.data.users
                 && response.data.data.users
                 && response.data.data.users.length > 0) {
-                  Array.prototype.push.apply(this.results, response.data.data.users);
+                  response.data.data.users.forEach(user => {
+                    user._search = username;
+                    this.searchResults.push(user);
+                  });
                   this.$emit('success', 'La liste des utilisateurs a été mise à jour');
               } else {
                 this.$emit('error', 'Aucune utilisateur trouvé');
               }
             }
-            this.loading = false;
           })
           .catch((error) => {
-            this.loading = false;
             this.$emit('error', error)
           });
       }

@@ -1,4 +1,4 @@
-error<template>
+<template>
   <div id="release-content">
     <div v-if="release">
       <div v-if="releaseType == 'album'">
